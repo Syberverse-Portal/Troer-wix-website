@@ -1,0 +1,7 @@
+# dependencies
+node_modules/
+.vscode/
+.idea/
+.wix/
+jsconfig.json
+.gcloud-key.json

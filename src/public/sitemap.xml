@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://troer.co.uk/</loc><priority>1.0</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://troer.co.uk/about.html</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://troer.co.uk/contact.html</loc><priority>0.9</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://troer.co.uk/industries.html</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://troer.co.uk/solutions.html</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://troer.co.uk/project-management.html</loc><priority>0.9</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://troer.co.uk/procurement-contractor-management.html</loc><priority>0.9</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://troer.co.uk/troerconnect.html</loc><priority>0.9</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://troer.co.uk/troertrack.html</loc><priority>0.9</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://troer.co.uk/blog.html</loc><priority>0.7</priority><changefreq>weekly</changefreq></url>
+</urlset>

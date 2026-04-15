@@ -1,0 +1,15 @@
+{
+  "devDependencies": {
+    "@wix/cli": "^1.0.0",
+    "@wix/eslint-plugin-cli": "^1.0.0",
+    "eslint": "^8.25.0",
+    "react": "16.14.0"
+  },
+  "scripts": {
+    "postinstall": "node -e \"if (process.env.CI || process.env.NETLIFY) { console.log('Skipping wix sync-types in CI/Netlify'); process.exit(0); } require('child_process').execSync('wix sync-types', { stdio: 'inherit' });\"",
+    "dev": "wix dev",
+    "lint": "eslint .",
+    "sync-gcs": "sync-gcs.bat",
+    "sync": "npm run sync-gcs"
+  }
+}
