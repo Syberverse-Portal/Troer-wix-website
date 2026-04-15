@@ -3,552 +3,260 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Troer delivers hands-on supply chain project management, procurement optimisation, and contractor oversight for NHS, construction, and enterprise clients across the UK.">
-    <title>Troer | UK Supply Chain Project Management & Procurement Consultancy</title>
+    <meta name="description" content="Troer helps NHS, infrastructure, and enterprise teams fix fragile supply chains with hands-on project management, procurement control, and operational resilience.">
+    <title>Troer | Fix Broken Supply Chains</title>
     <link rel="canonical" href="https://troer.co.uk/">
-    <meta property="og:title" content="Troer | UK Supply Chain Project Management & Procurement Consultancy">
-    <meta property="og:description" content="15+ years of hands-on supply chain project management, procurement optimisation, and contractor oversight for NHS, construction, and enterprise clients.">
+    <meta property="og:title" content="Troer | Fix Broken Supply Chains">
+    <meta property="og:description" content="Hands-on supply chain project management, procurement control, and resilience for NHS, construction, and enterprise teams.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://troer.co.uk/">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Troer | UK Supply Chain Project Management">
-    <meta name="twitter:description" content="15+ years of hands-on supply chain project management and procurement optimisation for NHS, construction, and enterprise clients.">
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Troer",
-      "url": "https://troer.co.uk/",
-      "logo": "https://troer.co.uk/",
-      "description": "UK supply chain project management, procurement optimisation, and contractor oversight specialists with 15+ years experience.",
-      "address": { "@type": "PostalAddress", "addressLocality": "London", "addressCountry": "GB" },
-      "contactPoint": { "@type": "ContactPoint", "telephone": "+44-1962-393842", "contactType": "customer service", "email": "info@troer.co.uk" },
-      "sameAs": ["https://www.linkedin.com/company/troer"]
-    }
-    </script>
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "LocalBusiness",
-      "name": "Troer",
-      "description": "Supply chain project management and procurement consultancy based in London, UK.",
-      "url": "https://troer.co.uk/",
-      "telephone": "+44-1962-393842",
-      "email": "info@troer.co.uk",
-      "address": { "@type": "PostalAddress", "addressLocality": "London", "addressCountry": "GB" },
-      "priceRange": "££",
-      "openingHours": "Mo-Fr 09:00-18:00"
-    }
-    </script>
+    <meta name="twitter:title" content="Troer | Fix Broken Supply Chains">
+    <meta name="twitter:description" content="Hands-on supply chain project management, procurement control, and resilience for complex operations across the UK.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="header.css">
-
-    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-L795LSG1ZL"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);} 
+      function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-L795LSG1ZL');
     </script>
-
     <style>
         :root {
-            --dark-navy: #0b2a58;
-            --deep-navy: #071e43;
+            --navy: #0b2a58;
+            --deep-navy: #071c3d;
             --blue-start: #4a90e2;
             --blue-end: #2962ff;
-            --text-dark: #141414;
-            --text-grey: #5f6773;
-            --border-light: #e8edf4;
-            --panel: #f7fbff;
+            --mist: #f4f8fe;
+            --ink: #132238;
+            --muted: #617084;
+            --line: #dce6f3;
+            --panel: #ffffff;
         }
-
-        *, *::before, *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
-
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         body {
-            background: linear-gradient(180deg, #f8fbff 0%, #ffffff 48%);
-            color: var(--text-dark);
-        }
-
-        .container {
-            width: min(1240px, 92vw);
-            margin: 0 auto;
-        }
-
-        .main-header {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            padding: 10px 0;
-            background: rgba(11, 42, 88, 0.08);
-            backdrop-filter: blur(10px);
-        }
-
-        .header-shell {
-            background: #ffffff;
-            border-radius: 14px;
-            box-shadow: 0 8px 26px rgba(7, 30, 67, 0.14);
-            border: 1px solid #e6edf8;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 18px;
-        }
-
-        .logo {
-            font-size: 38px;
-            font-weight: 800;
-            letter-spacing: -1.2px;
-            color: #0f1116;
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 34px;
-        }
-
-        .nav-links a,
-        .nav-dropdown-btn {
-            font-size: 14px;
-            font-weight: 700;
-            text-decoration: none;
-            color: #141923;
-            text-transform: uppercase;
-            letter-spacing: 0.25px;
-            background: none;
-            border: 0;
-            cursor: pointer;
-        }
-
-        .nav-dropdown {
-            position: relative;
-        }
-
-        .dropdown-menu {
-            position: absolute;
-            top: calc(100% + 14px);
-            left: 50%;
-            transform: translateX(-50%) translateY(-8px);
-            list-style: none;
-            min-width: 190px;
-            padding: 8px;
-            border-radius: 12px;
-            border: 1px solid var(--border-light);
-            background: #fff;
-            box-shadow: 0 18px 36px rgba(12, 29, 56, 0.16);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.2s ease;
-        }
-
-        .nav-dropdown:hover .dropdown-menu {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        .dropdown-menu a {
-            display: block;
-            padding: 10px 12px;
-            border-radius: 8px;
-            text-transform: none;
-            font-size: 14px;
-            color: #1d2738;
-        }
-
-        .dropdown-menu a:hover {
-            background: #eef5ff;
-            color: var(--blue-end);
-        }
-
-        .btn-primary {
-            border: 0;
-            text-decoration: none;
-            color: #fff;
-            background: linear-gradient(135deg, var(--blue-start), var(--blue-end));
-            border-radius: 999px;
-            font-size: 17px;
-            font-weight: 700;
-            letter-spacing: 0.2px;
-            padding: 14px 30px;
-            box-shadow: 0 8px 22px rgba(41, 98, 255, 0.4);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            display: inline-block;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 26px rgba(41, 98, 255, 0.48);
-        }
-    </style>
-
-
-        .hero-section {
-            position: relative;
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            color: var(--ink);
             background:
-                radial-gradient(1200px 420px at 50% -80px, rgba(101, 168, 255, 0.28), transparent 70%),
-                linear-gradient(180deg, var(--dark-navy) 0%, var(--deep-navy) 100%);
-            padding: 54px 0 176px;
-            overflow: hidden;
+                radial-gradient(circle at top, rgba(74, 144, 226, 0.16), transparent 24%),
+                linear-gradient(180deg, #f6faff 0%, #ffffff 46%);
         }
-
-        .hero-section::after {
-            content: '';
+        .page-section { width: min(1180px, 92vw); margin: 0 auto; }
+        .hero {
+            position: relative;
+            overflow: hidden;
+            padding: 34px 0 140px;
+            background:
+                radial-gradient(circle at 50% 0%, rgba(120, 185, 255, 0.38), transparent 28%),
+                linear-gradient(180deg, var(--navy) 0%, var(--deep-navy) 100%);
+        }
+        .hero::after {
+            content: "";
             position: absolute;
-            left: -10%;
-            right: -10%;
-            bottom: -120px;
-            height: 240px;
+            left: -8%;
+            right: -8%;
+            bottom: -110px;
+            height: 220px;
             background: #ffffff;
             border-radius: 50% 50% 0 0;
         }
-
-        .glass-stack {
+        .hero-panel {
             position: relative;
-            width: min(960px, 88vw);
-            margin: 0 auto;
+            z-index: 2;
+            max-width: 920px;
+            margin: 48px auto 0;
+            padding: 44px 38px;
+            border-radius: 30px;
+            border: 1px solid rgba(214, 233, 255, 0.58);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.74), rgba(221, 239, 255, 0.38));
+            backdrop-filter: blur(18px);
+            box-shadow: 0 28px 60px rgba(4, 19, 42, 0.32);
+            text-align: center;
         }
-
-        .glass-card {
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(11, 42, 88, 0.08);
+            color: var(--navy);
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+        .hero h1 {
+            margin: 20px 0 16px;
+            font-size: clamp(2.6rem, 6vw, 4.9rem);
+            line-height: 0.95;
+            letter-spacing: -0.06em;
+            text-transform: uppercase;
+            color: #0a1730;
+        }
+        .hero p {
+            margin: 0 auto;
+            max-width: 760px;
+            font-size: clamp(1.1rem, 2.2vw, 1.7rem);
+            line-height: 1.35;
+            color: #22324a;
+        }
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 14px;
+            margin-top: 28px;
+        }
+        .primary-btn,
+        .secondary-btn {
+            display: inline-block;
+            padding: 15px 26px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+        }
+        .primary-btn {
+            color: #fff;
+            background: linear-gradient(135deg, var(--blue-start), var(--blue-end));
+            box-shadow: 0 12px 28px rgba(41, 98, 255, 0.34);
+        }
+        .secondary-btn {
+            color: var(--navy);
+            background: rgba(255, 255, 255, 0.86);
+            border: 1px solid rgba(11, 42, 88, 0.12);
+        }
+        .services {
             position: relative;
             z-index: 3;
-            background: linear-gradient(135deg, rgba(255,255,255,0.66), rgba(220,239,255,0.42));
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            border: 1px solid rgba(201, 226, 255, 0.66);
-            border-radius: 28px;
-            padding: 44px 42px;
-            text-align: center;
-            box-shadow: 0 24px 42px rgba(1, 16, 39, 0.3);
+            margin-top: -84px;
         }
-
-        .glass-stack::before,
-        .glass-stack::after {
-            content: '';
-            position: absolute;
-            border-radius: 26px;
-            border: 1px solid rgba(206, 232, 255, 0.45);
-            background: rgba(195, 224, 255, 0.18);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            width: 100%;
-            height: calc(100% - 22px);
-        }
-
-        .glass-stack::before {
-            top: -12px;
-            left: -16px;
-            z-index: 1;
-        }
-
-        .glass-stack::after {
-            top: -24px;
-            left: -30px;
-            z-index: 0;
-        }
-
-        .glass-card h1 {
-            color: #0b1628;
-            font-size: clamp(40px, 4.1vw, 66px);
-            line-height: 0.98;
-            letter-spacing: -1.6px;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-            font-weight: 800;
-        }
-
-        .glass-card p {
-            color: #1a2331;
-            font-size: clamp(22px, 1.9vw, 32px);
-            line-height: 1.15;
-            margin-bottom: 28px;
-            font-weight: 500;
-        }
-
-        .cards-wrap {
-            position: relative;
-            z-index: 12;
-            margin-top: -98px;
-        }
-
-        .services-grid {
+        .services-grid,
+        .proof-grid,
+        .sector-grid,
+        .contact-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 18px;
+            gap: 20px;
         }
-
-        .service-card {
-            background: #ffffff;
-            border: 1px solid #d8e5f5;
-            border-radius: 16px;
-            box-shadow: 0 10px 24px rgba(9, 28, 56, 0.14);
-            overflow: hidden;
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        .services-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        .service-card,
+        .proof-card,
+        .sector-card,
+        .contact-card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            box-shadow: 0 14px 34px rgba(8, 29, 61, 0.08);
         }
-
-        .service-card:hover {
-            transform: translateY(-7px);
-            box-shadow: 0 16px 28px rgba(9, 28, 56, 0.18);
-        }
-
-        .card-top {
-            background: linear-gradient(180deg, #eef6ff, #dcecff);
-            padding: 11px 12px;
-            border-bottom: 1px solid #c9ddf9;
-        }
-
-        .card-icon {
-            width: 48px;
-            height: 48px;
-            stroke: #2f6eb8;
-        }
-
-        .card-body {
-            padding: 14px 14px 18px;
-        }
-
-        .service-card h3 {
-            color: #142440;
-            font-size: 18px;
-            line-height: 1.1;
-            margin-bottom: 7px;
-            text-transform: uppercase;
-            font-weight: 800;
-            letter-spacing: -0.2px;
-        }
-
-        .service-card h4 {
-            color: #223a62;
-            font-size: 16px;
-            margin-bottom: 8px;
-            font-weight: 700;
-        }
-
-        .service-card p {
-            font-size: 17px;
-            color: #1f2736;
-            line-height: 1.25;
-            font-weight: 500;
-        }
-
-        .trust-section {
-            background: #ffffff;
-            padding: 96px 0;
-        }
-
-        .trust-bar {
-            width: min(1280px, 92vw);
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 28px;
-        }
-
-        .trust-title {
-            color: var(--dark-navy);
+        .service-card { padding: 24px 22px; }
+        .service-card .service-tag {
+            color: var(--blue-end);
             font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .service-card h3 { margin: 14px 0 10px; font-size: 1.25rem; color: var(--navy); }
+        .service-card p { margin: 0 0 18px; color: var(--muted); line-height: 1.6; }
+        .service-link { font-weight: 800; color: var(--navy); text-decoration: none; }
+        .section-heading { margin-bottom: 24px; }
+        .section-heading h2 {
+            margin: 0 0 10px;
+            font-size: clamp(2rem, 4vw, 3rem);
+            line-height: 1;
+            letter-spacing: -0.04em;
+            color: var(--navy);
+        }
+        .section-heading p {
+            margin: 0;
+            max-width: 740px;
+            color: var(--muted);
+            font-size: 1.06rem;
+            line-height: 1.7;
+        }
+        .section-pad { padding: 88px 0; }
+        .proof-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .proof-card { padding: 28px; }
+        .proof-stat {
+            font-size: 2.7rem;
+            font-weight: 900;
+            color: var(--blue-end);
+            letter-spacing: -0.05em;
+        }
+        .proof-card h3 { margin: 12px 0 10px; color: var(--navy); }
+        .proof-card p,
+        .sector-card p,
+        .contact-card p,
+        .contact-detail span {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+        .sector-band { padding: 90px 0; background: linear-gradient(180deg, var(--mist) 0%, #eef5ff 100%); }
+        .sector-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .sector-card { padding: 28px; }
+        .sector-card .sector-number {
+            display: inline-block;
+            margin-bottom: 14px;
+            color: var(--blue-end);
+            font-size: 0.95rem;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .sector-card h3 { margin: 0 0 10px; color: var(--navy); font-size: 1.3rem; }
+        .contact-strip { padding: 94px 0; }
+        .contact-grid { grid-template-columns: 1.15fr 0.85fr; align-items: start; }
+        .contact-card { padding: 32px; }
+        .contact-detail {
+            display: grid;
+            gap: 6px;
+            padding: 18px 0;
+            border-bottom: 1px solid var(--line);
+        }
+        .contact-detail:last-child { border-bottom: 0; padding-bottom: 0; }
+        .contact-detail strong { color: var(--navy); font-size: 1rem; }
+        .contact-form { display: grid; gap: 14px; }
+        .contact-form label {
+            display: grid;
+            gap: 8px;
+            font-size: 0.95rem;
             font-weight: 700;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            white-space: nowrap;
+            color: var(--navy);
         }
-
-        .trust-divider {
-            width: 1px;
-            height: 76px;
-            background: #e5e7eb;
-            flex: 0 0 1px;
-        }
-
-        .trust-stats {
-            display: flex;
-            align-items: flex-start;
-            gap: 52px;
-            flex: 1;
-        }
-
-        .trust-stat {
-            min-width: 178px;
-        }
-
-        .stat {
-            color: var(--dark-navy);
-            font-size: clamp(44px, 5vw, 72px);
-            font-weight: 800;
-            line-height: 0.95;
-            letter-spacing: -1px;
-        }
-
-        .stat-label {
-            margin-top: 10px;
-            font-size: 16px;
-            color: #6b7280;
-            font-weight: 500;
-        }
-
-        .logo-gallery {
-            display: flex;
-            align-items: center;
-            gap: 26px;
-        }
-
-        .logo-text {
-            color: #9ca3af;
-            font-size: clamp(28px, 2.3vw, 36px);
-            font-weight: 600;
-            letter-spacing: -0.02em;
-            font-family: Georgia, 'Times New Roman', serif;
-        }
-
-        .who-we-help {
-            padding: 34px 0 78px;
-        }
-
-        .who-we-help h3 {
-            text-align: center;
-            font-size: clamp(44px, 3.2vw, 60px);
-            margin-bottom: 24px;
-            letter-spacing: -1px;
-            font-weight: 800;
-        }
-
-        .help-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 18px;
-        }
-
-        .help-card {
-            background: #fff;
-            border: 1px solid #d7e4f5;
-            border-radius: 18px;
-            overflow: hidden;
-            box-shadow: 0 10px 24px rgba(8, 26, 49, 0.12);
-        }
-
-        .help-top {
-            height: 54px;
-            background: linear-gradient(180deg, #eef5ff, #e2eefc);
-            border-bottom: 1px solid #d0ddf0;
-        }
-
-        .help-content {
-            padding: 14px 14px 18px;
-        }
-
-        .help-content h4 {
-            font-size: 17px;
-            line-height: 1.18;
-            margin-bottom: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            color: #11243f;
-        }
-
-        .help-content p {
-            font-size: 15px;
-            color: #29384f;
-            line-height: 1.4;
-            font-weight: 500;
-        }
-
-        .contact-section {
-            background: linear-gradient(180deg, #0c2d5f 0%, #08224b 100%);
-            color: #fff;
-            padding: 78px 0;
-            margin-top: 10px;
-        }
-
-        .contact-wrap {
-            width: min(780px, 90vw);
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        .contact-wrap h2 {
-            font-size: clamp(40px, 3.5vw, 58px);
-            margin-bottom: 12px;
-            font-weight: 800;
-            letter-spacing: -0.8px;
-        }
-
-        .contact-wrap p {
-            font-size: 20px;
-            color: #ccddf5;
-            margin-bottom: 28px;
-            font-weight: 500;
-        }
-
-        .contact-form {
-            display: grid;
-            gap: 14px;
-            text-align: left;
-        }
-
         .contact-form input,
         .contact-form textarea {
             width: 100%;
-            padding: 13px 16px;
-            border-radius: 10px;
-            border: 1px solid rgba(202, 224, 255, 0.3);
-            background: rgba(255, 255, 255, 0.08);
-            color: #fff;
-            font-size: 15px;
+            padding: 14px 15px;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            background: #f8fbff;
+            font: inherit;
+            color: var(--ink);
         }
-
-        .contact-form input::placeholder,
-        .contact-form textarea::placeholder {
-            color: rgba(230, 240, 255, 0.64);
+        .contact-form textarea { min-height: 140px; resize: vertical; }
+        .footer { padding: 28px 0 40px; text-align: center; color: var(--muted); font-size: 0.94rem; }
+        @media (max-width: 1080px) {
+            .services-grid,
+            .proof-grid,
+            .sector-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .contact-grid { grid-template-columns: 1fr; }
         }
-
-        .contact-form textarea {
-            min-height: 128px;
-            resize: vertical;
-        }
-
-        .contact-form button {
-            justify-self: center;
-        }
-
-        footer {
-            padding: 26px 0;
-            text-align: center;
-            font-size: 14px;
-            color: #58657b;
-            background: #f4f8ff;
-        }
-
-        @media (max-width: 1100px) {
-            .services-grid { grid-template-columns: repeat(2, 1fr); }
-            .trust-bar { flex-wrap: wrap; }
-            .trust-divider { display: none; }
-            .trust-stats { gap: 34px; }
-            .help-grid { grid-template-columns: 1fr; }
-        }
-
-        @media (max-width: 780px) {
-            .main-header { padding: 8px 0; }
-            .logo { font-size: 30px; }
-            .nav-links { display: none; }
-            .btn-primary { font-size: 15px; padding: 12px 22px; }
-            .glass-card { padding: 34px 20px; }
-            .glass-card p { font-size: 18px; }
-            .cards-wrap { margin-top: -66px; }
-            .services-grid { grid-template-columns: 1fr; }
-            .trust-section { padding: 72px 0; }
-            .trust-bar { align-items: flex-start; gap: 16px; }
-            .trust-stats { flex-direction: column; gap: 22px; }
-            .logo-gallery { width: 100%; justify-content: flex-start; }
+        @media (max-width: 760px) {
+            .hero-panel { padding: 32px 22px; }
+            .services-grid,
+            .proof-grid,
+            .sector-grid { grid-template-columns: 1fr; }
+            .section-pad,
+            .sector-band,
+            .contact-strip { padding: 68px 0; }
+            .services { margin-top: -64px; }
         }
     </style>
 </head>
@@ -582,175 +290,151 @@
         </div>
     </header>
 
-    <section class="hero-section">
-        <div class="glass-stack">
-            <div class="glass-card">
-                <h1>STOP THE STRESS: YOUR HUMAN SUPPLY CHAIN SOLUTIONS PARTNER.</h1>
-                <p>Complexity handled. Budgets respected.<br>Let's fix your critical networks, person-to-person.</p>
-                <a href="contact.html" class="btn-primary">FIX MY SUPPLY CHAIN NOW</a>
+    <section class="hero">
+        <div class="page-section">
+            <div class="hero-panel">
+                <span class="eyebrow">Operational Recovery Specialists</span>
+                <h1>Stop the Stress in Your Supply Chain.</h1>
+                <p>Troer steps into high-pressure operations, fixes the breakdowns that are costing you time and money, and leaves you with a system that runs cleanly.</p>
+                <div class="hero-actions">
+                    <a class="primary-btn" href="contact.html">Book an Operational Audit</a>
+                    <a class="secondary-btn" href="industries.html">See Our Sector Expertise</a>
+                </div>
             </div>
         </div>
     </section>
-        <!-- Trust Bar: 15+ Years Experience -->
-        <section class="w-full bg-[#4a90e2] py-3">
-            <div class="container flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16">
-                <span class="font-bold text-white text-base md:text-lg">15+ Years Industry Experience</span>
-                <span class="font-bold text-white text-base md:text-lg">Specialised Project Management</span>
-                <span class="font-bold text-white text-base md:text-lg">Proven ROI &amp; Risk Mitigation</span>
-            </div>
-        </section>
 
-    <section class="container cards-wrap">
+    <section class="services page-section">
         <div class="services-grid">
             <article class="service-card">
-                <!-- Icon removed -->
-                <div class="card-body">
-                    <h3>UNIFY Fragmented Operations</h3>
-                    <h4>Supply Chain & Logistics</h4>
-                    <p>&bull; Unlock cost savings and centralised control.</p>
-                </div>
+                <span class="service-tag">Strategic Control</span>
+                <h3>Project Management</h3>
+                <p>We bring order to critical programmes, supplier coordination, and delivery risks before they become expensive failures.</p>
+                <a class="service-link" href="project-management.html">Explore Project Management</a>
             </article>
             <article class="service-card">
-                <!-- Icon removed -->
-                <div class="card-body">
-                    <h3>STREAMLINE Project Delivery</h3>
-                    <h4>ProjectConnect</h4>
-                    <p>&bull; Deliver on-time, on-budget infrastructure.</p>
-                </div>
+                <span class="service-tag">Commercial Discipline</span>
+                <h3>Procurement &amp; Contractor Management</h3>
+                <p>Centralise spend, tighten compliance, and remove the hidden waste draining margin from your operation.</p>
+                <a class="service-link" href="procurement-contractor-management.html">Explore Procurement Control</a>
             </article>
             <article class="service-card">
-                <!-- Icon removed -->
-                <div class="card-body">
-                    <h3>INTEGRATE Legacy Systems</h3>
-                    <h4>TroerConnect</h4>
-                    <p>&bull; Unify data for real-time visibility.</p>
-                </div>
+                <span class="service-tag">Systems Integration</span>
+                <h3>TroerConnect</h3>
+                <p>Bridge legacy systems, disconnected teams, and manual reporting into one practical source of truth.</p>
+                <a class="service-link" href="troerconnect.html">Explore TroerConnect</a>
             </article>
             <article class="service-card">
-                <!-- Icon removed -->
-                <div class="card-body">
-                    <h3>ANTICIPATE Future Risks</h3>
-                    <h4>TroerTrack</h4>
-                    <p>&bull; Build a resilient and proactive network.</p>
-                </div>
+                <span class="service-tag">Risk Visibility</span>
+                <h3>TroerTrack</h3>
+                <p>Spot bottlenecks earlier, strengthen forecasting, and make better operational decisions with live risk insight.</p>
+                <a class="service-link" href="troertrack.html">Explore TroerTrack</a>
             </article>
         </div>
     </section>
-    <section class="trust-section" id="results-trust">
-        <div style="max-width: 520px; margin: 0 auto; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-            <h2 style="font-size: clamp(32px, 4vw, 48px); font-weight: 800; color: #0b2a58; margin-bottom: 32px; text-align: center; width: 100%;">RESULTS &amp; TRUST</h2>
-            <div style="display: flex; flex-direction: row; align-items: flex-end; justify-content: center; gap: 64px; width: 100%; max-width: 520px; margin: 0 auto;">
-                <div>
-                    <div class="stat" style="font-size: 64px; font-weight: 800; color: #2962ff; margin-bottom: 8px;"><span class="count" data-target="30">0</span>%</div>
-                    <div class="stat-label" style="font-size: 22px; color: #223a62; font-weight: 600;">Efficiency Gain</div>
-                </div>
-                <div>
-                    <div class="stat" style="font-size: 64px; font-weight: 800; color: #2962ff; margin-bottom: 8px;"><span class="count" data-target="99.8">0</span>%</div>
-                    <div class="stat-label" style="font-size: 22px; color: #223a62; font-weight: 600;">On-Time Delivery</div>
-                </div>
+
+    <section class="section-pad">
+        <div class="page-section">
+            <div class="section-heading">
+                <h2>Built for teams under pressure.</h2>
+                <p>We work where operational mistakes hurt most: regulated sectors, complex contractor networks, and supply chains that need practical intervention rather than generic strategy decks.</p>
+            </div>
+            <div class="proof-grid">
+                <article class="proof-card">
+                    <div class="proof-stat">15+</div>
+                    <h3>Years of frontline experience</h3>
+                    <p>Deep delivery experience across NHS logistics, infrastructure programmes, procurement transformation, and supplier management.</p>
+                </article>
+                <article class="proof-card">
+                    <div class="proof-stat">72h</div>
+                    <h3>Risk visibility window</h3>
+                    <p>Our operating model is built around seeing problems early enough to actually prevent operational damage.</p>
+                </article>
+                <article class="proof-card">
+                    <div class="proof-stat">1 team</div>
+                    <h3>Single point of accountability</h3>
+                    <p>You work directly with senior operators, not layers of handoff between account managers, juniors, and vendors.</p>
+                </article>
             </div>
         </div>
     </section>
-    <section class="who-we-help container" id="industry">
-        <h3>Who We Help</h3>
-        <div class="help-grid">
-            <article class="help-card">
-                <div class="help-top"></div>
-                <div class="help-content">
-                    <h4>FOOD & BEVERAGE Traceability & Safety</h4>
-                    <p>Track every handoff and certify compliance from source to shelf with audit-ready visibility.</p>
-                </div>
-            </article>
-            <article class="help-card">
-                <div class="help-top"></div>
-                <div class="help-content">
-                    <h4>ENERGY & FUEL Reliability & Compliance</h4>
-                    <p>Secure uptime with resilient logistics, verified chain-of-custody, and strict governance controls.</p>
-                </div>
-            </article>
-            <article class="help-card">
-                <div class="help-top"></div>
-                <div class="help-content">
-                    <h4>CONSTRUCTION End-to-End Oversight</h4>
-                    <p>Coordinate contractors, assets, and schedules to hit milestones on time and on budget.</p>
-                </div>
-            </article>
+
+    <section class="sector-band">
+        <div class="page-section">
+            <div class="section-heading">
+                <h2>Where Troer does its best work.</h2>
+                <p>Our team is strongest where operations are complex, consequences are real, and supply chain visibility matters.</p>
+            </div>
+            <div class="sector-grid">
+                <article class="sector-card">
+                    <span class="sector-number">01 / NHS &amp; Healthcare</span>
+                    <h3>Clinical continuity without procurement chaos</h3>
+                    <p>We help healthcare teams centralise fragmented supply chains and protect the flow of critical equipment, stock, and contractor support.</p>
+                </article>
+                <article class="sector-card">
+                    <span class="sector-number">02 / Construction &amp; Infrastructure</span>
+                    <h3>Control over contractors, materials, and milestones</h3>
+                    <p>From Tier-1 compliance to delivery sequencing, we support complex project environments where delays quickly become commercial pain.</p>
+                </article>
+                <article class="sector-card">
+                    <span class="sector-number">03 / Enterprise &amp; Manufacturing</span>
+                    <h3>Visibility that supports growth</h3>
+                    <p>We help scaling businesses replace spreadsheets and disconnected systems with a supply chain structure they can trust.</p>
+                </article>
+            </div>
         </div>
     </section>
-    <section class="contact-section" id="contact">
-        <div class="contact-wrap">
-            <h2>Let's fix your supply chain together.</h2>
-            <p>Share your challenge and we'll respond within 24 hours.</p>
-            <form class="contact-form" action="https://api.web3forms.com/submit" method="POST">
-                <input type="hidden" name="access_key" value="7b912fef-647c-43af-90fb-1cf0fc0df2d2">
-                <input type="hidden" name="subject" value="New Enquiry from Troer Website">
-                <input type="hidden" name="from_name" value="Troer Website">
-                <input type="hidden" name="redirect" value="https://troer.co.uk/">
-                <input type="text" name="name" placeholder="Name" required>
-                <input type="text" name="company" placeholder="Company">
-                <input type="email" name="email" placeholder="Email" required>
-                <textarea name="message" placeholder="Message" required></textarea>
-                <button type="submit" class="btn-primary">GET A PERSONALISED SOLUTION</button>
-            </form>
+
+    <section class="contact-strip" id="contact">
+        <div class="page-section contact-grid">
+            <div>
+                <div class="section-heading">
+                    <h2>Talk to someone who can actually fix it.</h2>
+                    <p>If your supply chain feels reactive, fragmented, or opaque, we can help you identify the immediate risks and what to do next.</p>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-detail">
+                        <strong>Email</strong>
+                        <span>info@troer.co.uk</span>
+                    </div>
+                    <div class="contact-detail">
+                        <strong>Phone</strong>
+                        <span>01962 393842</span>
+                    </div>
+                    <div class="contact-detail">
+                        <strong>Based in</strong>
+                        <span>London, United Kingdom</span>
+                    </div>
+                </div>
+            </div>
+            <div class="contact-card">
+                <form class="contact-form" action="https://api.web3forms.com/submit" method="POST">
+                    <input type="hidden" name="access_key" value="7b912fef-647c-43af-90fb-1cf0fc0df2d2">
+                    <input type="hidden" name="subject" value="New Enquiry from Troer Website">
+                    <input type="hidden" name="from_name" value="Troer Website">
+                    <input type="hidden" name="redirect" value="https://troer.co.uk/">
+                    <label>Full Name
+                        <input type="text" name="name" placeholder="Your full name" required>
+                    </label>
+                    <label>Company
+                        <input type="text" name="company" placeholder="Your company">
+                    </label>
+                    <label>Email
+                        <input type="email" name="email" placeholder="name@company.com" required>
+                    </label>
+                    <label>Message
+                        <textarea name="message" placeholder="Tell us what is breaking down in the operation." required></textarea>
+                    </label>
+                    <button class="primary-btn" type="submit">Get a Personalised Response</button>
+                </form>
+            </div>
         </div>
     </section>
-    <footer>
+
+    <footer class="footer">
         <p>&copy; 2026 Troer. All rights reserved.</p>
     </footer>
-    <!--Start of Tawk.to Script-->
-        <script type="text/javascript">
-            var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-            (function(){
-            var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-            s1.async=true;
-            s1.src='https://embed.tawk.to/69dcc425d99cf01c408cdc3f/1jm35scjo';
-            s1.charset='UTF-8';
-            s1.setAttribute('crossorigin','*');
-            s0.parentNode.insertBefore(s1,s0);
-            })();
-        </script>
-        <script>
-            (function () {
-                var section = document.getElementById('results-trust');
-                var counters = document.querySelectorAll('.count');
-                if (!section || !counters.length || typeof IntersectionObserver === 'undefined') {
-                    return;
-                }
-                var duration = 2000;
-                function animateCounter(el) {
-                    var targetStr = el.getAttribute('data-target') || '0';
-                    var target = parseFloat(targetStr);
-                    var hasDecimal = targetStr.indexOf('.') !== -1;
-                    var decimals = hasDecimal ? (targetStr.split('.')[1] || '').length : 0;
-                    var startTime = null;
-                    function step(timestamp) {
-                        if (!startTime) {
-                            startTime = timestamp;
-                        }
-                        var progress = Math.min((timestamp - startTime) / duration, 1);
-                        var current = target * progress;
-                        el.textContent = hasDecimal
-                            ? current.toFixed(decimals)
-                            : Math.round(current).toString();
-                        if (progress < 1) {
-                            requestAnimationFrame(step);
-                        } else {
-                            el.textContent = hasDecimal ? target.toFixed(decimals) : Math.round(target).toString();
-                        }
-                    }
-                    requestAnimationFrame(step);
-                }
-                var observer = new IntersectionObserver(function (entries, obs) {
-                    entries.forEach(function (entry) {
-                        if (entry.isIntersecting) {
-                            counters.forEach(animateCounter);
-                            obs.unobserve(entry.target);
-                        }
-                    });
-                }, { threshold: 0.35 });
-                observer.observe(section);
-            })();
-        </script>
+
     <script src="nav.js"></script>
 </body>
 </html>

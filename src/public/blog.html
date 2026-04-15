@@ -3,398 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Supply Chain Insights & Procurement Blog | Troer</title>
-    <meta name="description" content="Expert insights on supply chain management, procurement optimisation, NHS logistics, and contractor oversight from Troer's 15+ year specialists.">
+    <title>Supply Chain Insights | Troer Blog</title>
+    <meta name="description" content="Browse Troer blog insights by category and open full articles on supply chains, NHS procurement, construction delivery, and operational resilience.">
     <link rel="canonical" href="https://troer.co.uk/blog.html">
-    <meta property="og:title" content="Supply Chain Insights & Procurement Blog | Troer">
-    <meta property="og:description" content="Expert insights on supply chain management, procurement optimisation, and contractor oversight from Troer's specialists.">
+    <meta property="og:title" content="Supply Chain Insights | Troer Blog">
+    <meta property="og:description" content="Filter Troer insights by topic and open full articles on procurement, NHS logistics, construction risk, and supply chain resilience.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://troer.co.uk/blog.html">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        navy: '#0B2A58',
-                        bluestart: '#4A90E2',
-                        blueend: '#2962FF'
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="header.css">
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        :root { --navy:#0b2a58; --deep-navy:#081d3e; --blue-start:#4a90e2; --blue-end:#2962ff; --line:#dbe6f2; --muted:#637286; --text:#12233b; }
+        * { box-sizing:border-box; }
+        body { margin:0; font-family:'Inter',sans-serif; color:var(--text); background:linear-gradient(180deg,#f8fbff 0%,#ffffff 46%); }
+        .wrap { width:min(1180px,92vw); margin:0 auto; }
+        .hero { padding:84px 0 68px; background:radial-gradient(circle at 18% 0%, rgba(74,144,226,0.22), transparent 26%), linear-gradient(180deg,var(--navy) 0%,var(--deep-navy) 100%); color:#fff; }
+        .eyebrow { display:inline-block; padding:8px 14px; border-radius:999px; background:rgba(255,255,255,0.12); color:#a8cdff; font-size:13px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; }
+        .hero h1 { margin:18px 0 14px; font-size:clamp(2.6rem,5vw,4.6rem); line-height:0.98; letter-spacing:-0.05em; }
+        .hero p { max-width:740px; margin:0; color:#d2def0; line-height:1.75; font-size:1.08rem; }
+        .section { padding:82px 0; }
+        .toolbar { display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; margin-bottom:28px; }
+        .toolbar-copy h2 { margin:0 0 8px; color:var(--navy); font-size:clamp(2rem,4vw,2.8rem); letter-spacing:-0.04em; }
+        .toolbar-copy p { margin:0; color:var(--muted); line-height:1.7; }
+        .filters { display:flex; flex-wrap:wrap; gap:10px; }
+        .filter-btn { border:1px solid var(--line); background:#fff; color:var(--navy); border-radius:999px; padding:10px 16px; font:inherit; font-weight:700; cursor:pointer; }
+        .filter-btn.is-active { color:#fff; border-color:transparent; background:linear-gradient(135deg,var(--blue-start),var(--blue-end)); box-shadow:0 12px 24px rgba(41,98,255,0.24); }
+        .blog-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; }
+        .blog-card { display:grid; gap:14px; padding:26px; border-radius:26px; background:#fff; border:1px solid var(--line); box-shadow:0 16px 36px rgba(8,29,61,0.08); transition:transform 0.2s ease, box-shadow 0.2s ease; }
+        .blog-card:hover { transform:translateY(-4px); box-shadow:0 22px 42px rgba(8,29,61,0.12); }
+        .blog-card[hidden] { display:none; }
+        .blog-meta { display:flex; flex-wrap:wrap; gap:10px; align-items:center; color:var(--muted); font-size:0.92rem; }
+        .blog-tag { display:inline-block; padding:6px 11px; border-radius:999px; background:#eef5ff; color:var(--blue-end); font-weight:800; letter-spacing:0.06em; text-transform:uppercase; font-size:0.74rem; }
+        .blog-card h3 { margin:0; color:var(--navy); font-size:1.35rem; line-height:1.25; }
+        .blog-card p { margin:0; color:var(--muted); line-height:1.8; }
+        .blog-link { color:var(--navy); font-weight:800; text-decoration:none; }
+        .footer { padding:24px 0 34px; text-align:center; color:var(--muted); font-size:0.94rem; }
+        @media (max-width:980px) { .blog-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+        @media (max-width:720px) { .blog-grid { grid-template-columns:1fr; } }
     </style>
 </head>
-<body class="bg-white text-gray-900">
-    <header class="main-header">
-        <div class="container header-shell">
-            <a href="index.html" class="logo">Troer</a>
-            <nav class="nav-links">
-                <div class="nav-dropdown group relative">
-                    <button class="nav-dropdown-btn flex items-center gap-1">Solutions <span aria-hidden="true">&#9662;</span></button>
-                    <ul class="dropdown-menu w-80 max-w-xl rounded-2xl shadow-xl border border-gray-200 bg-white grid grid-cols-1 divide-y divide-gray-100 p-0">
-                        <li><a href="project-management.html" class="block px-5 py-3 font-bold text-navy hover:bg-blue-50/50 transition">Project Management</a></li>
-                        <li><a href="procurement-contractor-management.html" class="block px-5 py-3 font-bold text-navy hover:bg-blue-50/50 transition">Procurement &amp; Contractor Management</a></li>
-                        <li><a href="troerconnect.html" class="block px-5 py-3 font-bold text-navy hover:bg-blue-50/50 transition">TroerConnect (System Integration)</a></li>
-                        <li><a href="troertrack.html" class="block px-5 py-3 font-bold text-navy hover:bg-blue-50/50 transition">TroerTrack (Risk Mitigation)</a></li>
-                    </ul>
-                </div>
-                <a href="industries.html">Industry Expertise</a>
-                <div class="nav-dropdown group relative">
-                    <button class="nav-dropdown-btn flex items-center gap-1">About <span aria-hidden="true">&#9662;</span></button>
-                    <ul class="dropdown-menu">
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="contact.html">Contact Us</a></li>
-                        <li><a href="blog.html">Blog</a></li>
-                        <li><a href="case-studies.html">Case Studies</a></li>
-                        <li><a href="privacy.html">Privacy Policy</a></li>
-                    </ul>
-                </div>
-            </nav>
-            <a href="contact.html" class="btn-primary">WORK WITH US</a>
-        </div>
-    </header>
-    <!-- Hero -->
-    <section class="bg-navy py-20 text-center">
-        <div class="max-w-4xl mx-auto px-4">
-            <h1 class="text-white text-5xl font-extrabold mb-4">Supply Chain Insights</h1>
-            <p class="text-blue-100 text-xl">Expert thinking on procurement, logistics, NHS supply chains, and contractor management.</p>
-        </div>
-    </section>
-
-    <!-- Blog Grid -->
-    <main class="max-w-5xl mx-auto px-4 py-20">
-        <article class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden mb-12">
-            <div class="bg-gradient-to-r from-navy to-blueend h-3"></div>
-            <div class="p-10 md:p-14">
-                <div class="flex items-center gap-3 mb-6">
-                    <span class="bg-blue-50 text-bluestart text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">Procurement</span>
-                    <span class="text-gray-400 text-sm">June 2025 &bull; 8 min read</span>
-                </div>
-                <h2 class="text-3xl md:text-4xl font-extrabold text-navy mb-6 leading-tight">Why UK Supply Chains Are Still Broken in 2025 — And How to Fix Them</h2>
-                <p class="text-gray-600 text-lg leading-relaxed mb-6">Despite billions invested in digital transformation, the majority of UK supply chains remain fragmented, reactive, and dangerously exposed to disruption. From NHS procurement backlogs to Tier-1 construction delays, the root cause is almost always the same: siloed data, manual processes, and a lack of real-time visibility.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">The Scale of the Problem</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">A 2024 report by the Chartered Institute of Procurement &amp; Supply (CIPS) found that 74% of UK businesses experienced at least one significant supply chain disruption in the past 12 months. For NHS trusts, the figure is even higher — with procurement inefficiencies costing the health service an estimated £1.3 billion annually in avoidable waste and emergency sourcing premiums.</p>
-                <p class="text-gray-600 leading-relaxed mb-6">In construction, the picture is equally stark. Material delivery delays are now cited as the number one cause of project overruns, with Tier-1 contractors reporting that subcontractor misalignment adds an average of 11% to final project costs. These aren't abstract statistics — they represent missed deadlines, liquidated damages, and reputational damage that compounds over time.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">The Five Root Causes of Supply Chain Failure</h3>
-                <ul class="list-none space-y-4 mb-6">
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">01.</span><div><span class="font-bold text-navy">Fragmented procurement data.</span><span class="text-gray-600"> When purchasing decisions are made across multiple departments with no central visibility, duplicate vendor spend and missed volume discounts are inevitable.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">02.</span><div><span class="font-bold text-navy">Legacy ERP systems that don't communicate.</span><span class="text-gray-600"> Many organisations are running 15–20 year old software that cannot integrate with modern logistics platforms, creating dangerous data blind spots.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">03.</span><div><span class="font-bold text-navy">Reactive contractor management.</span><span class="text-gray-600"> Without automated compliance tracking, organisations only discover a contractor's certification has lapsed after an incident — not before.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">04.</span><div><span class="font-bold text-navy">No single source of truth.</span><span class="text-gray-600"> When project managers, procurement teams, and the boardroom are all working from different data sets, strategic decisions are made on outdated information.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">05.</span><div><span class="font-bold text-navy">Over-reliance on email and spreadsheets.</span><span class="text-gray-600"> Critical supply chain decisions are still being made via email chains that get lost, misread, or simply never actioned.</span></div></li>
-                </ul>
-                <h3 class="text-xl font-bold text-navy mb-3">What a Fixed Supply Chain Actually Looks Like</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">The organisations that have successfully modernised their supply chains share three common characteristics. First, they have centralised their procurement data into a single platform — eliminating the departmental silos that create duplicate spend. Second, they have automated contractor compliance, so certifications, insurance documents, and safety records are verified in real time rather than manually checked. Third, they have invested in predictive visibility tools that flag risks 48–72 hours before they reach the critical path.</p>
-                <p class="text-gray-600 leading-relaxed mb-6">At Troer, we have spent 15 years implementing exactly this kind of transformation — not as theoretical consultants, but as hands-on project managers who embed within your team and execute the change. Our TroerConnect platform bridges legacy ERP systems with modern cloud environments, while TroerTrack provides the predictive risk intelligence that turns reactive firefighting into proactive resilience.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">The Cost of Doing Nothing</h3>
-                <p class="text-gray-600 leading-relaxed mb-8">The most dangerous position any organisation can take is to acknowledge the problem and delay the fix. Every month of inaction compounds the inefficiency. Duplicate vendor spend continues. Contractor risks go undetected. Project timelines slip. And the gap between your operation and your competitors who have already modernised grows wider. The question is no longer whether to fix your supply chain — it's how quickly you can afford to start.</p>
-                <div class="bg-blue-50 rounded-2xl p-8 border border-blue-100">
-                    <p class="text-navy font-bold text-lg mb-3">Ready to fix your supply chain?</p>
-                    <p class="text-gray-600 mb-6">Book a free 30-minute operational audit with Troer's senior project managers. We'll identify your three biggest inefficiencies and outline a clear path to resolution.</p>
-                    <a href="contact.html" class="inline-block bg-gradient-to-r from-bluestart to-blueend text-white font-bold px-8 py-4 rounded-full hover:shadow-lg transition">BOOK YOUR FREE AUDIT</a>
-                </div>
-            </div>
-        </article>
-
-        <article class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden mb-12">
-            <div class="bg-gradient-to-r from-bluestart to-blueend h-3"></div>
-            <div class="p-10 md:p-14">
-                <div class="flex items-center gap-3 mb-6">
-                    <span class="bg-blue-50 text-bluestart text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">NHS Logistics</span>
-                    <span class="text-gray-400 text-sm">June 2025 &bull; 7 min read</span>
-                </div>
-                <h2 class="text-3xl md:text-4xl font-extrabold text-navy mb-6 leading-tight">NHS Supply Chain Reform: Why Centralised Procurement Is the Only Way Forward</h2>
-                <p class="text-gray-600 text-lg leading-relaxed mb-6">The NHS spends over £27 billion annually on goods and services. Yet despite this enormous purchasing power, fragmented procurement across hundreds of trusts means the health service routinely pays more than it should, receives less than it needs, and responds to supply failures far too slowly. Centralised procurement is not a luxury — it is an operational necessity.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">The Hidden Cost of Fragmented NHS Procurement</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">When individual NHS trusts procure independently, they lose the collective bargaining power that comes with consolidated spend. A single trust ordering 500 units of a medical consumable will always pay more per unit than a centralised system ordering 50,000. Multiply this across thousands of product lines and hundreds of trusts, and the waste becomes staggering. NHS England's own data suggests that better procurement coordination could save the health service up to £1.3 billion per year — funds that could be redirected directly into frontline care.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">The Three Pillars of Effective NHS Procurement Reform</h3>
-                <ul class="list-none space-y-4 mb-6">
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">01.</span><div><span class="font-bold text-navy">Consolidated vendor management.</span><span class="text-gray-600"> Reducing the number of approved suppliers and negotiating framework agreements that deliver consistent pricing, quality standards, and delivery reliability across all trusts.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">02.</span><div><span class="font-bold text-navy">Real-time inventory visibility.</span><span class="text-gray-600"> Implementing systems that give procurement teams live sight of stock levels across all sites, eliminating both costly overstocking and dangerous shortfalls.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">03.</span><div><span class="font-bold text-navy">Automated compliance and audit trails.</span><span class="text-gray-600"> Ensuring every supplier meets NHS clinical standards, with certifications verified automatically rather than through manual spot-checks that inevitably miss gaps.</span></div></li>
-                </ul>
-                <h3 class="text-xl font-bold text-navy mb-3">What Centralisation Looks Like in Practice</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">Effective NHS procurement centralisation doesn't mean removing local autonomy entirely. It means creating a shared infrastructure — a single source of truth for supplier data, pricing, and compliance — that individual trusts can draw from while still managing their specific operational requirements. The technology to do this exists. The challenge is implementation: migrating legacy systems, retraining procurement teams, and managing the change process without disrupting clinical operations.</p>
-                <p class="text-gray-600 leading-relaxed mb-6">This is precisely where Troer's 15 years of NHS logistics experience becomes critical. We have managed procurement centralisation projects across multiple NHS trusts, navigating the political, operational, and technical complexities that derail less experienced teams. We don't just design the framework — we implement it, train the staff, and stay embedded until the system runs reliably.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">The Urgency Has Never Been Greater</h3>
-                <p class="text-gray-600 leading-relaxed mb-8">With NHS budgets under unprecedented pressure and clinical demand continuing to rise, the margin for procurement inefficiency has effectively disappeared. Every pound wasted on fragmented purchasing is a pound not spent on patient care. The trusts that move fastest on centralisation will be best positioned to weather the financial pressures ahead — and to deliver the standard of care their patients deserve.</p>
-                <div class="bg-blue-50 rounded-2xl p-8 border border-blue-100">
-                    <p class="text-navy font-bold text-lg mb-3">Working in NHS procurement or healthcare logistics?</p>
-                    <p class="text-gray-600 mb-6">Troer specialises in NHS supply chain centralisation. Book a free consultation to find out how much your trust could save.</p>
-                    <a href="contact.html" class="inline-block bg-gradient-to-r from-bluestart to-blueend text-white font-bold px-8 py-4 rounded-full hover:shadow-lg transition">BOOK A FREE CONSULTATION</a>
-                </div>
-            </div>
-        </article>
-
-        <article class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden mb-12">
-            <div class="bg-gradient-to-r from-navy to-bluestart h-3"></div>
-            <div class="p-10 md:p-14">
-                <div class="flex items-center gap-3 mb-6">
-                    <span class="bg-blue-50 text-bluestart text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">Construction</span>
-                    <span class="text-gray-400 text-sm">July 2025 &bull; 9 min read</span>
-                </div>
-                <h2 class="text-3xl md:text-4xl font-extrabold text-navy mb-6 leading-tight">Tier-1 Contractor Management: The 7 Mistakes That Blow Construction Budgets</h2>
-                <p class="text-gray-600 text-lg leading-relaxed mb-6">Construction projects in the UK are failing at an alarming rate. According to KPMG's Global Construction Survey, only 31% of projects come within 10% of their original budget. The primary culprit in the majority of cases isn't material costs or design changes — it's poor Tier-1 contractor management. Here are the seven mistakes that consistently derail projects and how to eliminate them.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">Mistake 1: Onboarding Contractors Without Verified Compliance</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">Allowing contractors onto site before their certifications, insurance documents, and safety records have been independently verified is one of the most common and costly mistakes in construction project management. A single unverified contractor can trigger HSE investigations, insurance voids, and project shutdowns that cost far more than the compliance check would have.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">Mistake 2: No Single Source of Truth for Subcontractor Data</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">When contractor performance data, delivery schedules, and compliance records are spread across emails, spreadsheets, and individual project managers' notebooks, critical information gets lost. A centralised contractor management system that gives every stakeholder real-time access to the same data is not optional on a complex infrastructure project — it is essential.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">Mistake 3: Reactive Rather Than Predictive Scheduling</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">Most construction project managers only discover a scheduling conflict when it has already caused a delay. Predictive scheduling tools that model dependencies, flag resource conflicts, and identify critical path risks 48-72 hours in advance give project teams the window they need to pivot before a delay becomes a cost overrun.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">Mistake 4: Ignoring JIT Delivery Alignment</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">Just-in-Time material delivery is one of the most powerful cost-control tools available to construction project managers — but only when it is properly coordinated. Materials arriving too early create storage costs and theft risk. Materials arriving late halt work entirely. Precise JIT alignment requires real-time communication between procurement, logistics, and site management that most projects simply don't have.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">Mistake 5: Underestimating Tier-2 and Tier-3 Risk</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">Tier-1 contractors are typically well-managed. The risk lives further down the supply chain. A Tier-3 specialist subcontractor failing to deliver a critical component can cascade upwards and halt an entire project. Effective contractor management requires visibility not just of your direct suppliers but of their suppliers too.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">Mistake 6: No KPI Framework for Contractor Performance</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">Without clearly defined, measurable KPIs — on-time delivery rate, defect rate, safety incident frequency, response time to instructions — contractor performance becomes subjective. Subjective assessments lead to disputes, delayed payments, and ultimately litigation. A robust KPI framework protects both parties and drives continuous improvement.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">Mistake 7: Treating the Post-Project Review as Optional</h3>
-                <p class="text-gray-600 leading-relaxed mb-8">The organisations that consistently deliver projects on time and on budget are the ones that conduct rigorous post-project reviews and feed the lessons learned back into their contractor management processes. Without this feedback loop, the same mistakes repeat on every project. With it, each project becomes more efficient than the last.</p>
-                <div class="bg-blue-50 rounded-2xl p-8 border border-blue-100">
-                    <p class="text-navy font-bold text-lg mb-3">Managing a construction or infrastructure project?</p>
-                    <p class="text-gray-600 mb-6">Troer's Tier-1 contractor management specialists have delivered oversight on £50M+ projects. Book a free audit to identify where your project is most at risk.</p>
-                    <a href="contact.html" class="inline-block bg-gradient-to-r from-bluestart to-blueend text-white font-bold px-8 py-4 rounded-full hover:shadow-lg transition">BOOK A FREE PROJECT AUDIT</a>
-                </div>
-            </div>
-        </article>
-
-        <article class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden mb-12">
-            <div class="bg-gradient-to-r from-blueend to-navy h-3"></div>
-            <div class="p-10 md:p-14">
-                <div class="flex items-center gap-3 mb-6">
-                    <span class="bg-blue-50 text-bluestart text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">Digital Transformation</span>
-                    <span class="text-gray-400 text-sm">July 2025 &bull; 8 min read</span>
-                </div>
-                <h2 class="text-3xl md:text-4xl font-extrabold text-navy mb-6 leading-tight">Legacy ERP Systems Are Costing Your Business More Than You Think</h2>
-                <p class="text-gray-600 text-lg leading-relaxed mb-6">Across the UK, thousands of businesses are running supply chain operations on ERP systems that were installed before the iPhone existed. These legacy platforms were built for a different era of commerce — one without real-time data expectations, cloud connectivity, or the supply chain complexity that modern enterprises face daily. The cost of keeping them running is far higher than most finance directors realise.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">The True Cost of Legacy Systems</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">The most visible cost of a legacy ERP is the maintenance bill — ageing software requires specialist support, and that support gets more expensive every year as fewer engineers know the platform. But the hidden costs dwarf the maintenance fees. Manual data re-entry between systems that can't communicate. Decisions made on data that is hours or days out of date. Procurement teams spending 40% of their time on administrative workarounds instead of strategic sourcing. These inefficiencies compound silently until a competitor who has modernised starts taking your market share.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">Why Businesses Don't Upgrade</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">The reluctance to replace legacy systems is understandable. Full ERP migrations are expensive, disruptive, and carry significant implementation risk. Horror stories of failed SAP rollouts and Oracle migrations that took years and cost multiples of the original budget have made many boards deeply cautious. But the choice is no longer between upgrading and staying still — it's between upgrading and falling behind.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">The Bridge Approach: Integration Without Replacement</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">The good news is that full system replacement is no longer the only option. Modern API bridge technology — like that used in Troer's TroerConnect platform — allows legacy ERP systems to communicate with modern cloud environments without requiring a full migration. Custom connectors translate data between old and new systems in real time, giving organisations the visibility and automation benefits of modern platforms while preserving the institutional knowledge embedded in their existing systems.</p>
-                <p class="text-gray-600 leading-relaxed mb-6">This approach dramatically reduces implementation risk and cost. Instead of a two-year ERP replacement project, organisations can achieve real-time data integration in weeks. Procurement teams get live visibility. Finance gets accurate reporting. Operations gets the automation they need. And the business avoids the catastrophic disruption of a full system cutover.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">What to Do Right Now</h3>
-                <ul class="list-none space-y-4 mb-6">
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">01.</span><div><span class="font-bold text-navy">Audit your current data flows.</span><span class="text-gray-600"> Map every point where data is manually re-entered between systems. Each one is a cost centre and a risk point.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">02.</span><div><span class="font-bold text-navy">Quantify the hidden cost.</span><span class="text-gray-600"> Calculate how many hours per week your team spends on manual workarounds and multiply by their hourly cost. The number will surprise you.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">03.</span><div><span class="font-bold text-navy">Explore integration before replacement.</span><span class="text-gray-600"> Before committing to a full ERP migration, investigate whether API bridge technology can deliver the connectivity you need at a fraction of the cost and risk.</span></div></li>
-                </ul>
-                <p class="text-gray-600 leading-relaxed mb-8">The organisations winning in today's supply chain environment are not necessarily those with the newest systems — they are those with the best-connected systems. Connectivity, not novelty, is the competitive advantage.</p>
-                <div class="bg-blue-50 rounded-2xl p-8 border border-blue-100">
-                    <p class="text-navy font-bold text-lg mb-3">Still running on legacy ERP?</p>
-                    <p class="text-gray-600 mb-6">TroerConnect builds custom API bridges that connect your existing systems to modern cloud platforms — without the risk of a full migration. Book a free technical consultation today.</p>
-                    <a href="contact.html" class="inline-block bg-gradient-to-r from-bluestart to-blueend text-white font-bold px-8 py-4 rounded-full hover:shadow-lg transition">BOOK A FREE CONSULTATION</a>
-                </div>
-            </div>
-        </article>
-
-        <article class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden mb-12">
-            <div class="bg-gradient-to-r from-bluestart to-navy h-3"></div>
-            <div class="p-10 md:p-14">
-                <div class="flex items-center gap-3 mb-6">
-                    <span class="bg-blue-50 text-bluestart text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">Risk Management</span>
-                    <span class="text-gray-400 text-sm">August 2025 &bull; 8 min read</span>
-                </div>
-                <h2 class="text-3xl md:text-4xl font-extrabold text-navy mb-6 leading-tight">Predictive Risk Management: How to See Supply Chain Disruptions Before They Happen</h2>
-                <p class="text-gray-600 text-lg leading-relaxed mb-6">The era of reactive supply chain management is over. Businesses that wait for disruptions to materialise before responding are operating with a fundamental competitive disadvantage. The organisations pulling ahead in 2025 are those that have shifted from reactive firefighting to predictive resilience — using data to identify risks 48 to 72 hours before they reach the critical path.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">Why Reactive Management Is No Longer Viable</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">In a supply chain with dozens of interdependent variables — freight partners, Tier-1 and Tier-2 suppliers, port clearance windows, weather events, and regulatory changes — a single unexpected disruption can cascade into a project-wide crisis within hours. By the time a reactive team has identified the problem, escalated it, and begun sourcing alternatives, the damage is already done. Liquidated damages are accruing. Clinical operations are impacted. Client relationships are strained.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">The Four Data Sources That Predict Disruption</h3>
-                <ul class="list-none space-y-4 mb-6">
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">01.</span><div><span class="font-bold text-navy">Supplier performance history.</span><span class="text-gray-600"> A supplier who has missed three of their last ten delivery windows is statistically likely to miss the next one. Historical performance data is the most reliable predictor of future behaviour.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">02.</span><div><span class="font-bold text-navy">Port and freight congestion data.</span><span class="text-gray-600"> Real-time monitoring of port congestion levels, freight capacity constraints, and customs clearance delays allows logistics teams to reroute shipments before delays become critical.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">03.</span><div><span class="font-bold text-navy">Weather and geopolitical risk feeds.</span><span class="text-gray-600"> Severe weather events and geopolitical instability are increasingly frequent supply chain disruptors. Integrating external risk feeds into your supply chain monitoring gives early warning of events that could impact your logistics network.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">04.</span><div><span class="font-bold text-navy">Internal milestone tracking.</span><span class="text-gray-600"> When project milestones are tracked in real time against planned schedules, slippage becomes visible the moment it begins — not weeks later when it has compounded into a crisis.</span></div></li>
-                </ul>
-                <h3 class="text-xl font-bold text-navy mb-3">Building a Predictive Risk Framework</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">Effective predictive risk management requires three things working in concert: the right data sources feeding into a centralised monitoring platform, automated alert thresholds that trigger notifications when risk indicators exceed acceptable levels, and experienced project managers who know how to interpret the signals and act decisively. Technology without human expertise produces noise. Human expertise without technology produces blind spots. The combination produces resilience.</p>
-                <p class="text-gray-600 leading-relaxed mb-6">TroerTrack was built on exactly this principle. Our platform aggregates supplier performance data, freight intelligence, and internal milestone tracking into a single risk dashboard — and our project managers, with 15 years of frontline experience, provide the human layer that turns data into decisive action. Clients consistently report that TroerTrack identifies risks they would never have caught manually, giving them the 72-hour window they need to pivot before a delay becomes a cost overrun.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">The Competitive Advantage of Predictive Visibility</h3>
-                <p class="text-gray-600 leading-relaxed mb-8">In industries where margins are tight and client expectations are high, the ability to consistently deliver on time is a genuine competitive differentiator. Businesses that can demonstrate a track record of proactive risk management win more contracts, retain more clients, and build the kind of reputation that generates referrals. Predictive supply chain visibility is no longer a nice-to-have — it is a commercial necessity.</p>
-                <div class="bg-blue-50 rounded-2xl p-8 border border-blue-100">
-                    <p class="text-navy font-bold text-lg mb-3">Still firefighting supply chain disruptions?</p>
-                    <p class="text-gray-600 mb-6">TroerTrack gives you 72-hour advance warning of supply chain risks. Book a free demo and see how predictive visibility transforms project delivery.</p>
-                    <a href="contact.html" class="inline-block bg-gradient-to-r from-bluestart to-blueend text-white font-bold px-8 py-4 rounded-full hover:shadow-lg transition">BOOK A FREE DEMO</a>
-                </div>
-            </div>
-        </article>
-
-        <article class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden mb-12">
-            <div class="bg-gradient-to-r from-navy to-blueend h-3"></div>
-            <div class="p-10 md:p-14">
-                <div class="flex items-center gap-3 mb-6">
-                    <span class="bg-blue-50 text-bluestart text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">Procurement Strategy</span>
-                    <span class="text-gray-400 text-sm">August 2025 &bull; 7 min read</span>
-                </div>
-                <h2 class="text-3xl md:text-4xl font-extrabold text-navy mb-6 leading-tight">How to Cut Procurement Costs by 25% Without Cutting Corners</h2>
-                <p class="text-gray-600 text-lg leading-relaxed mb-6">Every procurement director has been told to cut costs. The instinctive response — squeezing suppliers on price, reducing order quantities, or switching to cheaper alternatives — almost always backfires. Quality drops. Relationships deteriorate. Hidden costs emerge elsewhere in the supply chain. The organisations that achieve sustainable procurement savings do it differently: they eliminate waste rather than value.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">Where the Real Waste Lives</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">In our 15 years of procurement audits across NHS trusts, construction firms, and enterprise businesses, the same categories of waste appear repeatedly. Duplicate vendor spend — where multiple departments are buying the same product from different suppliers at different prices — typically accounts for 8 to 12% of total procurement spend. Maverick purchasing — where individuals bypass approved procurement channels — adds another 5 to 8%. Emergency sourcing premiums, paid when poor planning forces last-minute purchases, can add 15 to 30% to the cost of individual orders.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">The Five Levers of Sustainable Cost Reduction</h3>
-                <ul class="list-none space-y-4 mb-6">
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">01.</span><div><span class="font-bold text-navy">Vendor consolidation.</span><span class="text-gray-600"> Reducing your approved supplier list and concentrating spend with fewer, better-performing vendors unlocks volume discounts and reduces the administrative overhead of managing multiple relationships.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">02.</span><div><span class="font-bold text-navy">Spend visibility.</span><span class="text-gray-600"> You cannot manage what you cannot see. A centralised procurement platform that gives real-time visibility of all purchasing activity across all departments is the foundation of any cost reduction programme.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">03.</span><div><span class="font-bold text-navy">Contract compliance monitoring.</span><span class="text-gray-600"> Many organisations negotiate excellent framework agreements and then fail to enforce them. Automated contract compliance monitoring ensures that agreed pricing and terms are actually applied to every purchase order.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">04.</span><div><span class="font-bold text-navy">Demand forecasting.</span><span class="text-gray-600"> Accurate demand forecasting eliminates both the cost of overstocking and the premium of emergency purchasing. Integrating procurement data with operational planning systems is the key to getting this right.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">05.</span><div><span class="font-bold text-navy">Invoice audit and recovery.</span><span class="text-gray-600"> Systematic auditing of supplier invoices against agreed contract terms consistently uncovers overcharges, duplicate billings, and unapplied credits. In high-volume procurement environments, this alone can recover significant sums.</span></div></li>
-                </ul>
-                <h3 class="text-xl font-bold text-navy mb-3">The 25% Target Is Achievable</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">A 25% reduction in procurement costs sounds ambitious. In our experience, it is consistently achievable for organisations that have not previously undertaken a structured procurement optimisation programme. The savings are not found in one place — they are accumulated across vendor consolidation, spend visibility, contract compliance, and waste elimination. Each lever delivers a modest improvement. Together, they compound into transformational savings.</p>
-                <p class="text-gray-600 leading-relaxed mb-8">The critical success factor is not the technology — it is the implementation. Procurement optimisation programmes fail when they are treated as IT projects rather than organisational change programmes. The technology enables the saving. The change management delivers it. This is why Troer's approach combines best-in-class procurement platforms with 15 years of hands-on change management experience — because one without the other simply doesn't work.</p>
-                <div class="bg-blue-50 rounded-2xl p-8 border border-blue-100">
-                    <p class="text-navy font-bold text-lg mb-3">Want to find out how much your organisation is overspending?</p>
-                    <p class="text-gray-600 mb-6">Troer's procurement audit identifies your biggest cost leakages within 2 weeks. Book your free assessment today.</p>
-                    <a href="contact.html" class="inline-block bg-gradient-to-r from-bluestart to-blueend text-white font-bold px-8 py-4 rounded-full hover:shadow-lg transition">BOOK A FREE PROCUREMENT AUDIT</a>
-                </div>
-            </div>
-        </article>
-
-        <article class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden mb-12">
-            <div class="bg-gradient-to-r from-blueend to-bluestart h-3"></div>
-            <div class="p-10 md:p-14">
-                <div class="flex items-center gap-3 mb-6">
-                    <span class="bg-blue-50 text-bluestart text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">Logistics</span>
-                    <span class="text-gray-400 text-sm">September 2025 &bull; 8 min read</span>
-                </div>
-                <h2 class="text-3xl md:text-4xl font-extrabold text-navy mb-6 leading-tight">Just-In-Time Delivery in 2025: Why JIT Is Back and How to Make It Work</h2>
-                <p class="text-gray-600 text-lg leading-relaxed mb-6">After years of being written off in the wake of pandemic-era supply chain chaos, Just-In-Time delivery is making a powerful comeback. Businesses that abandoned JIT in favour of safety stock buffers are now sitting on expensive excess inventory while their more agile competitors are running leaner, faster, and more profitably. The lesson of the last five years isn't that JIT doesn't work — it's that JIT without real-time visibility doesn't work.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">What Went Wrong With JIT During the Pandemic</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">The supply chain disruptions of 2020 to 2022 exposed a fundamental weakness in how most organisations had implemented JIT: they had optimised for efficiency without building in resilience. Single-source supplier relationships, minimal buffer stock, and no real-time visibility of upstream supply chain risks meant that when disruption hit, there was no early warning and no fallback. The problem wasn't JIT itself — it was JIT implemented without the data infrastructure to support it.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">The New JIT: Precision Delivery Backed by Real-Time Intelligence</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">The organisations successfully running JIT in 2025 have rebuilt their approach around three principles. First, multi-source supplier relationships that provide alternative supply routes when primary sources are disrupted. Second, real-time visibility of the entire supply chain — from raw material availability at Tier-2 suppliers through to last-mile delivery — so that potential disruptions are identified and rerouted before they cause delays. Third, dynamic scheduling systems that can adjust delivery windows in real time based on live operational data.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">JIT in Construction: The Highest-Stakes Application</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">In construction, JIT delivery is not a cost optimisation strategy — it is an operational necessity. Construction sites have limited storage capacity, and materials arriving too early create theft risk, damage risk, and site congestion that slows all other work. Materials arriving late halt work entirely, triggering liquidated damages that can run to tens of thousands of pounds per day on major infrastructure projects. Precise JIT coordination in construction requires real-time communication between procurement, logistics partners, and site management that most projects still lack.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">JIT in NHS Logistics: Where Precision Saves Lives</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">In healthcare, JIT takes on an even greater significance. Clinical teams need the right consumables, pharmaceuticals, and equipment at the right time — not days early creating storage problems, and certainly not late creating clinical risk. NHS trusts that have implemented properly supported JIT logistics report significant reductions in both storage costs and emergency procurement premiums, while improving the reliability of supply to frontline teams.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">Making JIT Work: The Non-Negotiables</h3>
-                <ul class="list-none space-y-4 mb-6">
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">01.</span><div><span class="font-bold text-navy">Real-time supplier visibility.</span><span class="text-gray-600"> You must be able to see where your materials are at every point in the supply chain, not just when they arrive at your door.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">02.</span><div><span class="font-bold text-navy">Multi-source supplier relationships.</span><span class="text-gray-600"> Single-source dependency is the Achilles heel of JIT. Always have a qualified alternative supplier ready to activate.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">03.</span><div><span class="font-bold text-navy">Predictive risk monitoring.</span><span class="text-gray-600"> Automated alerts for port congestion, weather disruption, and supplier performance anomalies give you the lead time to adjust before a delay becomes a crisis.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">04.</span><div><span class="font-bold text-navy">Experienced logistics management.</span><span class="text-gray-600"> Technology enables JIT. Experienced project managers execute it. The human layer of judgement and relationship management is irreplaceable.</span></div></li>
-                </ul>
-                <p class="text-gray-600 leading-relaxed mb-8">JIT is not dead. It has evolved. The businesses that master the new JIT — precision delivery backed by real-time intelligence and experienced management — will operate with a structural cost and agility advantage that their competitors will struggle to close.</p>
-                <div class="bg-blue-50 rounded-2xl p-8 border border-blue-100">
-                    <p class="text-navy font-bold text-lg mb-3">Need JIT logistics that actually works?</p>
-                    <p class="text-gray-600 mb-6">Troer has delivered JIT coordination for NHS trusts and £50M+ construction projects. Book a free consultation to find out how we can bring precision delivery to your operation.</p>
-                    <a href="contact.html" class="inline-block bg-gradient-to-r from-bluestart to-blueend text-white font-bold px-8 py-4 rounded-full hover:shadow-lg transition">BOOK A FREE CONSULTATION</a>
-                </div>
-            </div>
-        </article>
-
-        <article class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden mb-12">
-            <div class="bg-gradient-to-r from-navy to-bluestart h-3"></div>
-            <div class="p-10 md:p-14">
-                <div class="flex items-center gap-3 mb-6">
-                    <span class="bg-blue-50 text-bluestart text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">Contractor Compliance</span>
-                    <span class="text-gray-400 text-sm">September 2025 &bull; 7 min read</span>
-                </div>
-                <h2 class="text-3xl md:text-4xl font-extrabold text-navy mb-6 leading-tight">Contractor Compliance in the UK: What Every Project Manager Must Know in 2025</h2>
-                <p class="text-gray-600 text-lg leading-relaxed mb-6">Contractor compliance is one of the most underestimated risk areas in UK project management. A single non-compliant contractor on site can trigger HSE investigations, void your insurance, expose your organisation to unlimited liability, and halt an entire project. Yet the majority of UK businesses still manage contractor compliance through manual spreadsheets and periodic spot-checks that miss far more than they catch.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">The Compliance Landscape in 2025</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">The regulatory environment for contractor management has become significantly more complex in recent years. The Building Safety Act 2022 introduced new duties for principal contractors and principal designers on higher-risk buildings. The Health and Safety at Work Act continues to place primary responsibility for site safety on the principal contractor. And the increasing use of subcontractor chains means that compliance failures several tiers down the supply chain can still land at the principal contractor's door.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">The Five Documents Every Contractor Must Have Verified</h3>
-                <ul class="list-none space-y-4 mb-6">
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">01.</span><div><span class="font-bold text-navy">Public liability insurance.</span><span class="text-gray-600"> Minimum £5 million cover for most commercial projects, with the certificate verified as current and the scope confirmed as covering the specific work being undertaken.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">02.</span><div><span class="font-bold text-navy">Employers liability insurance.</span><span class="text-gray-600"> Legally required for any contractor with employees. Minimum £5 million cover. Expiry dates must be tracked and renewals confirmed before the existing certificate lapses.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">03.</span><div><span class="font-bold text-navy">CSCS cards and trade certifications.</span><span class="text-gray-600"> Every operative on site must hold a valid CSCS card appropriate to their role. Specialist trades require additional certifications — gas safe, NICEIC, IPAF, PASMA — that must be individually verified.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">04.</span><div><span class="font-bold text-navy">Method statements and risk assessments.</span><span class="text-gray-600"> Site-specific RAMS must be reviewed and approved before any work begins. Generic RAMS that haven't been tailored to the specific site and task are not compliant.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">05.</span><div><span class="font-bold text-navy">Tax compliance confirmation.</span><span class="text-gray-600"> Under the Construction Industry Scheme, principal contractors must verify the CIS registration status of all subcontractors before making payments. Failure to do so creates significant tax liability.</span></div></li>
-                </ul>
-                <h3 class="text-xl font-bold text-navy mb-3">Why Manual Compliance Management Fails</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">The fundamental problem with spreadsheet-based compliance management is that it is static in a dynamic environment. Certificates expire. Insurance policies lapse. Operatives' cards run out. A compliance check conducted at contractor onboarding is out of date the moment any of these documents changes. Effective compliance management requires continuous monitoring — automated alerts when documents are approaching expiry, and instant visibility of any contractor whose compliance status has lapsed.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">Automated Compliance: The Only Scalable Solution</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">For organisations managing more than a handful of contractors, automated compliance management is the only scalable solution. Troer's contractor compliance platform maintains a live compliance register for every contractor in your network — automatically flagging expiring documents, blocking non-compliant contractors from site access systems, and providing a complete audit trail that demonstrates due diligence in the event of an HSE investigation or insurance claim.</p>
-                <p class="text-gray-600 leading-relaxed mb-8">The cost of implementing automated compliance management is a fraction of the cost of a single compliance failure. One HSE improvement notice. One voided insurance claim. One project shutdown. Any of these outcomes costs more than a year of automated compliance monitoring. The question is not whether you can afford to automate — it's whether you can afford not to.</p>
-                <div class="bg-blue-50 rounded-2xl p-8 border border-blue-100">
-                    <p class="text-navy font-bold text-lg mb-3">Still managing contractor compliance manually?</p>
-                    <p class="text-gray-600 mb-6">Troer's automated compliance platform keeps your entire contractor network verified in real time. Book a free demo today.</p>
-                    <a href="contact.html" class="inline-block bg-gradient-to-r from-bluestart to-blueend text-white font-bold px-8 py-4 rounded-full hover:shadow-lg transition">BOOK A FREE DEMO</a>
-                </div>
-            </div>
-        </article>
-
-        <article class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden mb-12">
-            <div class="bg-gradient-to-r from-bluestart to-blueend h-3"></div>
-            <div class="p-10 md:p-14">
-                <div class="flex items-center gap-3 mb-6">
-                    <span class="bg-blue-50 text-bluestart text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">Digital Supply Chain</span>
-                    <span class="text-gray-400 text-sm">October 2025 &bull; 8 min read</span>
-                </div>
-                <h2 class="text-3xl md:text-4xl font-extrabold text-navy mb-6 leading-tight">The Single Source of Truth: Why Your Supply Chain Needs One and How to Build It</h2>
-                <p class="text-gray-600 text-lg leading-relaxed mb-6">Ask ten people in your organisation what your current stock levels are, what your top supplier's on-time delivery rate is, or how much you spent on procurement last quarter — and you will likely get ten different answers. This is the silo effect in action. And it is costing your business more than you realise in poor decisions, missed opportunities, and avoidable crises.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">What Is a Single Source of Truth?</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">A Single Source of Truth (SSOT) is a centralised data environment where every stakeholder — from the warehouse operative to the chief executive — accesses the same real-time information. There is no version control problem. No conflicting spreadsheets. No decisions made on data that was accurate last Tuesday but has since changed. Every function in the business operates from the same live picture of operational reality.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">The Business Cost of Data Silos</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">Data silos don't just create confusion — they create measurable financial damage. Procurement teams ordering stock that operations already has in a different warehouse. Finance reporting on costs that procurement has already renegotiated. Project managers making scheduling decisions based on delivery ETAs that logistics updated three hours ago but never communicated. Each of these failures is individually small. Collectively, across a complex supply chain operation, they compound into millions of pounds of avoidable waste annually.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">The Four Layers of a Supply Chain SSOT</h3>
-                <ul class="list-none space-y-4 mb-6">
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">01.</span><div><span class="font-bold text-navy">Data integration layer.</span><span class="text-gray-600"> All data sources — ERP systems, logistics platforms, supplier portals, finance systems — must feed into a single integration layer that normalises and consolidates the data in real time.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">02.</span><div><span class="font-bold text-navy">Master data management.</span><span class="text-gray-600"> Consistent definitions, naming conventions, and data standards across all systems ensure that the same product, supplier, or cost centre is described identically everywhere.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">03.</span><div><span class="font-bold text-navy">Role-based visibility.</span><span class="text-gray-600"> Different stakeholders need different views of the same data. A warehouse manager needs operational detail. A finance director needs cost summaries. A chief executive needs strategic KPIs. The SSOT serves all of them from the same underlying data.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">04.</span><div><span class="font-bold text-navy">Automated alerting.</span><span class="text-gray-600"> The SSOT should proactively push critical information to the right people at the right time — not wait for someone to log in and look for it.</span></div></li>
-                </ul>
-                <h3 class="text-xl font-bold text-navy mb-3">How TroerConnect Builds Your SSOT</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">TroerConnect was built specifically to solve the data silo problem in complex supply chain environments. Our platform connects legacy ERP systems, modern cloud applications, supplier portals, and logistics platforms through custom API bridges — pulling all data into a single, real-time dashboard that gives every stakeholder the visibility they need. We have built SSOTs for NHS trusts managing clinical supply chains across multiple sites, for Tier-1 construction contractors coordinating dozens of subcontractors, and for enterprise businesses with global supplier networks.</p>
-                <p class="text-gray-600 leading-relaxed mb-8">The transformation is consistently dramatic. Procurement decisions that previously took days of data gathering take minutes. Supply chain risks that previously went undetected until they caused disruption are flagged automatically. And the boardroom gets the real-time operational visibility it needs to make strategic decisions with confidence. A Single Source of Truth doesn't just improve efficiency — it changes the quality of every decision your organisation makes.</p>
-                <div class="bg-blue-50 rounded-2xl p-8 border border-blue-100">
-                    <p class="text-navy font-bold text-lg mb-3">Still working from fragmented data?</p>
-                    <p class="text-gray-600 mb-6">TroerConnect builds your Single Source of Truth in weeks, not years. Book a free technical consultation to see how we connect your existing systems.</p>
-                    <a href="contact.html" class="inline-block bg-gradient-to-r from-bluestart to-blueend text-white font-bold px-8 py-4 rounded-full hover:shadow-lg transition">BOOK A FREE CONSULTATION</a>
-                </div>
-            </div>
-        </article>
-
-        <article class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden mb-12">
-            <div class="bg-gradient-to-r from-navy to-blueend h-3"></div>
-            <div class="p-10 md:p-14">
-                <div class="flex items-center gap-3 mb-6">
-                    <span class="bg-blue-50 text-bluestart text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">Operations</span>
-                    <span class="text-gray-400 text-sm">October 2025 &bull; 9 min read</span>
-                </div>
-                <h2 class="text-3xl md:text-4xl font-extrabold text-navy mb-6 leading-tight">Supply Chain Resilience in 2025: The Complete Guide for UK Businesses</h2>
-                <p class="text-gray-600 text-lg leading-relaxed mb-6">Supply chain resilience has moved from boardroom buzzword to business-critical priority. The disruptions of the last five years — a global pandemic, the Suez Canal blockage, post-Brexit trade friction, energy price shocks, and escalating geopolitical instability — have demonstrated beyond any doubt that supply chains built purely for efficiency are dangerously fragile. In 2025, the question every UK business must answer is: how resilient is your supply chain, and what would it take to break it?</p>
-                <h3 class="text-xl font-bold text-navy mb-3">Defining True Supply Chain Resilience</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">Resilience is not the same as robustness. A robust supply chain resists disruption. A resilient supply chain absorbs disruption and recovers quickly. The distinction matters because in today's environment, disruption is inevitable. The goal is not to prevent every shock — it is to build the capability to absorb shocks and return to normal operations faster than your competitors.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">The Resilience Maturity Model</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">Supply chain resilience exists on a maturity spectrum. At the lowest level, organisations are purely reactive — they respond to disruptions after they occur with no pre-planned response. At the highest level, organisations are fully adaptive — they continuously sense changes in their supply chain environment and adjust their operations dynamically before disruptions materialise. Most UK businesses sit somewhere in the middle, with pockets of good practice alongside significant vulnerabilities.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">The Six Pillars of Supply Chain Resilience</h3>
-                <ul class="list-none space-y-4 mb-6">
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">01.</span><div><span class="font-bold text-navy">Supply chain mapping.</span><span class="text-gray-600"> You cannot protect what you cannot see. A complete map of your supply chain — including Tier-2 and Tier-3 suppliers — is the foundation of any resilience programme. Most organisations are shocked by how little visibility they have beyond their direct suppliers.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">02.</span><div><span class="font-bold text-navy">Supplier diversification.</span><span class="text-gray-600"> Single-source dependency is the most common and most dangerous supply chain vulnerability. Every critical component or service should have at least one qualified alternative supplier ready to activate within 48 hours.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">03.</span><div><span class="font-bold text-navy">Strategic inventory positioning.</span><span class="text-gray-600"> Not all inventory is equal. Identifying the critical components whose absence would halt operations and maintaining strategic buffers for those specific items — while running lean on everything else — balances resilience with efficiency.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">04.</span><div><span class="font-bold text-navy">Real-time risk monitoring.</span><span class="text-gray-600"> Continuous monitoring of supplier performance, geopolitical risk, freight disruption, and weather events gives organisations the early warning they need to activate contingency plans before disruptions become crises.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">05.</span><div><span class="font-bold text-navy">Documented contingency plans.</span><span class="text-gray-600"> When disruption hits, there is no time to design a response from scratch. Pre-documented contingency plans for the most likely disruption scenarios — key supplier failure, logistics disruption, demand spike — enable fast, coordinated responses.</span></div></li>
-                    <li class="flex gap-3"><span class="text-bluestart font-bold text-lg">06.</span><div><span class="font-bold text-navy">Cross-functional collaboration.</span><span class="text-gray-600"> Supply chain resilience cannot be owned by a single function. Procurement, operations, finance, and senior leadership must all be aligned on resilience priorities and empowered to act when disruption occurs.</span></div></li>
-                </ul>
-                <h3 class="text-xl font-bold text-navy mb-3">Resilience for NHS and Public Sector Supply Chains</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">For NHS trusts and public sector organisations, supply chain resilience carries an additional dimension: the consequences of failure are measured not just in financial terms but in patient outcomes. A resilient NHS supply chain ensures that clinical teams always have the consumables, pharmaceuticals, and equipment they need — regardless of what is happening in the broader logistics environment. This requires a higher standard of resilience planning than most commercial organisations apply, with mandatory contingency stock levels, pre-approved alternative suppliers, and real-time visibility of supply status across all sites.</p>
-                <h3 class="text-xl font-bold text-navy mb-3">Building Resilience Without Sacrificing Efficiency</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">The most common objection to supply chain resilience investment is cost. Dual sourcing costs more than single sourcing. Safety stock ties up working capital. Resilience monitoring requires technology investment. These costs are real — but they must be weighed against the cost of disruption. A single major supply chain failure — a project shutdown, a clinical supply crisis, a customer-facing stockout — typically costs far more than a year of resilience investment. The organisations that have done this calculation honestly are investing in resilience. The ones that haven't are one disruption away from finding out why they should have.</p>
-                <p class="text-gray-600 leading-relaxed mb-8">At Troer, we have spent 15 years building supply chain resilience for some of the UK's most demanding operational environments — NHS trusts where supply failure is not an option, Tier-1 construction contractors where a single day's delay costs thousands in liquidated damages, and enterprise businesses where supply chain performance is a direct competitive differentiator. We don't just advise on resilience — we build it, implement it, and stay embedded until it works. Because in today's environment, resilience isn't optional. It's survival.</p>
-                <div class="bg-blue-50 rounded-2xl p-8 border border-blue-100">
-                    <p class="text-navy font-bold text-lg mb-3">How resilient is your supply chain?</p>
-                    <p class="text-gray-600 mb-6">Book a free supply chain resilience audit with Troer's senior specialists. We'll identify your biggest vulnerabilities and build a clear roadmap to operational resilience.</p>
-                    <a href="contact.html" class="inline-block bg-gradient-to-r from-bluestart to-blueend text-white font-bold px-8 py-4 rounded-full hover:shadow-lg transition">BOOK YOUR FREE RESILIENCE AUDIT</a>
-                </div>
-            </div>
-        </article>
-    </main>
-
-    <footer class="bg-gray-50 py-8 text-center text-gray-500 text-sm border-t border-gray-200">
-        <p>&copy; 2026 Troer. All rights reserved.</p>
-    </footer>
-    <script src="nav.js"></script>
+<body>
+<header class="main-header"><div class="container header-shell"><a href="index.html" class="logo">Troer</a><nav class="nav-links"><div class="nav-dropdown group relative"><button class="nav-dropdown-btn flex items-center gap-1">Solutions <span aria-hidden="true">&#9662;</span></button><ul class="dropdown-menu w-80 max-w-xl rounded-2xl shadow-xl border border-gray-200 bg-white grid grid-cols-1 divide-y divide-gray-100 p-0"><li><a href="project-management.html" class="block px-5 py-3 font-bold text-navy hover:bg-blue-50/50 transition">Project Management</a></li><li><a href="procurement-contractor-management.html" class="block px-5 py-3 font-bold text-navy hover:bg-blue-50/50 transition">Procurement &amp; Contractor Management</a></li><li><a href="troerconnect.html" class="block px-5 py-3 font-bold text-navy hover:bg-blue-50/50 transition">TroerConnect (System Integration)</a></li><li><a href="troertrack.html" class="block px-5 py-3 font-bold text-navy hover:bg-blue-50/50 transition">TroerTrack (Risk Mitigation)</a></li></ul></div><a href="industries.html">Industry Expertise</a><div class="nav-dropdown group relative"><button class="nav-dropdown-btn flex items-center gap-1">About <span aria-hidden="true">&#9662;</span></button><ul class="dropdown-menu"><li><a href="about.html">About Us</a></li><li><a href="contact.html">Contact Us</a></li><li><a href="blog.html">Blog</a></li><li><a href="case-studies.html">Case Studies</a></li><li><a href="privacy.html">Privacy Policy</a></li></ul></div></nav><a href="contact.html" class="btn-primary">WORK WITH US</a></div></header>
+<section class="hero"><div class="wrap"><span class="eyebrow">Troer Insights</span><h1>Shortlist the topics that matter, then open the full article.</h1><p>The blog page now acts as a cleaner library. Filter by topic, reduce the visual length, and click through to read each article on its own page.</p></div></section>
+<section class="section"><div class="wrap"><div class="toolbar"><div class="toolbar-copy"><h2>Insights by category</h2><p>Filter articles by operational theme so you can quickly focus on procurement, NHS logistics, construction, or supply chain resilience.</p></div><div class="filters" role="tablist" aria-label="Filter blog posts"><button class="filter-btn is-active" data-filter="all" type="button">All</button><button class="filter-btn" data-filter="supply-chain" type="button">Supply Chain</button><button class="filter-btn" data-filter="nhs" type="button">NHS</button><button class="filter-btn" data-filter="construction" type="button">Construction</button><button class="filter-btn" data-filter="procurement" type="button">Procurement</button></div></div><div class="blog-grid"><article class="blog-card" data-category="supply-chain procurement"><div class="blog-meta"><span class="blog-tag">Supply Chain</span><span>June 2025</span><span>8 min read</span></div><h3>Why UK Supply Chains Are Still Broken in 2025</h3><p>An overview of the structural failures still damaging UK operations, from siloed data and slow reporting to reactive contractor management.</p><a class="blog-link" href="blog-uk-supply-chains-2025.html">Open full article</a></article><article class="blog-card" data-category="nhs procurement"><div class="blog-meta"><span class="blog-tag">NHS</span><span>June 2025</span><span>7 min read</span></div><h3>NHS Supply Chain Reform and Centralised Procurement</h3><p>Why fragmented trust-by-trust procurement creates waste and what effective centralisation looks like in practice.</p><a class="blog-link" href="blog-nhs-supply-chain-reform.html">Open full article</a></article><article class="blog-card" data-category="construction"><div class="blog-meta"><span class="blog-tag">Construction</span><span>July 2025</span><span>9 min read</span></div><h3>Tier-1 Contractor Management: Avoiding Budget Blowouts</h3><p>A practical look at the mistakes that create project overruns when compliance, sequencing, and subcontractor visibility are weak.</p><a class="blog-link" href="blog-tier-1-contractor-management.html">Open full article</a></article><article class="blog-card" data-category="procurement supply-chain"><div class="blog-meta"><span class="blog-tag">Procurement</span><span>August 2025</span><span>7 min read</span></div><h3>How to Cut Procurement Costs Without Cutting Corners</h3><p>Where procurement waste usually hides, which levers matter most, and why sustainable savings come from better control rather than blunt cost-cutting.</p><a class="blog-link" href="blog-cut-procurement-costs.html">Open full article</a></article></div></div></section>
+<footer class="footer"><p>&copy; 2026 Troer. All rights reserved.</p></footer><script src="nav.js"></script><script>const buttons=document.querySelectorAll('.filter-btn');const cards=document.querySelectorAll('.blog-card');buttons.forEach((button)=>{button.addEventListener('click',()=>{const filter=button.dataset.filter;buttons.forEach((item)=>item.classList.remove('is-active'));button.classList.add('is-active');cards.forEach((card)=>{const categories=card.dataset.category.split(' ');const show=filter==='all'||categories.includes(filter);card.hidden=!show;});});});</script>
 </body>
 </html>
