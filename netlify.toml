@@ -1,2 +1,11 @@
 [build]
-  publish = "src/public"
+  # If your index.html is in the root, change this to "."
+  # If you have a build step (like npm run build), this should be "dist" or "build"
+  publish = "."
+
+# REMOVED: Catch-all redirects can break static assets (CSS/JS) 
+# unless you are building a Single Page Application (SPA).
+# [[redirects]]
+#   from = "/*"
+#   to = "/index.html"
+#   status = 200
