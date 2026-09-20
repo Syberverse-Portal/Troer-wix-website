@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Troer helps NHS, infrastructure, and enterprise teams fix fragile supply chains with hands-on project management, procurement control, and operational resilience.">
-    <title>Troer | Fix Broken Supply Chains</title>
-    <link rel="canonical" href="https://troer.co.uk/">
-    <meta property="og:title" content="Troer | Fix Broken Supply Chains">
-    <meta property="og:description" content="Hands-on supply chain project management, procurement control, and resilience for NHS, construction, and enterprise teams.">
+    <meta name="description" content="Troer provides global procurement, supply chain and project delivery support, from strategic sourcing and cost reduction to supplier recovery and implementation.">
+    <title>Procurement, Supply Chain & Project Consultancy | Troer</title>
+    <link rel="canonical" href="https://www.troer.co.uk/">
+    <meta property="og:title" content="Troer | Procurement, Supply Chain & Project Delivery">
+    <meta property="og:description" content="Clearer visibility. Stronger decisions. Hands-on procurement, supply chain and project delivery support for organisations in the UK and globally.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://troer.co.uk/">
+    <meta property="og:url" content="https://www.troer.co.uk/">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Troer | Fix Broken Supply Chains">
-    <meta name="twitter:description" content="Hands-on supply chain project management, procurement control, and resilience for complex operations across the UK.">
+    <meta name="twitter:title" content="Troer | Procurement, Supply Chain & Project Delivery">
+    <meta name="twitter:description" content="Clearer visibility. Stronger decisions. Hands-on procurement, supply chain and project delivery support for organisations in the UK and globally.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -23,6 +23,36 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-L795LSG1ZL');
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Troer",
+      "url": "https://www.troer.co.uk/",
+      "logo": "https://www.troer.co.uk/troer-logo.png",
+      "description": "UK-based global procurement, supply chain and project delivery consultancy providing hands-on implementation support.",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+44-1962-393842",
+        "contactType": "Customer Service",
+        "email": "info@troer.co.uk"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "GB",
+        "addressRegion": "England"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "url": "https://www.troer.co.uk/",
+      "name": "Troer",
+      "description": "Procurement, supply chain and project delivery consultancy"
+    }
     </script>
     <style>
         :root {
@@ -42,397 +72,951 @@
             margin: 0;
             font-family: 'Inter', sans-serif;
             color: var(--ink);
-            background:
-                radial-gradient(circle at top, rgba(74, 144, 226, 0.16), transparent 24%),
-                linear-gradient(180deg, #f6faff 0%, #ffffff 46%);
+            line-height: 1.6;
+            background: #ffffff;
         }
-        .page-section { width: min(1180px, 92vw); margin: 0 auto; }
+        .container { width: min(1180px, 92vw); margin: 0 auto; }
+        main { display: block; }
+        section { width: 100%; }
+
+        /* Hero Section */
         .hero {
             position: relative;
             overflow: hidden;
-            padding: 34px 0 140px;
+            padding: 80px 0 100px;
             background:
                 radial-gradient(circle at 50% 0%, rgba(120, 185, 255, 0.38), transparent 28%),
                 linear-gradient(180deg, var(--navy) 0%, var(--deep-navy) 100%);
         }
-        .hero::after {
-            content: "";
-            position: absolute;
-            left: -8%;
-            right: -8%;
-            bottom: -110px;
-            height: 220px;
-            background: #ffffff;
-            border-radius: 50% 50% 0 0;
-        }
-        .hero-panel {
-            position: relative;
-            z-index: 2;
-            max-width: 920px;
-            margin: 48px auto 0;
-            padding: 44px 38px;
-            border-radius: 30px;
-            border: 1px solid rgba(214, 233, 255, 0.58);
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.74), rgba(221, 239, 255, 0.38));
-            backdrop-filter: blur(18px);
-            box-shadow: 0 28px 60px rgba(4, 19, 42, 0.32);
+        .hero .container {
             text-align: center;
         }
-        .eyebrow {
+        .hero .eyebrow {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            padding: 8px 14px;
+            padding: 8px 16px;
             border-radius: 999px;
-            background: rgba(11, 42, 88, 0.08);
-            color: var(--navy);
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
             font-size: 13px;
             font-weight: 800;
             letter-spacing: 0.12em;
             text-transform: uppercase;
+            margin-bottom: 24px;
         }
         .hero h1 {
-            margin: 20px 0 16px;
-            font-size: clamp(2.6rem, 6vw, 4.9rem);
-            line-height: 0.95;
-            letter-spacing: -0.06em;
-            text-transform: uppercase;
-            color: #0a1730;
+            margin: 0 0 28px;
+            font-size: clamp(2.2rem, 5vw, 3.8rem);
+            line-height: 1.15;
+            letter-spacing: -0.04em;
+            color: #ffffff;
+            font-weight: 900;
         }
-        .hero p {
-            margin: 0 auto;
-            max-width: 760px;
-            font-size: clamp(1.1rem, 2.2vw, 1.7rem);
-            line-height: 1.35;
-            color: #22324a;
+        .hero .intro-text {
+            margin: 0 auto 32px;
+            max-width: 820px;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.95);
         }
-        .hero-actions {
+        .hero .hero-actions {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 14px;
-            margin-top: 28px;
+            gap: 16px;
+            margin: 32px 0 24px;
         }
-        .primary-btn,
-        .secondary-btn {
+        .hero .supporting-text {
+            margin: 24px 0 0;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* CTA Buttons */
+        .btn-primary,
+        .btn-secondary {
             display: inline-block;
-            padding: 15px 26px;
+            padding: 16px 32px;
             border-radius: 999px;
             text-decoration: none;
             font-weight: 800;
             letter-spacing: 0.02em;
+            font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
-        .primary-btn {
+        .btn-primary {
             color: #fff;
             background: linear-gradient(135deg, var(--blue-start), var(--blue-end));
             box-shadow: 0 12px 28px rgba(41, 98, 255, 0.34);
         }
-        .secondary-btn {
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 36px rgba(41, 98, 255, 0.42);
+        }
+        .btn-secondary {
             color: var(--navy);
-            background: rgba(255, 255, 255, 0.86);
+            background: #ffffff;
             border: 1px solid rgba(11, 42, 88, 0.12);
         }
-        .services {
-            position: relative;
-            z-index: 3;
-            margin-top: -84px;
+        .btn-secondary:hover {
+            background: #f8fbff;
         }
-        .services-grid,
-        .proof-grid,
-        .sector-grid,
-        .contact-grid {
-            display: grid;
-            gap: 20px;
+
+        /* Content Sections */
+        .content-section {
+            padding: 88px 0;
         }
-        .services-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-        .service-card,
-        .proof-card,
-        .sector-card,
-        .contact-card {
-            background: var(--panel);
-            border: 1px solid var(--line);
-            border-radius: 24px;
-            box-shadow: 0 14px 34px rgba(8, 29, 61, 0.08);
+        .content-full-width {
+            padding: 88px 0;
+            background: linear-gradient(180deg, var(--mist) 0%, #eef5ff 100%);
         }
-        .service-card { padding: 24px 22px; }
-        .service-card .service-tag {
-            color: var(--blue-end);
-            font-size: 13px;
-            font-weight: 800;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
+
+        /* Section Heading */
+        .section-heading {
+            margin-bottom: 64px;
         }
-        .service-card h3 { margin: 14px 0 10px; font-size: 1.25rem; color: var(--navy); }
-        .service-card p { margin: 0 0 18px; color: var(--muted); line-height: 1.6; }
-        .service-link { font-weight: 800; color: var(--navy); text-decoration: none; }
-        .section-heading { margin-bottom: 24px; }
         .section-heading h2 {
-            margin: 0 0 10px;
-            font-size: clamp(2rem, 4vw, 3rem);
-            line-height: 1;
+            margin: 0 0 16px;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            line-height: 1.2;
             letter-spacing: -0.04em;
             color: var(--navy);
+            font-weight: 900;
         }
         .section-heading p {
             margin: 0;
-            max-width: 740px;
+            max-width: 820px;
             color: var(--muted);
-            font-size: 1.06rem;
+            font-size: 1.1rem;
             line-height: 1.7;
         }
-        .section-pad { padding: 88px 0; }
-        .proof-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-        .proof-card { padding: 28px; }
-        .proof-stat {
-            font-size: 2.7rem;
-            font-weight: 900;
-            color: var(--blue-end);
-            letter-spacing: -0.05em;
+
+        /* Three Service Pillars */
+        .three-columns {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 48px;
+            margin-bottom: 0;
         }
-        .proof-card h3 { margin: 12px 0 10px; color: var(--navy); }
-        .proof-card p,
-        .sector-card p,
-        .contact-card p,
-        .contact-detail span {
+        .pillar {
+            text-align: left;
+        }
+        .pillar h3 {
+            margin: 0 0 12px;
+            font-size: 1.6rem;
+            color: var(--navy);
+            font-weight: 800;
+        }
+        .pillar .tagline {
+            margin: 0 0 20px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--blue-end);
+        }
+        .pillar p {
+            margin: 0 0 20px;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+        .pillar ul {
+            margin: 16px 0 24px;
+            padding-left: 20px;
+            color: var(--muted);
+            line-height: 1.8;
+        }
+        .pillar ul li {
+            margin-bottom: 8px;
+        }
+        .pillar a {
+            display: inline-block;
+            margin-top: 16px;
+            color: var(--navy);
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 0.95rem;
+        }
+
+        /* Process Steps */
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 32px;
+            margin-top: 60px;
+        }
+        .step {
+            text-align: center;
+        }
+        .step-number {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            border-radius: 50%;
+            background: var(--blue-end);
+            color: white;
+            font-weight: 900;
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+        }
+        .step h4 {
+            margin: 0 0 12px;
+            color: var(--navy);
+            font-size: 1.1rem;
+            font-weight: 800;
+        }
+        .step p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Engagement Types */
+        .engagement-types {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-top: 48px;
+        }
+        .engagement-card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            padding: 40px;
+        }
+        .engagement-card h4 {
+            margin: 0 0 12px;
+            color: var(--navy);
+            font-size: 1.3rem;
+            font-weight: 800;
+        }
+        .engagement-card p {
             margin: 0;
             color: var(--muted);
             line-height: 1.7;
         }
-        .sector-band { padding: 90px 0; background: linear-gradient(180deg, var(--mist) 0%, #eef5ff 100%); }
-        .sector-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-        .sector-card { padding: 28px; }
-        .sector-card .sector-number {
+
+        /* Industry/Sector Grid */
+        .sector-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            margin-top: 48px;
+        }
+        .sector-card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            padding: 32px;
+        }
+        .sector-card h3 {
+            margin: 0 0 12px;
+            color: var(--navy);
+            font-size: 1.2rem;
+            font-weight: 800;
+        }
+        .sector-card p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        /* Problem/Situation List */
+        .situation-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-top: 40px;
+        }
+        .situation-item {
+            padding: 20px;
+            background: var(--mist);
+            border-radius: 12px;
+            color: var(--navy);
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        /* Blog/Insights Grid */
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            margin-top: 48px;
+        }
+        .insight-card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            overflow: hidden;
+            transition: box-shadow 0.3s ease;
+        }
+        .insight-card:hover {
+            box-shadow: 0 16px 40px rgba(8, 29, 61, 0.12);
+        }
+        .insight-card-body {
+            padding: 28px;
+        }
+        .insight-category {
             display: inline-block;
-            margin-bottom: 14px;
-            color: var(--blue-end);
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             font-weight: 800;
             letter-spacing: 0.1em;
             text-transform: uppercase;
+            color: var(--blue-end);
+            margin-bottom: 12px;
         }
-        .sector-card h3 { margin: 0 0 10px; color: var(--navy); font-size: 1.3rem; }
-        .contact-strip { padding: 94px 0; }
-        .contact-grid { grid-template-columns: 1.15fr 0.85fr; align-items: start; }
-        .contact-card { padding: 32px; }
-        .contact-detail {
-            display: grid;
-            gap: 6px;
-            padding: 18px 0;
-            border-bottom: 1px solid var(--line);
-        }
-        .contact-detail:last-child { border-bottom: 0; padding-bottom: 0; }
-        .contact-detail strong { color: var(--navy); font-size: 1rem; }
-        .contact-form { display: grid; gap: 14px; }
-        .contact-form label {
-            display: grid;
-            gap: 8px;
-            font-size: 0.95rem;
-            font-weight: 700;
+        .insight-card h4 {
+            margin: 0 0 12px;
             color: var(--navy);
+            font-size: 1.15rem;
+            font-weight: 800;
+            line-height: 1.4;
         }
-        .contact-form input,
-        .contact-form textarea {
-            width: 100%;
-            padding: 14px 15px;
-            border: 1px solid var(--line);
-            border-radius: 16px;
-            background: #f8fbff;
-            font: inherit;
-            color: var(--ink);
+        .insight-card p {
+            margin: 0 0 16px;
+            color: var(--muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
         }
-        .contact-form textarea { min-height: 140px; resize: vertical; }
-        .footer { padding: 28px 0 40px; text-align: center; color: var(--muted); font-size: 0.94rem; }
+        .insight-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--muted);
+            padding-top: 16px;
+            border-top: 1px solid var(--line);
+        }
+        .insight-link {
+            color: var(--navy);
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 0.9rem;
+        }
+
+        /* FAQ Section */
+        .faq-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+            margin-top: 48px;
+        }
+        .faq-item h4 {
+            margin: 0 0 12px;
+            color: var(--navy);
+            font-size: 1.05rem;
+            font-weight: 800;
+        }
+        .faq-item p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+
+        /* Final CTA Section */
+        .final-cta {
+            text-align: center;
+            padding: 80px 0;
+            background: linear-gradient(135deg, var(--navy) 0%, var(--deep-navy) 100%);
+            color: white;
+        }
+        .final-cta h2 {
+            margin: 0 0 24px;
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: white;
+        }
+        .final-cta p {
+            margin: 0 auto 48px;
+            max-width: 660px;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+        .final-cta .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .final-cta .supporting {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+        }
+
+        /* Footer */
+        footer {
+            background: #f5f8fc;
+            padding: 60px 0 40px;
+            border-top: 1px solid var(--line);
+        }
+        footer .container {
+            display: grid;
+            grid-template-columns: 1fr 2fr 2fr;
+            gap: 60px;
+            margin-bottom: 48px;
+        }
+        footer h3 {
+            margin: 0 0 12px;
+            color: var(--navy);
+            font-size: 1rem;
+            font-weight: 800;
+        }
+        footer p {
+            margin: 0 0 24px;
+            color: var(--muted);
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+        footer ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        footer li {
+            margin-bottom: 12px;
+        }
+        footer a {
+            color: var(--navy);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+        footer a:hover {
+            color: var(--blue-end);
+        }
+        .footer-bottom {
+            text-align: center;
+            padding-top: 32px;
+            border-top: 1px solid var(--line);
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+        /* Responsive */
         @media (max-width: 1080px) {
-            .services-grid,
-            .proof-grid,
-            .sector-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-            .contact-grid { grid-template-columns: 1fr; }
+            .three-columns,
+            .engagement-types,
+            .sector-grid,
+            .insights-grid { grid-template-columns: repeat(2, 1fr); }
+            .process-steps { grid-template-columns: repeat(3, 1fr); }
+            .faq-grid { grid-template-columns: 1fr; }
+            footer .container { grid-template-columns: 1fr; gap: 40px; }
         }
         @media (max-width: 760px) {
-            .hero-panel { padding: 32px 22px; }
-            .services-grid,
-            .proof-grid,
-            .sector-grid { grid-template-columns: 1fr; }
-            .section-pad,
-            .sector-band,
-            .contact-strip { padding: 68px 0; }
-            .services { margin-top: -64px; }
+            .hero { padding: 60px 0 80px; }
+            .hero h1 { font-size: 2rem; margin-bottom: 20px; }
+            .hero-actions { gap: 12px; }
+            .btn-primary, .btn-secondary { min-height: 44px; padding: 14px 24px; }
+            .content-section,
+            .content-full-width { padding: 60px 0; }
+            .section-heading { margin-bottom: 40px; }
+            .three-columns,
+            .engagement-types,
+            .sector-grid,
+            .insights-grid,
+            .process-steps,
+            .situation-list { grid-template-columns: 1fr; }
+            .final-cta { padding: 60px 0; }
+            .final-cta h2 { font-size: 1.6rem; }
         }
     </style>
 </head>
 <body>
     <header class="main-header">
         <div class="container header-shell">
-            <a href="index.html" class="logo">Troer</a>
+            <a href="/" class="logo">Troer</a>
             <nav class="nav-links">
                 <div class="nav-dropdown group relative">
-                    <button class="nav-dropdown-btn flex items-center gap-1">Solutions <span aria-hidden="true">&#9662;</span></button>
-                    <ul class="dropdown-menu w-80 max-w-xl rounded-2xl shadow-xl border border-gray-200 bg-white grid grid-cols-1 divide-y divide-gray-100 p-0">
-                        <li><a href="project-management.html" class="block px-5 py-3 font-bold text-navy hover:bg-blue-50/50 transition">Project Management</a></li>
-                        <li><a href="procurement-contractor-management.html" class="block px-5 py-3 font-bold text-navy hover:bg-blue-50/50 transition">Procurement &amp; Contractor Management</a></li>
-                        <li><a href="troerconnect.html" class="block px-5 py-3 font-bold text-navy hover:bg-blue-50/50 transition">TroerConnect (System Integration)</a></li>
-                        <li><a href="troertrack.html" class="block px-5 py-3 font-bold text-navy hover:bg-blue-50/50 transition">TroerTrack (Risk Mitigation)</a></li>
+                    <button class="nav-dropdown-btn">Procurement <span aria-hidden="true">&#9662;</span></button>
+                    <ul class="dropdown-menu">
+                        <li><a href="/procurement-consulting/">Procurement Consulting</a></li>
+                        <li><a href="/procurement-as-a-service/">Procurement as a Service</a></li>
+                        <li><a href="/strategic-sourcing/">Strategic Sourcing</a></li>
+                        <li><a href="/procurement-cost-reduction/">Cost Reduction</a></li>
+                        <li><a href="/supplier-management/">Supplier Management</a></li>
+                        <li><a href="/global-sourcing/">Global Sourcing</a></li>
+                        <li><a href="/emergency-procurement-support/">Emergency Support</a></li>
                     </ul>
                 </div>
-                <a href="industries.html">Industry Expertise</a>
                 <div class="nav-dropdown group relative">
-                    <button class="nav-dropdown-btn flex items-center gap-1">About <span aria-hidden="true">&#9662;</span></button>
+                    <button class="nav-dropdown-btn">Supply Chain <span aria-hidden="true">&#9662;</span></button>
                     <ul class="dropdown-menu">
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="contact.html">Contact Us</a></li>
-                        <li><a href="blog.html">Blog</a></li>
-                        <li><a href="case-studies.html">Case Studies</a></li>
-                        <li><a href="privacy.html">Privacy Policy</a></li>
+                        <li><a href="/supply-chain-consulting/">Supply Chain Consulting</a></li>
+                        <li><a href="/supply-chain-resilience/">Supply Chain Resilience</a></li>
+                        <li><a href="/supplier-performance/">Supplier Performance</a></li>
+                        <li><a href="/logistics-and-inventory/">Logistics & Inventory</a></li>
+                        <li><a href="/supply-chain-risk/">Supply Chain Risk</a></li>
+                    </ul>
+                </div>
+                <div class="nav-dropdown group relative">
+                    <button class="nav-dropdown-btn">Projects <span aria-hidden="true">&#9662;</span></button>
+                    <ul class="dropdown-menu">
+                        <li><a href="/project-delivery-consulting/">Project Delivery</a></li>
+                        <li><a href="/project-recovery/">Project Recovery</a></li>
+                        <li><a href="/project-implementation/">Implementation Support</a></li>
+                        <li><a href="/project-capacity-support/">Capacity Support</a></li>
+                    </ul>
+                </div>
+                <a href="/industries/">Industries</a>
+                <a href="/insights/">Insights</a>
+                <div class="nav-dropdown group relative">
+                    <button class="nav-dropdown-btn">About <span aria-hidden="true">&#9662;</span></button>
+                    <ul class="dropdown-menu">
+                        <li><a href="/about/">About Troer</a></li>
+                        <li><a href="/contact/">Contact Us</a></li>
+                        <li><a href="/case-studies/">Case Studies</a></li>
+                        <li><a href="/privacy/">Privacy Policy</a></li>
                     </ul>
                 </div>
             </nav>
-            <a href="contact.html" class="btn-primary">WORK WITH US</a>
+            <a href="/contact/" class="btn-primary">Talk to Troer</a>
         </div>
     </header>
 
-    <section class="hero">
-        <div class="page-section">
-            <div class="hero-panel">
-                <span class="eyebrow">Operational Recovery Specialists</span>
-                <h1>Stop the Stress in Your Supply Chain.</h1>
-                <p>Troer steps into high-pressure operations, fixes the breakdowns that are costing you time and money, and leaves you with a system that runs cleanly.</p>
+    <main>
+        <!-- SECTION 1: HERO -->
+        <section class="hero">
+            <div class="container">
+                <span class="eyebrow">A Clearer View. A Brighter Tomorrow.</span>
+                <h1>Global Procurement, Supply Chain & Project Delivery Consultancy</h1>
+                <p class="intro-text">When costs rise, suppliers fail, supply chains become difficult to control or projects start slipping, businesses need more than another report.</p>
+                <p class="intro-text">Troer identifies what is getting in the way, creates a clear route forward and helps implement the solution.</p>
+                <p class="intro-text">From strategic sourcing and supplier performance to supply-chain improvement and critical project delivery, we provide experienced hands-on support when businesses need clarity, capability and action.</p>
+                <p class="intro-text" style="margin-bottom: 0;"><strong>UK-based. Supporting organisations globally.</strong></p>
                 <div class="hero-actions">
-                    <a class="primary-btn" href="contact.html">Book an Operational Audit</a>
-                    <a class="secondary-btn" href="industries.html">See Our Sector Expertise</a>
+                    <a href="/contact/" class="btn-primary" data-event="hero-talk-to-troer">Talk to Troer</a>
+                    <a href="/contact/" class="btn-secondary" data-event="hero-need-support">Need Support Now?</a>
                 </div>
+                <p class="supporting-text">Ad-hoc support. Defined projects. Ongoing delivery. Additional capacity.</p>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section class="services page-section">
-        <div class="services-grid">
-            <article class="service-card">
-                <span class="service-tag">Strategic Control</span>
-                <h3>Project Management</h3>
-                <p>We bring order to critical programmes, supplier coordination, and delivery risks before they become expensive failures.</p>
-                <a class="service-link" href="project-management.html">Explore Project Management</a>
-            </article>
-            <article class="service-card">
-                <span class="service-tag">Commercial Discipline</span>
-                <h3>Procurement &amp; Contractor Management</h3>
-                <p>Centralise spend, tighten compliance, and remove the hidden waste draining margin from your operation.</p>
-                <a class="service-link" href="procurement-contractor-management.html">Explore Procurement Control</a>
-            </article>
-            <article class="service-card">
-                <span class="service-tag">Systems Integration</span>
-                <h3>TroerConnect</h3>
-                <p>Bridge legacy systems, disconnected teams, and manual reporting into one practical source of truth.</p>
-                <a class="service-link" href="troerconnect.html">Explore TroerConnect</a>
-            </article>
-            <article class="service-card">
-                <span class="service-tag">Risk Visibility</span>
-                <h3>TroerTrack</h3>
-                <p>Spot bottlenecks earlier, strengthen forecasting, and make better operational decisions with live risk insight.</p>
-                <a class="service-link" href="troertrack.html">Explore TroerTrack</a>
-            </article>
-        </div>
-    </section>
-
-    <section class="section-pad">
-        <div class="page-section">
-            <div class="section-heading">
-                <h2>Built for teams under pressure.</h2>
-                <p>We work where operational mistakes hurt most: regulated sectors, complex contractor networks, and supply chains that need practical intervention rather than generic strategy decks.</p>
-            </div>
-            <div class="proof-grid">
-                <article class="proof-card">
-                    <div class="proof-stat">15+</div>
-                    <h3>Years of frontline experience</h3>
-                    <p>Deep delivery experience across NHS logistics, infrastructure programmes, procurement transformation, and supplier management.</p>
-                </article>
-                <article class="proof-card">
-                    <div class="proof-stat">72h</div>
-                    <h3>Risk visibility window</h3>
-                    <p>Our operating model is built around seeing problems early enough to actually prevent operational damage.</p>
-                </article>
-                <article class="proof-card">
-                    <div class="proof-stat">1 team</div>
-                    <h3>Single point of accountability</h3>
-                    <p>You work directly with senior operators, not layers of handoff between account managers, juniors, and vendors.</p>
-                </article>
-            </div>
-        </div>
-    </section>
-
-    <section class="sector-band">
-        <div class="page-section">
-            <div class="section-heading">
-                <h2>Where Troer does its best work.</h2>
-                <p>Our team is strongest where operations are complex, consequences are real, and supply chain visibility matters.</p>
-            </div>
-            <div class="sector-grid">
-                <article class="sector-card">
-                    <span class="sector-number">01 / NHS &amp; Healthcare</span>
-                    <h3>Clinical continuity without procurement chaos</h3>
-                    <p>We help healthcare teams centralise fragmented supply chains and protect the flow of critical equipment, stock, and contractor support.</p>
-                </article>
-                <article class="sector-card">
-                    <span class="sector-number">02 / Construction &amp; Infrastructure</span>
-                    <h3>Control over contractors, materials, and milestones</h3>
-                    <p>From Tier-1 compliance to delivery sequencing, we support complex project environments where delays quickly become commercial pain.</p>
-                </article>
-                <article class="sector-card">
-                    <span class="sector-number">03 / Enterprise &amp; Manufacturing</span>
-                    <h3>Visibility that supports growth</h3>
-                    <p>We help scaling businesses replace spreadsheets and disconnected systems with a supply chain structure they can trust.</p>
-                </article>
-            </div>
-        </div>
-    </section>
-
-    <section class="contact-strip" id="contact">
-        <div class="page-section contact-grid">
-            <div>
+        <!-- SECTION 2: PROBLEM-LED INTRODUCTION -->
+        <section class="content-section">
+            <div class="container">
                 <div class="section-heading">
-                    <h2>Talk to someone who can actually fix it.</h2>
-                    <p>If your supply chain feels reactive, fragmented, or opaque, we can help you identify the immediate risks and what to do next.</p>
+                    <h2>See the problem clearly. Solve the right problem.</h2>
+                    <p>Business problems rarely arrive neatly labelled as procurement, supply chain or project issues. A late supplier can become a project delay. A poor sourcing decision can become a margin problem. Weak supplier visibility can become an operational risk. An overstretched internal team can leave important actions sitting unresolved.</p>
                 </div>
-                <div class="contact-card">
-                    <div class="contact-detail">
-                        <strong>Email</strong>
-                        <span>info@troer.co.uk</span>
+                <p style="max-width: 820px; margin: 0 auto; color: var(--muted); font-size: 1.1rem; line-height: 1.7;">That is why Troer looks beyond the immediate symptom. We connect Procurement, Supply Chain and Project Delivery to understand what is happening, what is causing it and what needs to happen next. Then we help get it done.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 3: THREE CORE SERVICES -->
+        <section class="content-section">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>Three disciplines. One delivery partner.</h2>
+                    <p>Troer brings procurement, supply chain and project delivery together so that decisions made in one area work in the others.</p>
+                </div>
+                <div class="three-columns">
+                    <article class="pillar">
+                        <h3>Procurement</h3>
+                        <p class="tagline">Better buying. Better suppliers. Better commercial control.</p>
+                        <p>We provide practical procurement support from strategy through to implementation. Whether you need additional procurement capacity, a new supplier, better commercial terms or a complete review of how purchasing is managed, we work alongside your team to move the requirement forward.</p>
+                        <p><strong>Support includes:</strong></p>
+                        <ul>
+                            <li>Strategic sourcing</li>
+                            <li>Supplier identification and qualification</li>
+                            <li>Supplier negotiations</li>
+                            <li>Cost reduction and spend optimisation</li>
+                            <li>Supplier performance management</li>
+                            <li>Tender, RFQ and RFP support</li>
+                            <li>Procurement transformation & process improvement</li>
+                            <li>Contract and commercial support</li>
+                            <li>Global sourcing & emergency capacity</li>
+                        </ul>
+                        <a href="/procurement-consulting/" data-event="procurement-explore">Explore Procurement Support →</a>
+                    </article>
+                    <article class="pillar">
+                        <h3>Supply Chain</h3>
+                        <p class="tagline">More visibility. Less disruption.</p>
+                        <p>Supply chains become difficult when businesses cannot clearly see where risk, delay or dependency sits. Troer helps organisations understand their supply chain, identify weaknesses and put practical controls in place before those weaknesses become larger operational problems.</p>
+                        <p><strong>Support includes:</strong></p>
+                        <ul>
+                            <li>Supply-chain optimisation</li>
+                            <li>Supplier resilience & visibility</li>
+                            <li>Supplier performance management</li>
+                            <li>Supply-chain risk & inventory flow</li>
+                            <li>Logistics support</li>
+                            <li>Alternative sourcing</li>
+                            <li>Cross-border supply</li>
+                            <li>Contractor & supplier management</li>
+                            <li>Implementation support</li>
+                        </ul>
+                        <a href="/supply-chain-consulting/" data-event="supply-chain-explore">Explore Supply Chain Support →</a>
+                    </article>
+                    <article class="pillar">
+                        <h3>Projects</h3>
+                        <p class="tagline">Keep projects moving.</p>
+                        <p>Projects rarely go wrong because of one dramatic event. Problems build through missed decisions, supplier delays, weak ownership, communication gaps and issues that remain unresolved for too long. Troer brings structure, accountability and delivery focus back into the project.</p>
+                        <p><strong>Support includes:</strong></p>
+                        <ul>
+                            <li>Project delivery & recovery</li>
+                            <li>Programme coordination</li>
+                            <li>Supplier and contractor coordination</li>
+                            <li>Procurement-led project support</li>
+                            <li>Project controls & risk management</li>
+                            <li>Implementation planning</li>
+                            <li>Stakeholder coordination</li>
+                            <li>Additional project capacity</li>
+                            <li>Critical project intervention</li>
+                        </ul>
+                        <a href="/project-delivery-consulting/" data-event="projects-explore">Explore Project Support →</a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: PROCUREMENT FEATURE -->
+        <section class="content-full-width">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>Procurement should protect more than price.</h2>
+                    <p>Good procurement is not simply about buying something for less. It should protect margin, continuity, quality, project delivery and the wider business. Troer helps organisations strengthen procurement from both a commercial and operational perspective.</p>
+                </div>
+                <p style="max-width: 820px; margin: 0 auto 48px; color: var(--muted); font-size: 1.1rem; line-height: 1.7;">We can support an existing procurement function, provide additional capability during periods of pressure or take ownership of a defined sourcing requirement from initial need through to supplier implementation.</p>
+
+                <div class="three-columns">
+                    <div class="pillar">
+                        <h4 style="margin: 0 0 12px;">Need another supplier?</h4>
+                        <p>We can support supplier identification, market engagement, qualification, negotiation and implementation.</p>
                     </div>
-                    <div class="contact-detail">
-                        <strong>Phone</strong>
-                        <span>01962 393842</span>
+                    <div class="pillar">
+                        <h4 style="margin: 0 0 12px;">Costs increasing?</h4>
+                        <p>We can review suppliers, commercial terms, sourcing routes and areas of spend to identify realistic opportunities for improvement.</p>
                     </div>
-                    <div class="contact-detail">
-                        <strong>Based in</strong>
-                        <span>London, United Kingdom</span>
+                    <div class="pillar">
+                        <h4 style="margin: 0 0 12px;">Procurement team overstretched?</h4>
+                        <p>Add experienced capacity without immediately adding permanent headcount.</p>
+                    </div>
+                    <div class="pillar">
+                        <h4 style="margin: 0 0 12px;">Supplier performance deteriorating?</h4>
+                        <p>We can help establish clearer performance expectations, accountability, measures and corrective actions.</p>
+                    </div>
+                    <div class="pillar">
+                        <h4 style="margin: 0 0 12px;">Need to change how procurement operates?</h4>
+                        <p>We can review processes, supplier structures, systems and controls and help implement the changes.</p>
+                    </div>
+                    <div class="pillar">
+                        <h4 style="margin: 0 0 12px;">Urgent sourcing problem?</h4>
+                        <p>Troer can provide focused sourcing and procurement intervention when a requirement cannot wait for a long consultancy programme.</p>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 48px;">
+                    <a href="/procurement-consulting/" class="btn-primary" data-event="procurement-feature-cta">Discuss a Procurement Requirement</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: THE TROER DIFFERENCE -->
+        <section class="content-section">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>We don't disappear when the presentation ends.</h2>
+                    <p>There is a place for strategy. But strategy only creates value when something changes afterwards. Troer is built around implementation. We can diagnose the problem, develop the approach, work with suppliers and stakeholders, establish the controls and stay involved while the solution is put into practice.</p>
+                </div>
+                <div class="process-steps">
+                    <div class="step">
+                        <div class="step-number">01</div>
+                        <h4>Understand</h4>
+                        <p>We establish what is happening, where the pressure sits and what outcome the business actually needs.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">02</div>
+                        <h4>Investigate</h4>
+                        <p>We look beyond the visible symptom to understand suppliers, processes, commercial exposure, risks, dependencies and constraints.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">03</div>
+                        <h4>Create Clarity</h4>
+                        <p>We turn complexity into a clear set of priorities, actions and decisions.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">04</div>
+                        <h4>Implement</h4>
+                        <p>We work alongside your people, suppliers and stakeholders to put the solution into practice.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">05</div>
+                        <h4>Stabilise</h4>
+                        <p>We establish the controls, ownership and visibility needed for the improvement to continue.</p>
+                    </div>
+                </div>
+                <p style="text-align: center; margin-top: 60px; font-size: 1.15rem; font-weight: 600; color: var(--navy);">A clearer view of today. A stronger position for tomorrow.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 6: ENGAGEMENT TYPES -->
+        <section class="content-full-width">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>Support that fits the problem — not the other way around.</h2>
+                    <p>You do not always need a six-month consultancy programme. Sometimes you need somebody experienced to step in and fix one problem. Sometimes a project needs additional control. Sometimes your procurement team simply needs more capacity. Troer can be engaged around the requirement.</p>
+                </div>
+                <div class="engagement-types">
+                    <div class="engagement-card">
+                        <h4>Rapid / Ad-hoc Support</h4>
+                        <p>Focused intervention when something important needs attention quickly.</p>
+                    </div>
+                    <div class="engagement-card">
+                        <h4>Defined Project</h4>
+                        <p>A clear scope, objective and delivery requirement with Troer taking responsibility for agreed workstreams.</p>
+                    </div>
+                    <div class="engagement-card">
+                        <h4>Additional Capacity</h4>
+                        <p>Experienced procurement, supply-chain or project capability alongside your existing team.</p>
+                    </div>
+                    <div class="engagement-card">
+                        <h4>Ongoing Support</h4>
+                        <p>Flexible continuing support without automatically creating another permanent internal position.</p>
+                    </div>
+                    <div class="engagement-card">
+                        <h4>Transformation & Improvement</h4>
+                        <p>A structured programme where processes, suppliers, systems or ways of working need to change.</p>
+                    </div>
+                    <div class="engagement-card" style="grid-column: 1 / -1; max-width: 50%; margin: 0 auto;">
+                        <h4>Multiple Markets</h4>
+                        <p>One requirement. Multiple markets. Suppliers, projects and operational risks do not stop at national borders. We support organisations with domestic and cross-border requirements, combining commercial understanding with practical implementation.</p>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 48px;">
+                    <a href="/contact/" class="btn-primary" data-event="engagement-discuss">Discuss the Right Approach</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 7: GLOBAL CAPABILITY -->
+        <section class="content-section">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>UK-based. Supporting organisations globally.</h2>
+                    <p>Suppliers, projects and operational risks do not stop at national borders. Troer supports organisations with domestic and cross-border requirements, combining commercial understanding with practical implementation. Support can be delivered remotely, on-site or through a combination of both depending on the requirement.</p>
+                </div>
+                <p style="max-width: 820px; margin: 0 auto 48px; color: var(--muted); font-size: 1.1rem; line-height: 1.7;">Our work can include international supplier identification, global sourcing, cross-border supplier coordination, procurement support and supply-chain problem solving.</p>
+                <p style="text-align: center; font-size: 1.15rem; font-weight: 600; color: var(--navy); margin-bottom: 32px;">One requirement. Multiple markets. Clear ownership.</p>
+                <div style="text-align: center;">
+                    <a href="/contact/" class="btn-primary" data-event="global-discuss">Discuss a Global Requirement</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 8: EXPERIENCE -->
+        <section class="content-full-width">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>Practical experience in complex environments.</h2>
+                    <p>Our experience spans organisations where procurement, suppliers and project delivery directly affect day-to-day operations.</p>
+                </div>
+                <div class="sector-grid">
+                    <div class="sector-card">
+                        <h3>Retail & Multi-Site Operations</h3>
+                        <p>High-volume environments where supplier consistency, cost, speed and coordination matter.</p>
+                    </div>
+                    <div class="sector-card">
+                        <h3>Hospitality & Leisure</h3>
+                        <p>Multi-site projects, supplier management, sourcing and operational delivery.</p>
+                    </div>
+                    <div class="sector-card">
+                        <h3>Construction & Property</h3>
+                        <p>Materials, contractors, compliance, sourcing, programme requirements and project delivery.</p>
+                    </div>
+                    <div class="sector-card">
+                        <h3>Healthcare & Public Sector</h3>
+                        <p>Structured procurement, supplier management, frameworks, compliance and operational continuity.</p>
+                    </div>
+                    <div class="sector-card">
+                        <h3>Corporate & Operational Procurement</h3>
+                        <p>Indirect procurement, supplier rationalisation, commercial improvement and additional capacity.</p>
+                    </div>
+                    <div class="sector-card">
+                        <h3>International & Cross-Border Supply</h3>
+                        <p>Supplier sourcing, commercial risk, alternative supply and coordination across different markets.</p>
+                    </div>
+                </div>
+                <p style="text-align: center; margin-top: 48px; font-size: 1.1rem; color: var(--muted); line-height: 1.7;"><strong>Our focus remains the same regardless of sector: Understand the requirement. Make the problem visible. Put the right solution into action.</strong></p>
+            </div>
+        </section>
+
+        <!-- SECTION 9: WHEN TO CALL TROER -->
+        <section class="content-section">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>You do not need to wait until something becomes a crisis.</h2>
+                    <p>Speak to us when any of these situations applies to your business.</p>
+                </div>
+                <div class="situation-list">
+                    <div class="situation-item">A critical supplier is becoming unreliable.</div>
+                    <div class="situation-item">Procurement does not have enough capacity.</div>
+                    <div class="situation-item">Costs are increasing and nobody has properly challenged why.</div>
+                    <div class="situation-item">You need to source something difficult.</div>
+                    <div class="situation-item">A project is starting to slip.</div>
+                    <div class="situation-item">Supplier performance is difficult to measure.</div>
+                    <div class="situation-item">Teams are spending too much time chasing suppliers and contractors.</div>
+                    <div class="situation-item">You need alternative suppliers or alternative supply routes.</div>
+                    <div class="situation-item">A transformation programme needs somebody to actually implement the changes.</div>
+                    <div class="situation-item">A supply-chain problem is affecting customers, operations or revenue.</div>
+                    <div class="situation-item">You know something is wrong but do not yet have a clear view of the cause.</div>
+                    <div class="situation-item">That last situation is often where Troer adds the most value.</div>
+                </div>
+                <div style="text-align: center; margin-top: 48px;">
+                    <a href="/contact/" class="btn-primary" data-event="when-to-call">Tell Us What's Happening</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 10: INSIGHTS -->
+        <section class="content-full-width">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>What is changing — and what businesses can do about it.</h2>
+                    <p>Supply chains, supplier markets, regulation, global trade, technology and project risks change constantly. Our Insights look at current events through a practical business lens: what happened, who could be affected, what is the potential impact, and what can businesses do now.</p>
+                </div>
+                <div class="insights-grid">
+                    <article class="insight-card">
+                        <div class="insight-card-body">
+                            <span class="insight-category">Supply Chain</span>
+                            <h4>UK Supply Chains in 2025: What Businesses Need to Know</h4>
+                            <p>UK supply chains are facing new challenges in 2025. Here is what is changing and what your business should focus on.</p>
+                            <div class="insight-meta">
+                                <span>Published: 2026-01-20</span>
+                                <a href="/blog-uk-supply-chains-2025.html" class="insight-link">Read →</a>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="insight-card">
+                        <div class="insight-card-body">
+                            <span class="insight-category">Procurement</span>
+                            <h4>Cut Procurement Costs Without Cutting Quality</h4>
+                            <p>Cost reduction is often procurement's first responsibility. But how do you save money without damaging supplier relationships or quality?</p>
+                            <div class="insight-meta">
+                                <span>Published: 2025-12-10</span>
+                                <a href="/blog-cut-procurement-costs.html" class="insight-link">Read →</a>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="insight-card">
+                        <div class="insight-card-body">
+                            <span class="insight-category">Projects</span>
+                            <h4>Tier-1 Contractor Management on Major Projects</h4>
+                            <p>Managing large contractors on major projects requires clear ownership, realistic expectations and structured oversight. Here is how to get it right.</p>
+                            <div class="insight-meta">
+                                <span>Published: 2025-11-15</span>
+                                <a href="/blog-tier-1-contractor-management.html" class="insight-link">Read →</a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+                <div style="text-align: center; margin-top: 48px;">
+                    <a href="/insights/" class="btn-primary" data-event="insights-view-all">View All Insights</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 11: FAQs -->
+        <section class="content-section">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>Procurement, Supply Chain & Project Support FAQs</h2>
+                </div>
+                <div class="faq-grid">
+                    <div class="faq-item">
+                        <h4>What does a procurement consultancy do?</h4>
+                        <p>A procurement consultancy can help organisations improve how they source, select, negotiate with and manage suppliers. Troer goes further by providing hands-on implementation support rather than limiting the engagement to recommendations.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>Can Troer work alongside our existing procurement team?</h4>
+                        <p>Yes. Troer can provide additional procurement capacity alongside an internal team, take ownership of a specific sourcing exercise or support a wider procurement improvement programme.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>Do you offer outsourced procurement?</h4>
+                        <p>Yes. Troer can support defined procurement activities or provide ongoing outsourced procurement capability depending on the organisation's requirements.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>Can you help us find new suppliers?</h4>
+                        <p>Yes. Supplier sourcing can include market research, supplier identification, initial engagement, qualification, commercial comparison, negotiation and implementation support.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>Do you support international sourcing?</h4>
+                        <p>Yes. Troer can support domestic and cross-border sourcing requirements and help organisations identify, assess and coordinate suppliers across international markets.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>Can you help with an urgent supplier problem?</h4>
+                        <p>Yes. Troer offers focused procurement and supply-chain intervention for urgent situations including supplier issues, difficult sourcing requirements and additional short-term capacity.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>Are you purely an advisory consultancy?</h4>
+                        <p>No. Implementation is central to the Troer model. We can help identify the solution and remain involved while the agreed changes are implemented.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>Can Troer support a short project rather than a long consultancy engagement?</h4>
+                        <p>Yes. Support can be ad-hoc, project-based, ongoing or structured around additional temporary capacity.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>Do you work remotely?</h4>
+                        <p>Yes. Many procurement, supplier, supply-chain and project activities can be supported remotely. On-site support can also form part of an engagement where appropriate.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>Where does Troer operate?</h4>
+                        <p>Troer is UK-based and can support organisations with UK and international procurement, supply-chain and project requirements.</p>
                     </div>
                 </div>
             </div>
-            <div class="contact-card">
-                <form class="contact-form" action="https://api.web3forms.com/submit" method="POST">
-                    <input type="hidden" name="access_key" value="7b912fef-647c-43af-90fb-1cf0fc0df2d2">
-                    <input type="hidden" name="subject" value="New Enquiry from Troer Website">
-                    <input type="hidden" name="from_name" value="Troer Website">
-                    <input type="hidden" name="redirect" value="https://troer.co.uk/">
-                    <label>Full Name
-                        <input type="text" name="name" placeholder="Your full name" required>
-                    </label>
-                    <label>Company
-                        <input type="text" name="company" placeholder="Your company">
-                    </label>
-                    <label>Email
-                        <input type="email" name="email" placeholder="name@company.com" required>
-                    </label>
-                    <label>Message
-                        <textarea name="message" placeholder="Tell us what is breaking down in the operation." required></textarea>
-                    </label>
-                    <button class="primary-btn" type="submit">Get a Personalised Response</button>
-                </form>
+        </section>
+
+        <!-- SECTION 12: FINAL CTA -->
+        <section class="final-cta">
+            <div class="container">
+                <h2>A Clearer View. A Brighter Tomorrow.</h2>
+                <p>Start with the problem. You do not need to know which Troer service you need. Tell us what is happening: a supplier problem, rising costs, a difficult sourcing requirement, an overstretched team, a project slipping, or a supply chain that does not provide enough visibility. We will start by understanding the problem. Then we can establish what needs to happen next.</p>
+                <div class="button-group">
+                    <a href="/contact/" class="btn-primary" data-event="final-cta-talk">Talk to Troer</a>
+                    <a href="mailto:info@troer.co.uk" class="btn-secondary" data-event="final-cta-email">Email Us</a>
+                </div>
+                <p class="supporting">Procurement | Supply Chain | Projects<br>UK-based. Global support.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div>
+                <h3>Troer</h3>
+                <p>Procurement. Supply Chain. Project Delivery.</p>
+                <p>Practical consultancy and implementation support for organisations that need greater clarity, stronger control and better delivery.</p>
+                <p><em>A Clearer View. A Brighter Tomorrow.</em></p>
+            </div>
+            <div>
+                <h3>Services</h3>
+                <ul>
+                    <li><a href="/procurement-consulting/">Procurement</a></li>
+                    <li><a href="/supply-chain-consulting/">Supply Chain</a></li>
+                    <li><a href="/project-delivery-consulting/">Projects</a></li>
+                    <li><a href="/industries/">Industries</a></li>
+                    <li><a href="/insights/">Insights</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Company</h3>
+                <ul>
+                    <li><a href="/about/">About Troer</a></li>
+                    <li><a href="/contact/">Contact Us</a></li>
+                    <li><a href="/case-studies/">Case Studies</a></li>
+                    <li><a href="privacy/">Privacy Policy</a></li>
+                    <li><a href="mailto:info@troer.co.uk">Email: info@troer.co.uk</a></li>
+                    <li><a href="tel:+441962393842">Phone: +44 1962 393842</a></li>
+                </ul>
             </div>
         </div>
-    </section>
-
-    <footer class="footer">
-        <p>&copy; 2026 Troer. All rights reserved.</p>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Troer. All rights reserved. | <a href="/privacy/" style="color: var(--navy);">Privacy Policy</a></p>
+        </div>
     </footer>
 
     <script src="nav.js"></script>
