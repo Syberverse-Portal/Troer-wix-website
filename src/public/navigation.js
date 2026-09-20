@@ -4,26 +4,34 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Toggle main menu
     if (navToggle && navLinks) {
-        navToggle.addEventListener('click', function() {
+        navToggle.addEventListener('click', function(e) {
+            e.preventDefault();
             const isOpen = navLinks.classList.toggle('active');
             navToggle.setAttribute('aria-expanded', isOpen);
             navToggle.classList.toggle('active');
         });
 
-        // Handle dropdown buttons
+        // Handle dropdown buttons - both <a> and <button> tags
         const dropdownButtons = navLinks.querySelectorAll('.nav-dropdown-btn');
         dropdownButtons.forEach(button => {
             button.addEventListener('click', function(e) {
                 const dropdown = this.closest('.nav-dropdown');
                 if (dropdown) {
-                    dropdown.classList.toggle('expanded');
                     e.preventDefault();
                     e.stopPropagation();
+                    // Close other dropdowns
+                    document.querySelectorAll('.nav-dropdown.expanded').forEach(dd => {
+                        if (dd !== dropdown) {
+                            dd.classList.remove('expanded');
+                        }
+                    });
+                    // Toggle this dropdown
+                    dropdown.classList.toggle('expanded');
                 }
             });
         });
 
-        // Close menu when a regular link is clicked
+        // Close menu when clicking a regular link
         const regularLinks = navLinks.querySelectorAll('a:not(.nav-dropdown-btn)');
         regularLinks.forEach(link => {
             link.addEventListener('click', function() {
@@ -41,6 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!navToggle.contains(event.target) && !navLinks.contains(event.target)) {
                 navLinks.classList.remove('active');
                 navToggle.classList.remove('active');
+                navToggle.setAttribute('aria-expanded', 'false');
             }
         });
     }
