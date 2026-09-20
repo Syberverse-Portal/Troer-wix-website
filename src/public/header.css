@@ -202,8 +202,6 @@
 
     .dropdown-menu {
         position: static !important;
-        opacity: 0;
-        visibility: hidden;
         max-height: 0;
         overflow: hidden;
         transform: none !important;
@@ -215,17 +213,15 @@
         box-shadow: none;
         margin: 0;
         padding: 0;
-        transition: max-height 0.3s ease, opacity 0.3s ease;
+        transition: max-height 0.4s ease-in-out;
         z-index: auto;
         border-radius: 0;
+        display: block;
     }
 
     .nav-dropdown.expanded .dropdown-menu {
-        opacity: 1 !important;
-        visibility: visible !important;
-        max-height: 600px !important;
+        max-height: 800px !important;
         overflow-y: auto !important;
-        display: block !important;
     }
 
     .dropdown-menu a,
