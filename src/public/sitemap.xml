@@ -10,6 +10,14 @@
   <url><loc>https://www.troer.co.uk/insights/</loc><priority>0.8</priority><changefreq>weekly</changefreq></url>
   <url><loc>https://www.troer.co.uk/case-studies/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
 
+  <!-- Industry Pages (6 pages) -->
+  <url><loc>https://www.troer.co.uk/industries/retail-multi-site/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://www.troer.co.uk/industries/hospitality-leisure/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://www.troer.co.uk/industries/construction-property/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://www.troer.co.uk/industries/healthcare/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://www.troer.co.uk/industries/public-sector/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://www.troer.co.uk/industries/manufacturing-engineering/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+
   <!-- Procurement Services (7 pages) -->
   <url><loc>https://www.troer.co.uk/procurement-consulting/</loc><priority>0.9</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://www.troer.co.uk/procurement-as-a-service/</loc><priority>0.85</priority><changefreq>monthly</changefreq></url>
@@ -38,10 +46,9 @@
   <url><loc>https://www.troer.co.uk/troerconnect/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://www.troer.co.uk/troertrack/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
 
-  <!-- Blog/Insights Articles -->
-  <url><loc>https://www.troer.co.uk/blog/</loc><priority>0.7</priority><changefreq>weekly</changefreq></url>
-  <url><loc>https://www.troer.co.uk/blog-uk-supply-chains-2025/</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
-  <url><loc>https://www.troer.co.uk/blog-cut-procurement-costs/</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
-  <url><loc>https://www.troer.co.uk/blog-tier-1-contractor-management/</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
-  <url><loc>https://www.troer.co.uk/blog-nhs-supply-chain-reform/</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <!-- Insights Articles -->
+  <url><loc>https://www.troer.co.uk/insights/articles/uk-supply-chains-2025/</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://www.troer.co.uk/insights/articles/nhs-supply-chain-reform/</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://www.troer.co.uk/insights/articles/tier-1-contractor-management/</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://www.troer.co.uk/insights/articles/cut-procurement-costs/</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
 </urlset>

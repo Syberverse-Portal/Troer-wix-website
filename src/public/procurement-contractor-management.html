@@ -18,6 +18,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="header.css">
+    <link rel="stylesheet" href="mobile.css">
   <style>
     .glass-panel {
       background: rgba(255,255,255,0.08);
@@ -49,6 +50,7 @@
   <header class="main-header">
     <div class="container header-shell">
       <a href="index.html" class="logo">Troer</a>
+            <button class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">☰</button>
       <nav class="nav-links">
         <div class="nav-dropdown group relative">
           <button class="nav-dropdown-btn flex items-center gap-1">Solutions <span aria-hidden="true">&#9662;</span></button>
@@ -65,7 +67,7 @@
           <ul class="dropdown-menu">
             <li><a href="about.html">About Us</a></li>
             <li><a href="contact.html">Contact Us</a></li>
-            <li><a href="blog.html">Blog</a></li>
+            <li><a href="insights/index.html">Insights</a></li>
             <li><a href="case-studies.html">Case Studies</a></li>
             <li><a href="privacy.html">Privacy Policy</a></li>
           </ul>
@@ -181,5 +183,6 @@
   </footer>
 
   <script src="nav.js"></script>
+    <script src="navigation.js"></script>
 </body>
 </html>

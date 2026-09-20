@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supply Chain Insights | Troer</title>
+    <meta name="description" content="Research-backed insights on supply chain resilience, procurement strategy, and operational risk. Read how leading organisations strengthen their supply chain control.">
+    <link rel="canonical" href="https://troer.co.uk/insights/">
+    <meta property="og:title" content="Supply Chain Insights | Troer">
+    <meta property="og:description" content="Research-backed insights on supply chain resilience, procurement strategy, and operational risk for resilient organisations.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://troer.co.uk/insights/">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../header.css">
+    <link rel="stylesheet" href="../mobile.css">
+    <style>
+        :root { --navy:#0b2a58; --deep-navy:#081d3e; --blue-start:#4a90e2; --blue-end:#2962ff; --line:#dbe6f2; --muted:#637286; --text:#12233b; }
+        * { box-sizing:border-box; }
+        body { margin:0; font-family:'Inter',sans-serif; color:var(--text); background:linear-gradient(180deg,#f8fbff 0%,#ffffff 46%); }
+        .wrap { width:min(1180px,92vw); margin:0 auto; }
+        .hero { padding:84px 0 68px; background:radial-gradient(circle at 18% 0%, rgba(74,144,226,0.22), transparent 26%), linear-gradient(180deg,var(--navy) 0%,var(--deep-navy) 100%); color:#fff; }
+        .eyebrow { display:inline-block; padding:8px 14px; border-radius:999px; background:rgba(255,255,255,0.12); color:#a8cdff; font-size:13px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; }
+        .hero h1 { margin:18px 0 14px; font-size:clamp(2.6rem,5vw,4.6rem); line-height:0.98; letter-spacing:-0.05em; }
+        .hero p { max-width:740px; margin:0; color:#d2def0; line-height:1.75; font-size:1.08rem; }
+
+        .section { padding:82px 0; }
+        .toolbar { display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; margin-bottom:40px; }
+        .toolbar-copy h2 { margin:0 0 8px; color:var(--navy); font-size:clamp(2rem,4vw,2.8rem); letter-spacing:-0.04em; }
+        .toolbar-copy p { margin:0; color:var(--muted); line-height:1.7; }
+
+        .filters { display:flex; flex-wrap:wrap; gap:10px; }
+        .filter-btn { border:1px solid var(--line); background:#fff; color:var(--navy); border-radius:999px; padding:10px 16px; font:inherit; font-weight:700; cursor:pointer; transition:all 0.2s ease; }
+        .filter-btn:hover { border-color:var(--blue-end); }
+        .filter-btn.is-active { color:#fff; border-color:transparent; background:linear-gradient(135deg,var(--blue-start),var(--blue-end)); box-shadow:0 12px 24px rgba(41,98,255,0.24); }
+
+        .insights-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; margin-bottom:40px; }
+        .insight-card { display:grid; gap:14px; padding:26px; border-radius:26px; background:#fff; border:1px solid var(--line); box-shadow:0 16px 36px rgba(8,29,61,0.08); transition:transform 0.2s ease, box-shadow 0.2s ease; }
+        .insight-card:hover { transform:translateY(-4px); box-shadow:0 22px 42px rgba(8,29,61,0.12); }
+        .insight-card[hidden] { display:none; }
+
+        .insight-meta { display:flex; flex-wrap:wrap; gap:10px; align-items:center; color:var(--muted); font-size:0.92rem; }
+        .insight-tag { display:inline-block; padding:6px 11px; border-radius:999px; background:#eef5ff; color:var(--blue-end); font-weight:800; letter-spacing:0.06em; text-transform:uppercase; font-size:0.74rem; }
+        .insight-card h3 { margin:0; color:var(--navy); font-size:1.35rem; line-height:1.25; }
+        .insight-card p { margin:0; color:var(--muted); line-height:1.8; }
+        .insight-link { color:var(--navy); font-weight:800; text-decoration:none; }
+
+        .related-services { margin-top:20px; padding-top:14px; border-top:1px solid var(--line); }
+        .related-services-label { font-size:0.85rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:8px; }
+        .service-links { display:flex; flex-wrap:wrap; gap:8px; }
+        .service-link { font-size:0.9rem; padding:6px 11px; border-radius:6px; background:#f0f4f9; color:var(--navy); text-decoration:none; font-weight:600; transition:background 0.2s ease; }
+        .service-link:hover { background:#e0e8f0; }
+
+        .breadcrumb { padding:20px 0 0; color:var(--muted); font-size:0.9rem; }
+        .breadcrumb a { color:var(--navy); text-decoration:none; font-weight:600; }
+        .breadcrumb a:hover { text-decoration:underline; }
+        .footer { padding:24px 0 34px; text-align:center; color:var(--muted); font-size:0.94rem; }
+
+        @media (max-width:980px) { .insights-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+        @media (max-width:720px) { .insights-grid { grid-template-columns:1fr; } .toolbar { flex-direction:column; align-items:flex-start; } .filters { justify-content:flex-start; } }
+    </style>
+</head>
+<body>
+<header class="main-header"><div class="container header-shell"><a href="../index.html" class="logo">Troer</a>
+            <button class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">☰</button><nav class="nav-links"><div class="nav-dropdown group relative"><button class="nav-dropdown-btn flex items-center gap-1">Solutions <span aria-hidden="true">&#9662;</span></button><ul class="dropdown-menu w-80 max-w-xl rounded-2xl shadow-xl border border-gray-200 bg-white grid grid-cols-1 divide-y divide-gray-100 p-0"><li><a href="../project-management.html" class="block px-5 py-3 font-bold text-navy hover:bg-blue-50/50 transition">Project Management</a></li><li><a href="../procurement-contractor-management.html" class="block px-5 py-3 font-bold text-navy hover:bg-blue-50/50 transition">Procurement &amp; Contractor Management</a></li><li><a href="../troerconnect.html" class="block px-5 py-3 font-bold text-navy hover:bg-blue-50/50 transition">TroerConnect (System Integration)</a></li><li><a href="../troertrack.html" class="block px-5 py-3 font-bold text-navy hover:bg-blue-50/50 transition">TroerTrack (Risk Mitigation)</a></li></ul></div><a href="../industries.html">Industry Expertise</a><div class="nav-dropdown group relative"><button class="nav-dropdown-btn flex items-center gap-1">About <span aria-hidden="true">&#9662;</span></button><ul class="dropdown-menu"><li><a href="../about.html">About Us</a></li><li><a href="../contact.html">Contact Us</a></li><li><a href="index.html">Insights</a></li><li><a href="../case-studies.html">Case Studies</a></li><li><a href="../privacy.html">Privacy Policy</a></li></ul></div></nav><a href="../contact.html" class="btn-primary">WORK WITH US</a></div></header>
+
+<div class="breadcrumb"><div class="wrap"><a href="../index.html">Home</a> / Insights</div></div>
+
+<section class="hero"><div class="wrap"><span class="eyebrow">Troer Insights</span><h1>Research-backed supply chain thinking.</h1><p>Filter by topic, reduce the visual length, and click through to read the full article. Get actionable perspectives on procurement, supply chain resilience, and operational risk.</p></div></section>
+
+<section class="section"><div class="wrap"><div class="toolbar"><div class="toolbar-copy"><h2>Insights by category</h2><p>Filter articles by operational theme so you can quickly focus on the topics that matter most to your organisation.</p></div><div class="filters" role="tablist" aria-label="Filter insights"><button class="filter-btn is-active" data-filter="all" type="button">All</button><button class="filter-btn" data-filter="procurement" type="button">Procurement</button><button class="filter-btn" data-filter="supply-chain" type="button">Supply Chain</button><button class="filter-btn" data-filter="projects" type="button">Projects</button><button class="filter-btn" data-filter="global-trade" type="button">Global Trade</button><button class="filter-btn" data-filter="supplier-management" type="button">Supplier Management</button><button class="filter-btn" data-filter="business-resilience" type="button">Business Resilience</button></div></div>
+
+<div class="insights-grid">
+<article class="insight-card" data-category="supply-chain procurement">
+    <div class="insight-meta"><span class="insight-tag">Supply Chain</span><span>June 2025</span><span>8 min read</span></div>
+    <h3>Why UK Supply Chains Are Still Broken in 2025</h3>
+    <p>An overview of the structural failures still damaging UK operations, from siloed data and slow reporting to reactive contractor management.</p>
+    <a class="insight-link" href="articles/uk-supply-chains-2025.html">Read full insight →</a>
+    <div class="related-services">
+        <span class="related-services-label">Related solutions</span>
+        <div class="service-links">
+            <a href="../troertrack.html" class="service-link">Risk Mitigation</a>
+            <a href="../procurement-contractor-management.html" class="service-link">Contractor Management</a>
+            <a href="../troerconnect.html" class="service-link">System Integration</a>
+        </div>
+    </div>
+</article>
+
+<article class="insight-card" data-category="supply-chain procurement">
+    <div class="insight-meta"><span class="insight-tag">Supply Chain</span><span>June 2025</span><span>7 min read</span></div>
+    <h3>NHS Supply Chain Reform and Centralised Procurement</h3>
+    <p>Why fragmented trust-by-trust procurement creates waste and what effective centralisation looks like in practice.</p>
+    <a class="insight-link" href="articles/nhs-supply-chain-reform.html">Read full insight →</a>
+    <div class="related-services">
+        <span class="related-services-label">Related solutions</span>
+        <div class="service-links">
+            <a href="../procurement-contractor-management.html" class="service-link">Procurement Strategy</a>
+            <a href="../project-management.html" class="service-link">Project Management</a>
+        </div>
+    </div>
+</article>
+
+<article class="insight-card" data-category="projects supplier-management">
+    <div class="insight-meta"><span class="insight-tag">Projects</span><span>July 2025</span><span>9 min read</span></div>
+    <h3>Tier-1 Contractor Management: Avoiding Budget Blowouts</h3>
+    <p>A practical look at the mistakes that create project overruns when compliance, sequencing, and subcontractor visibility are weak.</p>
+    <a class="insight-link" href="articles/tier-1-contractor-management.html">Read full insight →</a>
+    <div class="related-services">
+        <span class="related-services-label">Related solutions</span>
+        <div class="service-links">
+            <a href="../project-management.html" class="service-link">Project Management</a>
+            <a href="../procurement-contractor-management.html" class="service-link">Contractor Management</a>
+            <a href="../troertrack.html" class="service-link">Risk Tracking</a>
+        </div>
+    </div>
+</article>
+
+<article class="insight-card" data-category="procurement supply-chain">
+    <div class="insight-meta"><span class="insight-tag">Procurement</span><span>August 2025</span><span>7 min read</span></div>
+    <h3>How to Cut Procurement Costs Without Cutting Corners</h3>
+    <p>Where procurement waste usually hides, which levers matter most, and why sustainable savings come from better control rather than blunt cost-cutting.</p>
+    <a class="insight-link" href="articles/cut-procurement-costs.html">Read full insight →</a>
+    <div class="related-services">
+        <span class="related-services-label">Related solutions</span>
+        <div class="service-links">
+            <a href="../procurement-contractor-management.html" class="service-link">Procurement Strategy</a>
+            <a href="../troerconnect.html" class="service-link">Visibility & Control</a>
+        </div>
+    </div>
+</article>
+</div>
+
+</div></section>
+
+<footer class="footer"><p>&copy; 2026 Troer. All rights reserved.</p></footer>
+
+<script src="../nav.js"></script>
+<script>
+const buttons = document.querySelectorAll('.filter-btn');
+const cards = document.querySelectorAll('.insight-card');
+
+buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+        const filter = button.dataset.filter;
+        buttons.forEach((item) => item.classList.remove('is-active'));
+        button.classList.add('is-active');
+        cards.forEach((card) => {
+            const categories = card.dataset.category.split(' ');
+            const show = filter === 'all' || categories.includes(filter);
+            card.hidden = !show;
+        });
+    });
+});
+</script>
+<script src="../navigation.js"></script>
+</body>
+</html>

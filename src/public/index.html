@@ -17,6 +17,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="header.css">
+    <link rel="stylesheet" href="mobile.css">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-L795LSG1ZL"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -531,49 +532,186 @@
     <header class="main-header">
         <div class="container header-shell">
             <a href="/" class="logo">Troer</a>
+            <button class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">☰</button>
             <nav class="nav-links">
-                <div class="nav-dropdown group relative">
-                    <button class="nav-dropdown-btn">Procurement <span aria-hidden="true">&#9662;</span></button>
-                    <ul class="dropdown-menu">
-                        <li><a href="/procurement-consulting/">Procurement Consulting</a></li>
-                        <li><a href="/procurement-as-a-service/">Procurement as a Service</a></li>
-                        <li><a href="/strategic-sourcing/">Strategic Sourcing</a></li>
-                        <li><a href="/procurement-cost-reduction/">Cost Reduction</a></li>
-                        <li><a href="/supplier-management/">Supplier Management</a></li>
-                        <li><a href="/global-sourcing/">Global Sourcing</a></li>
-                        <li><a href="/emergency-procurement-support/">Emergency Support</a></li>
-                    </ul>
+                <!-- Procurement Mega Menu -->
+                <div class="nav-dropdown mega-dropdown group relative">
+                    <a href="/procurement-consulting/" class="nav-dropdown-btn">Procurement <span aria-hidden="true">&#9662;</span></a>
+                    <div class="dropdown-menu">
+                        <!-- Column 1: Main Hub + Strategic Services -->
+                        <div class="mega-menu-section">
+                            <a href="/procurement-consulting/" class="mega-menu-section h4 primary">Procurement Consultancy</a>
+                            <ul class="mega-menu-links">
+                                <li><a href="/strategic-sourcing/">Strategic Sourcing</a></li>
+                                <li><a href="/procurement-as-a-service/">Procurement as a Service</a></li>
+                                <li><a href="/procurement-transformation/">Procurement Transformation</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Column 2: Cost & Control -->
+                        <div class="mega-menu-section">
+                            <h4>Cost & Control</h4>
+                            <ul class="mega-menu-links">
+                                <li><a href="/procurement-cost-reduction/">Cost Reduction</a></li>
+                                <li><a href="/supplier-management/">Supplier Management</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Column 3: Specialized Services -->
+                        <div class="mega-menu-section">
+                            <h4>Specialized Services</h4>
+                            <ul class="mega-menu-links">
+                                <li><a href="/global-sourcing/">Global Sourcing</a></li>
+                                <li><a href="/emergency-procurement-support/">Emergency Procurement Support</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- CTA Section (spans all columns) -->
+                        <div class="mega-menu-cta">
+                            <h3>Need procurement capability quickly?</h3>
+                            <a href="/contact/" class="btn-primary">Talk to Troer</a>
+                        </div>
+                    </div>
                 </div>
-                <div class="nav-dropdown group relative">
-                    <button class="nav-dropdown-btn">Supply Chain <span aria-hidden="true">&#9662;</span></button>
-                    <ul class="dropdown-menu">
-                        <li><a href="/supply-chain-consulting/">Supply Chain Consulting</a></li>
-                        <li><a href="/supply-chain-resilience/">Supply Chain Resilience</a></li>
-                        <li><a href="/supplier-performance/">Supplier Performance</a></li>
-                        <li><a href="/logistics-and-inventory/">Logistics & Inventory</a></li>
-                        <li><a href="/supply-chain-risk/">Supply Chain Risk</a></li>
-                    </ul>
+
+                <!-- Supply Chain Mega Menu -->
+                <div class="nav-dropdown mega-dropdown group relative">
+                    <a href="/supply-chain-consulting/" class="nav-dropdown-btn">Supply Chain <span aria-hidden="true">&#9662;</span></a>
+                    <div class="dropdown-menu">
+                        <!-- Column 1: Main Hub + Foundation Services -->
+                        <div class="mega-menu-section">
+                            <a href="/supply-chain-consulting/" class="mega-menu-section h4 primary">Supply Chain Consultancy</a>
+                            <ul class="mega-menu-links">
+                                <li><a href="/supply-chain-resilience/">Supply Chain Resilience</a></li>
+                                <li><a href="/supply-chain-risk/">Supply Chain Risk Management</a></li>
+                                <li><a href="/supply-chain-optimisation/">Supply Chain Optimisation</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Column 2: Operational Services -->
+                        <div class="mega-menu-section">
+                            <h4>Operational Services</h4>
+                            <ul class="mega-menu-links">
+                                <li><a href="/supplier-performance/">Supplier Performance</a></li>
+                                <li><a href="/logistics-and-inventory/">Logistics & Inventory</a></li>
+                                <li><a href="/supply-continuity/">Supply Continuity</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Column 3: Recovery -->
+                        <div class="mega-menu-section">
+                            <h4>Recovery</h4>
+                            <ul class="mega-menu-links">
+                                <li><a href="/supplier-recovery/">Supplier Recovery</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- CTA Section (spans all columns) -->
+                        <div class="mega-menu-cta">
+                            <h3>Supply chain problem?</h3>
+                            <a href="/contact/" class="btn-primary">See how Troer can help</a>
+                        </div>
+                    </div>
                 </div>
-                <div class="nav-dropdown group relative">
-                    <button class="nav-dropdown-btn">Projects <span aria-hidden="true">&#9662;</span></button>
-                    <ul class="dropdown-menu">
-                        <li><a href="/project-delivery-consulting/">Project Delivery</a></li>
-                        <li><a href="/project-recovery/">Project Recovery</a></li>
-                        <li><a href="/project-implementation/">Implementation Support</a></li>
-                        <li><a href="/project-capacity-support/">Capacity Support</a></li>
-                    </ul>
+
+                <!-- Projects dropdown -->
+                <div class="nav-dropdown mega-dropdown group relative">
+                    <a href="/project-delivery-consulting/" class="nav-dropdown-btn">Projects <span aria-hidden="true">&#9662;</span></a>
+                    <div class="dropdown-menu">
+                        <div class="mega-menu-section">
+                            <a href="/project-delivery-consulting/" class="mega-menu-section h4 primary">Project Delivery Consultancy</a>
+                            <ul class="mega-menu-links">
+                                <li><a href="/project-recovery/">Project Recovery</a></li>
+                                <li><a href="/project-implementation/">Project Implementation</a></li>
+                                <li><a href="/project-capacity-support/">Additional Project Capacity</a></li>
+                            </ul>
+                        </div>
+                        <div class="mega-menu-section">
+                            <h4>Specialist Services</h4>
+                            <ul class="mega-menu-links">
+                                <li><a href="/project-controls/">Project Controls</a></li>
+                                <li><a href="/procurement-project-support/">Procurement-Led Projects</a></li>
+                                <li><a href="/supplier-contractor-coordination/">Supplier & Contractor Coordination</a></li>
+                            </ul>
+                        </div>
+                        <div class="mega-menu-section">
+                            <h4>Complex Delivery</h4>
+                            <ul class="mega-menu-links">
+                                <li><a href="/multi-site-project-delivery/">Multi-Site Project Delivery</a></li>
+                            </ul>
+                        </div>
+                        <div class="mega-menu-cta">
+                            <h3>Project slipping or additional capacity needed?</h3>
+                            <a href="/contact/" class="btn-primary">Talk to Troer</a>
+                        </div>
+                    </div>
                 </div>
-                <a href="/industries/">Industries</a>
+
+                <!-- How We Help mega menu -->
+                <div class="nav-dropdown mega-dropdown group relative">
+                    <a href="/how-we-help/" class="nav-dropdown-btn">How We Help <span aria-hidden="true">&#9662;</span></a>
+                    <div class="dropdown-menu">
+                        <div class="mega-menu-section">
+                            <a href="/how-we-help/" class="mega-menu-section h4 primary">Solve Your Business Challenge</a>
+                            <ul class="mega-menu-links">
+                                <li><a href="/emergency-procurement-support/">Emergency Business Support</a></li>
+                                <li><a href="/project-capacity-support/">Additional Procurement & Project Capacity</a></li>
+                                <li><a href="/procurement-cost-reduction/">Reduce Supplier Costs</a></li>
+                                <li><a href="/supplier-recovery/">Fix Supplier Performance</a></li>
+                                <li><a href="/global-sourcing/">Find an Alternative Supplier</a></li>
+                            </ul>
+                        </div>
+                        <div class="mega-menu-section">
+                            <h4>Urgent Challenges</h4>
+                            <ul class="mega-menu-links">
+                                <li><a href="/emergency-procurement-support/">Urgent Sourcing Support</a></li>
+                                <li><a href="/project-recovery/">Recover a Delayed Project</a></li>
+                                <li><a href="/supplier-recovery/">Our Supplier Has Failed</a></li>
+                            </ul>
+                        </div>
+                        <div class="mega-menu-section">
+                            <h4>Strategic Improvements</h4>
+                            <ul class="mega-menu-links">
+                                <li><a href="/procurement-transformation/">Improve Procurement Processes</a></li>
+                                <li><a href="/supply-chain-resilience/">Strengthen Supply Chain Resilience</a></li>
+                            </ul>
+                        </div>
+                        <div class="mega-menu-cta">
+                            <h3>Not sure where to start?</h3>
+                            <a href="/contact/" class="btn-primary">Talk to Troer</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Industries Mega Menu -->
+                <div class="nav-dropdown mega-dropdown group relative">
+                    <a href="/industries/" class="nav-dropdown-btn">Industries <span aria-hidden="true">&#9662;</span></a>
+                    <div class="dropdown-menu">
+                        <div class="mega-menu-section">
+                            <a href="/industries/" class="mega-menu-section h4 primary">Browse All Industries</a>
+                            <ul class="mega-menu-links">
+                                <li><a href="/industries/retail-multi-site/">Retail & Multi-Site</a></li>
+                                <li><a href="/industries/hospitality-leisure/">Hospitality & Leisure</a></li>
+                                <li><a href="/industries/construction-property/">Construction & Property</a></li>
+                            </ul>
+                        </div>
+                        <div class="mega-menu-section">
+                            <h4>Key Sectors</h4>
+                            <ul class="mega-menu-links">
+                                <li><a href="/industries/healthcare/">Healthcare</a></li>
+                                <li><a href="/industries/public-sector/">Public Sector</a></li>
+                                <li><a href="/industries/manufacturing-engineering/">Manufacturing & Engineering</a></li>
+                            </ul>
+                        </div>
+                        <div class="mega-menu-cta">
+                            <h3>Explore sector-specific support</h3>
+                            <a href="/contact/" class="btn-primary">Talk to Troer</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insights link -->
                 <a href="/insights/">Insights</a>
-                <div class="nav-dropdown group relative">
-                    <button class="nav-dropdown-btn">About <span aria-hidden="true">&#9662;</span></button>
-                    <ul class="dropdown-menu">
-                        <li><a href="/about/">About Troer</a></li>
-                        <li><a href="/contact/">Contact Us</a></li>
-                        <li><a href="/case-studies/">Case Studies</a></li>
-                        <li><a href="/privacy/">Privacy Policy</a></li>
-                    </ul>
-                </div>
             </nav>
             <a href="/contact/" class="btn-primary">Talk to Troer</a>
         </div>
@@ -882,33 +1020,33 @@
                     <article class="insight-card">
                         <div class="insight-card-body">
                             <span class="insight-category">Supply Chain</span>
-                            <h4>UK Supply Chains in 2025: What Businesses Need to Know</h4>
-                            <p>UK supply chains are facing new challenges in 2025. Here is what is changing and what your business should focus on.</p>
+                            <h4>Why UK Supply Chains Are Still Broken in 2025</h4>
+                            <p>An overview of the structural failures still damaging UK operations, from siloed data and slow reporting to reactive contractor management.</p>
                             <div class="insight-meta">
-                                <span>Published: 2026-01-20</span>
-                                <a href="/blog-uk-supply-chains-2025.html" class="insight-link">Read →</a>
+                                <span>Published: June 2025</span>
+                                <a href="/insights/articles/uk-supply-chains-2025.html" class="insight-link">Read →</a>
                             </div>
                         </div>
                     </article>
                     <article class="insight-card">
                         <div class="insight-card-body">
                             <span class="insight-category">Procurement</span>
-                            <h4>Cut Procurement Costs Without Cutting Quality</h4>
-                            <p>Cost reduction is often procurement's first responsibility. But how do you save money without damaging supplier relationships or quality?</p>
+                            <h4>How to Cut Procurement Costs Without Cutting Corners</h4>
+                            <p>Where procurement waste usually hides, which levers matter most, and why sustainable savings come from better control rather than blunt cost-cutting.</p>
                             <div class="insight-meta">
-                                <span>Published: 2025-12-10</span>
-                                <a href="/blog-cut-procurement-costs.html" class="insight-link">Read →</a>
+                                <span>Published: August 2025</span>
+                                <a href="/insights/articles/cut-procurement-costs.html" class="insight-link">Read →</a>
                             </div>
                         </div>
                     </article>
                     <article class="insight-card">
                         <div class="insight-card-body">
                             <span class="insight-category">Projects</span>
-                            <h4>Tier-1 Contractor Management on Major Projects</h4>
-                            <p>Managing large contractors on major projects requires clear ownership, realistic expectations and structured oversight. Here is how to get it right.</p>
+                            <h4>Tier-1 Contractor Management: Avoiding Budget Blowouts</h4>
+                            <p>A practical look at the mistakes that create project overruns when compliance, sequencing, and subcontractor visibility are weak.</p>
                             <div class="insight-meta">
-                                <span>Published: 2025-11-15</span>
-                                <a href="/blog-tier-1-contractor-management.html" class="insight-link">Read →</a>
+                                <span>Published: July 2025</span>
+                                <a href="/insights/articles/tier-1-contractor-management.html" class="insight-link">Read →</a>
                             </div>
                         </div>
                     </article>
@@ -1020,5 +1158,6 @@
     </footer>
 
     <script src="nav.js"></script>
+    <script src="navigation.js"></script>
 </body>
 </html>
