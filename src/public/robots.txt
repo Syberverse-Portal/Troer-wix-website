@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /privacy.html
+Disallow: /test-*
 
-Sitemap: https://troer.co.uk/sitemap.xml
+Sitemap: https://www.troer.co.uk/sitemap.xml
