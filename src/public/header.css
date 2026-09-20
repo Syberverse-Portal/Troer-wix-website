@@ -223,8 +223,9 @@
     .nav-dropdown.expanded .dropdown-menu {
         opacity: 1 !important;
         visibility: visible !important;
-        max-height: 600px;
-        overflow-y: auto;
+        max-height: 600px !important;
+        overflow-y: auto !important;
+        display: block !important;
     }
 
     .dropdown-menu a,

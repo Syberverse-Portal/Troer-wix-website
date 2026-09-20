@@ -1,4 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Only run desktop hover behavior on non-mobile devices (above 780px)
+    const isDesktop = () => window.innerWidth > 780;
+
+    if (!isDesktop()) return;
+
     const dropdowns = document.querySelectorAll('.nav-dropdown');
 
     dropdowns.forEach((dropdown) => {
@@ -28,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     menu.style.visibility = 'hidden';
                     menu.style.transform = 'translateX(-50%) translateY(-8px)';
                     dropdown.setAttribute('aria-expanded', 'false');
-                }, 150); 
+                }, 150);
             }
         };
 
