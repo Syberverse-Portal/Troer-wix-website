@@ -1,124 +1,110 @@
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Navigation.js loaded');
+// Robust dropdown navigation system with fallbacks
+(function() {
+    'use strict';
 
-    const navToggle = document.querySelector('.nav-toggle');
-    const navLinks = document.querySelector('.nav-links');
+    function initNavigation() {
+        const navToggle = document.querySelector('.nav-toggle');
+        const navLinks = document.querySelector('.nav-links');
 
-    if (!navToggle || !navLinks) {
-        console.error('Navigation elements not found');
-        return;
-    }
+        if (!navToggle || !navLinks) {
+            console.warn('Navigation elements not found');
+            return false;
+        }
 
-    console.log('Navigation elements found');
-
-    // Toggle main menu
-    navToggle.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        console.log('Hamburger clicked');
-
-        const isOpen = navLinks.classList.toggle('active');
-        navToggle.setAttribute('aria-expanded', isOpen);
-        navToggle.classList.toggle('active');
-        console.log('Menu is now:', isOpen ? 'OPEN' : 'CLOSED');
-    });
-
-    // Handle dropdown buttons
-    const dropdownButtons = navLinks.querySelectorAll('.nav-dropdown-btn');
-    console.log('Found ' + dropdownButtons.length + ' dropdown buttons');
-
-    dropdownButtons.forEach((button, index) => {
-        button.addEventListener('click', function(e) {
+        // Toggle main hamburger menu
+        navToggle.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            console.log('Dropdown button ' + index + ' clicked:', button.textContent.trim());
 
-            const dropdown = this.closest('.nav-dropdown');
-            if (!dropdown) {
-                console.error('Could not find parent .nav-dropdown');
-                return;
-            }
+            const isActive = !navLinks.classList.contains('active');
 
-            // Close other dropdowns
-            document.querySelectorAll('.nav-dropdown.expanded').forEach(dd => {
-                if (dd !== dropdown) {
-                    dd.classList.remove('expanded');
-                    // Also set inline styles
-                    const menu = dd.querySelector('.dropdown-menu');
-                    if (menu) {
-                        menu.style.maxHeight = '0';
-                        menu.style.overflow = 'hidden';
-                    }
-                    console.log('Closed other dropdown');
-                }
-            });
-
-            // Toggle this dropdown
-            const isExpanded = dropdown.classList.toggle('expanded');
-            console.log('Dropdown is now:', isExpanded ? 'EXPANDED' : 'COLLAPSED');
-
-            // Apply inline styles to ensure visibility
-            const dropdownMenu = dropdown.querySelector('.dropdown-menu');
-            if (dropdownMenu) {
-                if (isExpanded) {
-                    // Show menu
-                    dropdownMenu.style.maxHeight = '1200px';
-                    dropdownMenu.style.overflow = 'visible';
-                    dropdownMenu.style.overflowY = 'auto';
-                    console.log('Menu styles applied - should be visible');
-                } else {
-                    // Hide menu
-                    dropdownMenu.style.maxHeight = '0';
-                    dropdownMenu.style.overflow = 'hidden';
-                    console.log('Menu collapsed');
-                }
+            if (isActive) {
+                navLinks.classList.add('active');
+                navToggle.classList.add('active');
+                navToggle.setAttribute('aria-expanded', 'true');
             } else {
-                console.error('Could not find .dropdown-menu');
+                navLinks.classList.remove('active');
+                navToggle.classList.remove('active');
+                navToggle.setAttribute('aria-expanded', 'false');
+                closeAllDropdowns();
             }
         });
-    });
 
-    // Close menu when clicking a regular link
-    const regularLinks = navLinks.querySelectorAll('a:not(.nav-dropdown-btn)');
-    console.log('Found ' + regularLinks.length + ' regular links');
+        // Handle dropdown buttons
+        const dropdownButtons = navLinks.querySelectorAll('.nav-dropdown-btn');
 
-    regularLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            console.log('Regular link clicked:', this.textContent.trim());
-            navLinks.classList.remove('active');
-            navToggle.classList.remove('active');
-            navToggle.setAttribute('aria-expanded', 'false');
+        dropdownButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                // Only prevent default for anchor tags
+                if (this.tagName === 'A') {
+                    e.preventDefault();
+                }
+                e.stopPropagation();
 
-            // Close all dropdowns
-            document.querySelectorAll('.nav-dropdown.expanded').forEach(dd => {
-                dd.classList.remove('expanded');
-                const menu = dd.querySelector('.dropdown-menu');
-                if (menu) {
-                    menu.style.maxHeight = '0';
-                    menu.style.overflow = 'hidden';
+                const dropdown = this.closest('.nav-dropdown');
+                if (!dropdown) return;
+
+                const isExpanded = dropdown.classList.contains('expanded');
+
+                // Close other dropdowns
+                navLinks.querySelectorAll('.nav-dropdown.expanded').forEach(dd => {
+                    if (dd !== dropdown) {
+                        dd.classList.remove('expanded');
+                    }
+                });
+
+                // Toggle current dropdown
+                if (isExpanded) {
+                    dropdown.classList.remove('expanded');
+                } else {
+                    dropdown.classList.add('expanded');
                 }
             });
         });
-    });
 
-    // Close menu when clicking outside
-    document.addEventListener('click', function(event) {
-        if (!navToggle.contains(event.target) && !navLinks.contains(event.target)) {
-            navLinks.classList.remove('active');
-            navToggle.classList.remove('active');
-            navToggle.setAttribute('aria-expanded', 'false');
-
-            // Close all dropdowns
-            document.querySelectorAll('.nav-dropdown.expanded').forEach(dd => {
-                dd.classList.remove('expanded');
-                const menu = dd.querySelector('.dropdown-menu');
-                if (menu) {
-                    menu.style.maxHeight = '0';
-                    menu.style.overflow = 'hidden';
-                }
+        // Close menu when clicking links
+        const regularLinks = navLinks.querySelectorAll('a:not(.nav-dropdown-btn)');
+        regularLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                navLinks.classList.remove('active');
+                navToggle.classList.remove('active');
+                navToggle.setAttribute('aria-expanded', 'false');
+                closeAllDropdowns();
             });
-        }
-    });
+        });
 
-    console.log('Navigation.js initialization complete');
-});
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!navToggle.contains(event.target) && !navLinks.contains(event.target)) {
+                navLinks.classList.remove('active');
+                navToggle.classList.remove('active');
+                navToggle.setAttribute('aria-expanded', 'false');
+                closeAllDropdowns();
+            }
+        });
+
+        return true;
+    }
+
+    function closeAllDropdowns() {
+        document.querySelectorAll('.nav-dropdown.expanded').forEach(dd => {
+            dd.classList.remove('expanded');
+        });
+    }
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initNavigation);
+    } else {
+        initNavigation();
+    }
+
+    // Fallback: Try again after a delay if needed
+    setTimeout(function() {
+        if (!document.querySelector('.nav-links')) {
+            return; // Elements not in DOM yet
+        }
+        // Just ensure scripts are properly attached
+        initNavigation();
+    }, 500);
+})();

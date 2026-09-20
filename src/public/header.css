@@ -213,17 +213,31 @@
         box-shadow: none !important;
         margin: 0 !important;
         padding: 0 !important;
-        transition: max-height 0.4s ease-in-out !important;
-        z-index: auto !important;
+        transition: max-height 0.3s ease-in-out !important;
+        z-index: 999 !important;
         border-radius: 0 !important;
         display: block !important;
         visibility: visible !important;
+        opacity: 1 !important;
+        height: auto !important;
+        min-height: 0 !important;
+        line-height: 1.5 !important;
     }
 
     .nav-dropdown.expanded .dropdown-menu {
-        max-height: 1200px !important;
+        max-height: 2000px !important;
         overflow: visible !important;
         overflow-y: auto !important;
+        height: auto !important;
+    }
+
+    /* Fallback: Show menu on hover for desktop */
+    @media (min-width: 781px) {
+        .nav-dropdown:hover .dropdown-menu {
+            max-height: 2000px !important;
+            overflow: visible !important;
+            overflow-y: auto !important;
+        }
     }
 
     .dropdown-menu a,
@@ -241,6 +255,40 @@
         opacity: 1 !important;
         width: 100% !important;
         box-sizing: border-box !important;
+        line-height: 1.5 !important;
+        min-height: 20px !important;
+        text-align: left !important;
+    }
+
+    .dropdown-menu li,
+    .mega-menu-links li {
+        display: block !important;
+        list-style: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .mega-menu-section {
+        display: block !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .mega-menu-section h4 {
+        display: block !important;
+        padding: 14px 40px !important;
+        margin: 0 !important;
+        font-size: 12px !important;
+        text-transform: uppercase !important;
+        color: #141923 !important;
+        font-weight: 800 !important;
+        border-bottom: 1px solid #e8edf4 !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
 
     .mega-menu-section {
