@@ -202,8 +202,7 @@
 
     .dropdown-menu {
         position: static !important;
-        max-height: 0 !important;
-        overflow: hidden !important;
+        display: none !important;
         transform: none !important;
         top: auto !important;
         left: auto !important;
@@ -214,20 +213,17 @@
         box-shadow: none !important;
         margin: 0 !important;
         padding: 0 !important;
-        transition: max-height 0.3s ease-in-out !important;
         z-index: 999 !important;
         border-radius: 0 !important;
-        display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
         height: auto !important;
-        min-height: 0 !important;
         line-height: 1.5 !important;
         box-sizing: border-box !important;
     }
 
     .nav-dropdown.expanded .dropdown-menu {
-        max-height: 2000px !important;
+        display: block !important;
         overflow: visible !important;
         overflow-y: auto !important;
         height: auto !important;
