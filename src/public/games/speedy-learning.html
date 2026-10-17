@@ -1199,7 +1199,7 @@ async function loadImages(from) {
 let deckName = "";
 function start(name) { deckName = name; return begin(deckFor(subject, name)); }
 async function begin(cards) {
-  deck = shuffle(cards); i = 0; score = 0; streak = 0;
+  deck = shuffle(cards); i = 0; score = 0; streak = 0; finishing = false;
   $("menu").hidden = true; $("topbar").hidden = true; $("game").hidden = false;
   $("sub").textContent = SUBJECTS[subject].note;
   $("credit").textContent = subject === "animals" ? "Photos from Wikipedia" : subject === "flags" ? "Flags from flagcdn.com" : subject === "books" ? "Covers from Open Library" : "";
@@ -1305,7 +1305,7 @@ function isRight(c, guess) {
   return norm(guess) === norm(c.answer);
 }
 // ---------- Sounds, confetti, streaks and best scores ----------
-let muted = store.get("speedy-muted") === "1", actx = null, streak = 0;
+let muted = store.get("speedy-muted") === "1", actx = null, streak = 0, finishing = false;
 $("mute").textContent = muted ? "🔇" : "🔊";
 $("mute").onclick = () => { muted = !muted; store.set("speedy-muted", muted ? "1" : "0"); $("mute").textContent = muted ? "🔇" : "🔊"; if (!muted) sfx("flip"); };
 function tone(freq, start, dur, type = "sine", vol = .15) {
@@ -1344,9 +1344,10 @@ function scored(right) {
     card.classList.remove("cheer"); void card.offsetWidth; card.classList.add("cheer");
     $("tries").textContent = "✅ " + PRAISE[r(0, PRAISE.length - 1)] + (streak >= 3 ? ` 🔥 ${streak} in a row!` : "");
   } else { streak = 0; sfx("wrong"); }
-  if (i + 1 >= deck.length) setTimeout(finishDeck, 1300);
+  if (i + 1 >= deck.length) { finishing = true; const final = score; setTimeout(() => finishDeck(final), 900); }
 }
-function finishDeck() {
+function finishDeck(final = score) {
+  score = final;
   const pct = deck.length ? score / deck.length : 0, stars = pct >= .9 ? 3 : pct >= .6 ? 2 : pct > 0 ? 1 : 0;
   if (deckName) {
     const key = `speedy-best|${subject}|${deckName}`, old = parseInt(store.get(key) || "0", 10);
@@ -1357,8 +1358,8 @@ function finishDeck() {
   $("finText").textContent = `You got ${score} out of ${deck.length}.` + (stars < 3 ? " Play again to get 3 stars!" : "");
   $("finish").hidden = false; sfx("win"); confetti(160);
 }
-$("finAgain").onclick = () => { $("finish").hidden = true; deck.length && (shuffle(deck), i = 0, score = 0, streak = 0, show()); };
-$("finDecks").onclick = () => { $("finish").hidden = true; year ? showTopics(subject, year) : showDecks(subject); };
+$("finAgain").onclick = () => { $("finish").hidden = true; finishing = false; deck.length && (shuffle(deck), i = 0, score = 0, streak = 0, show()); };
+$("finDecks").onclick = () => { $("finish").hidden = true; finishing = false; year ? showTopics(subject, year) : showDecks(subject); };
 
 function pickOption(btn, choice) {
   const c = deck[i];
@@ -1374,7 +1375,8 @@ function pickOption(btn, choice) {
   $("count").textContent = `Card ${i + 1} of ${deck.length} · ⭐ ${score}`;
   $("hint").textContent = i + 1 < deck.length ? "Tap the card for the next question" : `Finished! You got ${score} out of ${deck.length}. Tap to play again`;
 }
-function next() { i++; if (i >= deck.length) { shuffle(deck); i = 0; score = 0; } show(); }
+function next() {
+  if (finishing) return; i++; if (i >= deck.length) { shuffle(deck); i = 0; score = 0; } show(); }
 const norm = s => s.trim().toLowerCase().replace(/[’']/g, "'");
 $("spellForm").onclick = e => e.stopPropagation();
 $("spellForm").onsubmit = e => {
