@@ -8,7 +8,8 @@
   :root { --bg:#1f6f43; --card:#fffdf5; --ink:#222; --accent:#f4b400; --muted:#777; }
   * { box-sizing:border-box; }
   body { margin:0; min-height:100vh; background:radial-gradient(circle at top,#2e9b5e,var(--bg)); font-family:"Trebuchet MS",system-ui,sans-serif; color:var(--ink); display:flex; flex-direction:column; align-items:center; padding:16px; user-select:none; }
-  h1 { color:#fff; text-shadow:2px 2px 0 #0004; margin:8px 0 4px; text-align:center; font-size:clamp(1.6rem,7vw,2.4rem); padding:0 52px; }
+  h1 { color:#fff; text-shadow:2px 2px 0 #0004; margin:8px 0 4px; text-align:center; font-size:clamp(1.5rem,6.5vw,2.4rem); padding:0 106px 0 0; }
+  @media (min-width:700px) { h1 { padding:0 106px; } }
   .sub { color:#fff; opacity:.9; margin:0 0 16px; text-align:center; }
   .cats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; width:100%; max-width:760px; }
   .cat { background:var(--card); border:4px solid var(--accent); border-radius:16px; padding:16px 8px; font-size:1.1rem; font-weight:bold; cursor:pointer; text-align:center; box-shadow:0 4px 0 #0003; font-family:inherit; color:var(--ink); }
@@ -171,6 +172,12 @@
   .mic { font-size:1.3rem; padding:6px 12px; }
   .mic.listening { background:#e8473f; color:#fff; animation:pulse 1s ease-in-out infinite; }
   @keyframes pulse { 50% { transform:scale(1.12); } }
+  .mute.auto { right:calc(64px + env(safe-area-inset-right, 0px)); opacity:.55; }
+  .mute.auto.on { opacity:1; background:#ffe68a; }
+  .readQ { position:absolute; top:30px; right:10px; z-index:3; font-size:1.3rem; width:44px; height:44px; border-radius:50%; border:3px solid var(--accent); background:#fff; cursor:pointer; box-shadow:0 2px 0 #0002; }
+  .readRules { border:none; background:none; cursor:pointer; font-size:1.2rem; }
+  .readQ:active { transform:scale(.92); }
+  .msg .hear { margin-left:6px; border:none; background:none; cursor:pointer; font-size:1rem; }
   .topbar { width:100%; max-width:760px; margin-bottom:12px; }
   .btn { background:var(--accent); border:none; border-radius:10px; padding:8px 14px; font-weight:bold; cursor:pointer; font-family:inherit; font-size:1rem; }
   #game { flex-direction:column; align-items:center; width:100%; }
@@ -196,14 +203,15 @@
 </style>
 </head>
 <body>
-<button class="mute" id="mute" type="button" aria-label="Sound on or off">🔊</button>
+<button class="mute" id="mute" type="button" aria-label="Sound effects on or off">🔊</button>
+<button class="mute auto" id="autoRead" type="button" aria-label="Read every question out loud automatically" aria-pressed="false">🗣️</button>
 <canvas id="confetti" aria-hidden="true"></canvas>
 <h1>⚡ Speedy Learning ⚡</h1>
 <p class="sub" id="sub">Pick a subject</p>
 
 <div class="topbar" id="topbar" hidden><button class="btn" id="home">← Subjects</button> <button class="btn" id="years" hidden>← Year groups</button></div>
 <div class="rules" id="rules">
-  <h2>How to play</h2>
+  <h2>How to play <button class="hear readRules" id="readRules" type="button" aria-label="Read the rules out loud">🔊</button></h2>
   <ol>
     <li>Pick a subject, then pick a deck.</li>
     <li>Look at the card and say your answer out loud.</li>
@@ -213,6 +221,7 @@
   <p>In Spelling Bee, listen to the word and type it in, then press Check. You get 3 tries for each word. Tap 🔊 to hear it again.</p>
   <p>In Story Time, watch the picture and read along as the words light up. Swipe or press ▶ for the next page, or press 🔊 Read to me to hear it. Book Ideas shows great books to look out for at the library.</p>
   <p>In the subject quizzes (Science, History, Geography and more), tap the answer you think is right.</p>
+  <p>Can't read yet? Press 🔊 on any card to hear it, or press 🗣️ at the top so every question is read out automatically.</p>
   <p>In Maths, type your answer and press Check. You get 3 tries for each question.</p>
 </div>
 <div id="menu" class="cats"></div>
@@ -250,6 +259,7 @@
   <div class="bar"><button class="btn" id="back">← Decks</button><span id="count"></span></div>
   <div class="card" id="card">
     <div class="tag" id="tag"></div>
+    <button class="readQ" id="readQ" type="button" aria-label="Read this out loud">🔊</button>
     <img class="pic" id="pic" alt="" hidden>
     <div class="cover" id="cover" hidden></div>
     <div class="big" id="big" hidden></div>
@@ -1291,7 +1301,7 @@ async function show() {
   revealed = false; ready = false;
   for (const id of ["pic", "big", "speak", "clue", "spellForm", "cover", "story", "scene", "pager", "opts"]) $(id).hidden = true;
   $("big").className = "big";
-  stopReading(); $("card").classList.remove("reading");
+  stopReading(); $("card").classList.remove("reading"); $("readQ").hidden = false;
   page = -1;
   $("tries").textContent = ""; $("tries").className = "tries";
   $("name").textContent = ""; $("name").className = "name"; $("hint").textContent = "Loading…";
@@ -1336,12 +1346,35 @@ async function show() {
   $("hint").textContent = c.kind === "spell" ? "Type the word and press Check. Tap 🔊 to hear it again" : c.kind === "sum" ? "Type your answer and press Check. You have 3 tries" : c.kind === "story" ? "Tap the card to open the story" : c.kind === "quiz" ? "Tap the answer you think is right" : "Tap the card to reveal the answer";
   const card = $("card"); card.classList.remove("pop"); void card.offsetWidth; card.classList.add("pop");
   ready = true;
+  if (autoRead && c.kind !== "spell" && c.kind !== "story") setTimeout(() => { if (deck[i] === c && !revealed) readCard(); }, 400);
   const next = deck[i + 1];
   if (next && next.kind === "photo" && images[next.title]) new Image().src = images[next.title];
   if (next && next.kind === "flag") new Image().src = next.src;
   if (deck[i + 10] && deck[i + 10].kind === "photo" && !(deck[i + 10].title in images)) loadImages(i + 10);
 }
 
+// Read anything on the card out loud, for children who can't read it yet
+const spoken = s => String(s).replace(/×/g, " times ").replace(/÷/g, " divided by ").replace(/−/g, " minus ").replace(/\+/g, " plus ").replace(/=\s*\?/g, " equals what?").replace(/=/g, " equals ")
+  .replace(/²/g, " squared").replace(/³/g, " cubed").replace(/½/g, "a half").replace(/¼/g, "a quarter").replace(/⅓/g, "a third").replace(/(\d+)\/(\d+)/g, "$1 over $2").replace(/£(\d+)/g, "$1 pounds ").replace(/(\d+)p\b/g, "$1 pence").replace(/°C/g, " degrees").replace(/°/g, " degrees").replace(/\n/g, ". ").replace(/\?\s*\?/g, "?").replace(/\p{Extended_Pictographic}/gu, "");
+function readCard() {
+  const c = deck[i]; if (!c) return;
+  let t = "";
+  if (c.kind === "quiz") t = revealed ? `The answer is ${c.answer}.` : `${c.question} Is it: ${shuffleSafe([...$("opts").children].map(b => b.textContent)).join(", or ")}?`;
+  else if (c.kind === "sum") t = revealed ? `${c.worded ? c.question + ". The answer is" : c.question + " equals"} ${c.answer}.` : c.worded ? c.question : c.question + " = ?";
+  else if (c.kind === "spell") t = revealed ? `${c.answer} is spelt ${c.answer.split("").join(", ")}.` : c.answer;
+  else if (c.kind === "photo") t = revealed ? c.answer : "What animal is this?";
+  else if (c.kind === "flag") t = revealed ? c.answer : "Which country does this flag belong to?";
+  else if (c.kind === "book") t = revealed ? `${c.answer}, by ${c.author}. ${c.about}` : `This book is called ${c.answer}.`;
+  else if (c.kind === "story") t = page >= 0 && page < c.pages.length ? c.pages[page][1] : c.answer;
+  if (t) say(spoken(t));
+}
+const shuffleSafe = a => a;
+$("readQ").onclick = e => { e.stopPropagation(); readCard(); };
+let autoRead = store.get("speedy-autoread") === "1";
+const showAuto = () => { $("autoRead").classList.toggle("on", autoRead); $("autoRead").setAttribute("aria-pressed", autoRead); };
+showAuto();
+$("autoRead").onclick = () => { autoRead = !autoRead; store.set("speedy-autoread", autoRead ? "1" : "0"); showAuto(); say(autoRead ? "I will read every question out loud." : "Reading out loud is off."); };
+$("readRules").onclick = () => say($("rules").innerText.replace("🔊", ""));
 $("speak").onclick = e => { e.stopPropagation(); say(deck[i].answer); };
 const typed = c => c.kind === "spell" || c.kind === "sum";
 function openForm(placeholder, mode) {
@@ -2856,8 +2889,9 @@ function lookUp(question) {
 }
 function addMsg(text, who) {
   const d = document.createElement("div"); d.className = "msg " + who;
-  if (who === "bot") { const b = document.createElement("b"); b.textContent = "🦉 Ollie the Owl"; d.appendChild(b); }
+  if (who === "bot") { const b = document.createElement("b"); b.textContent = "🦉 Ollie the Owl"; const hb = document.createElement("button"); hb.className = "hear"; hb.type = "button"; hb.textContent = "🔊"; hb.setAttribute("aria-label", "Read this answer out loud"); hb.onclick = () => say(spoken(d.lastChild.textContent)); b.appendChild(hb); d.appendChild(b); }
   d.append(text); $("msgs").appendChild(d); $("msgs").scrollTop = $("msgs").scrollHeight;
+  if (who === "bot" && typeof autoRead !== "undefined" && autoRead && text !== "Thinking…") say(spoken(text));
   return d;
 }
 const NOT_SURE = "Hmm, I'm not sure about that one. I can help with words you learn at school, like adverb, fraction, habitat or Vikings. Try asking me one of those!";
