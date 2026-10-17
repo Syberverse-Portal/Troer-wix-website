@@ -508,6 +508,10 @@ const MATHS_MORE = {
     () => { const x = r(1, 6), y = r(1, 6); return [`Reflect point (${x}, ${y}) in the y-axis. What is the new x coordinate?`, -x]; },
     () => { const n = r(1, 9); return [`What is ${n}% of 200?`, n * 2]; }]
 };
+// More maths objectives for Years 4–6
+MATHS_MORE["Year 4"].push(() => { const a = r(100, 999), b = r(3, 9); return [`${a} × ${b}`, a * b]; }, () => { const n = r(2, 9); return [`What is ${n} hundredths as a decimal?`, dec(n / 100)]; });
+MATHS_MORE["Year 5"].push(() => { const d = [3, 4, 5, 8][r(0, 3)], a = r(1, d - 1), w = r(2, 6); return [`${a}/${d} × ${w} = ?\n(type like 7/${d} or a mixed number)`, `${a * w}/${d}`]; }, () => { const a = r(1000, 9999), b = r(3, 9); return [`${a} × ${b}`, a * b]; }, () => { const n = r(1, 9); return [`Write ${n}/100 as a percentage. (%)`, n]; });
+MATHS_MORE["Year 6"].push(() => { const b = r(12, 25), q = r(12, 99), rem = r(1, b - 1); return [`${b * q + rem} ÷ ${b} = ? remainder ?\n(type like 34 r5)`, `${q} r${rem}`]; }, () => { const a = r(11, 99) / 10, b = r(11, 39); return [`${dec(a)} × ${b}`, dec(a * b)]; }, () => { const p = r(2, 9) * 5, n = r(2, 9) * 20; return [`What is ${p}% of ${n}?`, n * p / 100]; });
 for (const [y, gens] of Object.entries(MATHS_MORE)) {
   const base = MATHS[y], extra = pick(...gens);
   MATHS[y] = () => Math.random() < .5 ? base() : extra();
@@ -1071,6 +1075,29 @@ const COMPREHENSION = {
 QUIZ.comprehension = {title: "Reading Comprehension", icon: "🔎", decks: Object.fromEntries(Object.entries(COMPREHENSION).map(([band, ps]) => [band, ps.flatMap(p => p.qs.map(q => q + "|@@" + p.title))]))};
 
 for (const [k, decks] of Object.entries(QUIZ_MORE)) for (const [d, l] of Object.entries(decks)) QUIZ[k].decks[d].push(...l);
+// Filling the thinner parts of the curriculum
+const GAPS = {
+  science: {
+    "Years 3–4": ["What is a cell (battery) in a circuit for?|It pushes electricity round the circuit|It stops electricity|It makes sound","Which appliance runs on mains electricity?|Television|Torch|Remote control","What happens to a bulb if a wire is disconnected?|It goes out|It gets brighter|It flashes","Which material would make a good switch contact?|Metal|Wool|Paper","Why are plugs covered in plastic?|Plastic is an insulator|Plastic is shiny|Plastic is heavy","What happens when you push a toy car on carpet compared with a smooth floor?|It slows down faster on carpet|It goes faster on carpet|There's no difference","Which force pulls things down to Earth?|Gravity|Friction|Magnetism","Which objects would a magnet pick up?|Paper clips|Coins made of copper only|Wooden spoons","Can magnets work through paper?|Yes|No|Only through glass","What do we call materials that are attracted to magnets?|Magnetic|Transparent|Absorbent"],
+    "Years 5–6": ["What is the Sun?|A star|A planet|A moon","Which planet is known as the Red Planet?|Mars|Venus|Jupiter","Which is the largest planet?|Jupiter|Saturn|Earth","Why does the Moon seem to change shape?|We see different amounts of its sunlit side|It really changes shape|Clouds cover it","Which theory explained that Earth goes round the Sun?|The heliocentric model|The flat Earth idea|The geocentric model","What is a light source?|Something that gives out light|Something that reflects light|A shadow","Is the Moon a light source?|No, it reflects sunlight|Yes|Only when full","Why do we see a rainbow?|Sunlight is split into colours by raindrops|Paint in the sky|Clouds are colourful","What do plants produce during photosynthesis?|Oxygen and sugar|Carbon dioxide only|Salt","What is a variable in an investigation?|Something that can change|The answer|A type of graph","Why do scientists repeat tests?|To make results more reliable|To waste time|To change the question","Which part of the eye lets light in?|Pupil|Eyelash|Eyebrow"],
+  },
+  history: {
+    "Years 3–4": ["When did the Shang Dynasty rule China?|About 3,500 years ago|100 years ago|In 1066","What did the Shang use oracle bones for?|To ask questions of the gods and ancestors|For soup|As money","What were Shang craftworkers famous for?|Bronze work|Plastic toys|Steel cars","What was the Indus Valley city Mohenjo-daro known for?|Its planned streets and drains|Its pyramids|Its castles","What did Sumerians invent?|One of the first writing systems (cuneiform)|The internet|The printing press","Which civilisation came first?|Ancient Sumer|Ancient Rome|The Vikings"],
+    "Years 5–6": ["When was the Kingdom of Benin powerful?|About AD 900–1897|In the Stone Age|In 2000","What was the Oba of Benin?|The king|A bronze statue|A river","What happened to many Benin Bronzes in 1897?|They were taken by British soldiers|They were buried|They melted","What was Baghdad known for around AD 900?|Being a centre of learning and science|Being a Viking town|Building pyramids","What did scholars in the House of Wisdom do?|Translated and studied books on science and maths|Built ships|Made bronzes","What is a 'local history study'?|Finding out about the history of your own area|Studying another planet|Learning a language","Which is a good local history source?|Old photos and maps of your town|A science fiction film|A video game","What did the Romans build in Bath?|Public baths|A castle|A pyramid"],
+  },
+  geography: {
+    "Years 5–6": ["Which is the largest country in the world?|Russia|China|Canada","Russia stretches across which two continents?|Europe and Asia|Africa and Asia|Europe and America","What is the capital of Russia?|Moscow|Saint Petersburg|Kyiv","Which country is the largest in South America?|Brazil|Peru|Chile","What is the capital of the USA?|Washington, D.C.|New York|Los Angeles","Which European country is famous for fjords?|Norway|Spain|Italy","What is the capital of Germany?|Berlin|Munich|Vienna","Which river flows through Egypt?|The Nile|The Danube|The Amazon","What is the Great Barrier Reef?|A huge coral reef off Australia|A mountain range|A desert","Which is the highest mountain in the world?|Mount Everest|K2|Kilimanjaro"],
+  },
+  languages: {
+    "French": ["Which word means 'a' for a feminine noun in French?|une|un|le","Which word means 'the' for a masculine noun?|le|la|les","What does 'je suis' mean?|I am|I have|I go","What does 'j'ai' mean?|I have|I am|I like","How do you make most French nouns plural?|Add -s|Add -en|Add -x always","Where does a French colour adjective usually go?|After the noun (un chat noir)|Before the noun|At the end of the sentence","What does 'il' mean?|He|She|They","What does 'elle' mean?|She|He|We"],
+    "Spanish": ["Which word means 'a' for a feminine noun in Spanish?|una|un|el","Which word means 'the' for a masculine noun?|el|la|los","What does 'soy' mean?|I am|I have|I go","What does 'tengo' mean?|I have|I am|I want","How do you make most Spanish nouns plural?|Add -s or -es|Add -x|Add -en","Where does a Spanish colour adjective usually go?|After the noun (un gato negro)|Before the noun|At the start","What does 'él' mean?|He|She|You","What does 'ella' mean?|She|He|They"],
+  },
+  music: { "Years 5–6": ["Which family does the cello belong to?|Strings|Brass|Woodwind","Which instrument is the largest in the brass family?|Tuba|Trumpet|Trombone","Which instrument uses a slide?|Trombone|Flute|Violin","Which percussion instrument has tuned metal bars?|Glockenspiel|Snare drum|Cymbal","What do the drums and bass guitar provide in a band?|The rhythm section|The melody only|The lyrics"] },
+  pe: { "Years 3–4": ["What does orienteering help you practise?|Reading a map and finding your way|Swimming|Juggling","What should you take on an outdoor adventure?|Water and suitable clothes|Nothing|A television","What is a 'control' in orienteering?|A checkpoint to find|A remote|A rule"] },
+  art: { "Years 5–6": ["Which colours are opposite on the colour wheel and called complementary?|Red and green|Red and orange|Blue and purple","What is a monochrome picture?|One using shades of a single colour|One with every colour|A picture with no colour at all","What effect do warm colours have in a picture?|They seem to come forward and feel lively|They make it feel cold|They disappear"] },
+};
+for (const [k, decks] of Object.entries(GAPS)) for (const [d, l] of Object.entries(decks)) QUIZ[k].decks[d].push(...l);
+
 for (const [k, Q] of Object.entries(QUIZ)) SUBJECTS[k] = {
   title: Q.title, icon: Q.icon, unit: "questions", note: "Pick the right answer",
   decks: Object.fromEntries(Object.entries(Q.decks).map(([d, l]) => [d, l.map(s => {
@@ -1615,6 +1642,7 @@ function isRight(c, guess) {
   if (c.keywords) return c.keywords.some(k => g0.includes(norm(k)));
   if (c.accept) return c.accept.some(a => norm(a) === g0 || norm(a).replace(/[^a-z0-9;:?']/g, "") === g0.replace(/[^a-z0-9;:?']/g, ""));
   if (/^\d+,\d+$/.test(c.answer)) return g0.replace(/[()\s]/g, "") === c.answer;
+  if (/ r\d+$/.test(c.answer)) return g0.replace(/\s*(r|remainder|rem)\s*/, " r") === c.answer;
   if (c.kind === "sum" && /\//.test(c.answer + guess)) { const a = fracVal(c.answer), b = fracVal(g0); if (a !== null && b !== null) return Math.abs(a - b) < 1e-9; }
   guess = g0;
   if (c.kind === "sum") {
