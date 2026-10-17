@@ -265,6 +265,36 @@
   .toast.show { animation:toastIn 2.6s ease both; }
   @keyframes toastIn { 0% { transform:translate(-50%, 140%); } 12%, 85% { transform:translate(-50%, 0); } 100% { transform:translate(-50%, 140%); } }
   .panel.warn { background:#fff6db; border-color:#ffd54a; color:#5c4400; }
+  .parents { width:100%; max-width:820px; display:grid; gap:12px; }
+  .tabs { display:flex; flex-wrap:wrap; gap:8px; }
+  .tab { font:inherit; font-weight:800; padding:10px 16px; border-radius:999px; border:1px solid var(--line); background:var(--card); color:var(--ink); cursor:pointer; }
+  .tab.on { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .formGrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; margin:10px 0; }
+  .formGrid label { display:flex; flex-direction:column; gap:4px; font-weight:800; font-size:.9rem; color:var(--muted); }
+  .formGrid select, .formGrid input:not([type=checkbox]) { font:inherit; font-weight:700; padding:9px 10px; border:2px solid var(--line); border-radius:12px; background:var(--card); color:var(--ink); min-width:0; }
+  .formGrid .check { flex-direction:row; align-items:center; gap:8px; color:var(--ink); }
+  .sheetPreview { margin-top:12px; max-height:60vh; overflow:auto; border:1px dashed var(--line); border-radius:14px; padding:12px; background:#fff; color:#111; }
+  .sheetPreview:empty { display:none; }
+  .method { border:1px solid var(--line); border-radius:16px; padding:12px 14px; margin-top:10px; }
+  .method h3 { margin:0 0 6px; font-family:var(--display); } .method h3 small { color:var(--muted); font-family:var(--body); font-size:.8rem; margin-left:6px; }
+  .method .eg { background:var(--soft); border-radius:10px; padding:8px; }
+  #ptab h3 { margin:14px 0 4px; } #ptab ul { margin:0; padding-left:20px; } #ptab li { margin-bottom:4px; }
+  .ws h1 { font-size:1.2rem; margin:0; } .ws h2 { font-size:1.15rem; margin:10px 0; }
+  .wsHead { display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; border-bottom:2px solid #333; padding-bottom:6px; }
+  .ws .line { display:inline-block; min-width:110px; border-bottom:1px solid #333; height:1.1em; vertical-align:bottom; } .ws .line.short { min-width:70px; } .ws .line.long { min-width:240px; }
+  .ws .qs li { margin:0 0 14px; line-height:1.5; break-inside:avoid; }
+  .ws .opts3 { display:flex; flex-wrap:wrap; gap:6px 18px; margin-top:4px; }
+  .ws .psg { white-space:pre-line; border:1px solid #bbb; border-radius:8px; padding:6px 8px; margin:4px 0; font-size:.9rem; }
+  .ws .lscwc { width:100%; border-collapse:collapse; margin-bottom:14px; } .ws .lscwc th, .ws .lscwc td { border:1px solid #888; padding:8px; text-align:left; height:30px; }
+  .ws .ans { columns:2; } .ws .foot { color:#777; font-size:.75rem; margin-top:16px; }
+  #printArea { display:none; }
+  @media print {
+    body.printing > *:not(#printArea) { display:none !important; }
+    body.printing { background:#fff !important; padding:0 !important; display:block; color:#111; }
+    body.printing #printArea { display:block; font-family:var(--body); color:#111; }
+    .pagebreak { break-before:page; }
+    .method { break-inside:avoid; border-color:#999; }
+  }
   /* ---------- Modern theme ---------- */
   /* Layout: a light, calm page; colour comes from each subject, not the background */
   :root { --bg:#f5f6fb; --card:#ffffff; --ink:#1f2540; --muted:#6b7185; --line:#e6e8f2; --accent:#6c5ce7; --accent-ink:#ffffff; --good:#16a34a; --good-bg:#e7f8ec; --bad:#dc2626; --bad-bg:#fdecec; --c:#6c5ce7; --soft:#f0eefe;
@@ -399,6 +429,8 @@
 </div>
 
 <div class="progress" id="progress" hidden></div>
+<div class="parents" id="parents" hidden></div>
+<div id="printArea" aria-hidden="true"></div>
 
 <div class="panel writing" id="writing" hidden>
   <h2>🖊️ Your writing task</h2>
@@ -635,6 +667,15 @@ const MATHS_MORE = {
 MATHS_MORE["Year 4"].push(() => { const a = r(100, 999), b = r(3, 9); return [`${a} × ${b}`, a * b]; }, () => { const n = r(2, 9); return [`What is ${n} hundredths as a decimal?`, dec(n / 100)]; });
 MATHS_MORE["Year 5"].push(() => { const d = [3, 4, 5, 8][r(0, 3)], a = r(1, d - 1), w = r(2, 6); return [`${a}/${d} × ${w} = ?\n(type like 7/${d} or a mixed number)`, `${a * w}/${d}`]; }, () => { const a = r(1000, 9999), b = r(3, 9); return [`${a} × ${b}`, a * b]; }, () => { const n = r(1, 9); return [`Write ${n}/100 as a percentage. (%)`, n]; });
 MATHS_MORE["Year 6"].push(() => { const b = r(12, 25), q = r(12, 99), rem = r(1, b - 1); return [`${b * q + rem} ÷ ${b} = ? remainder ?\n(type like 34 r5)`, `${q} r${rem}`]; }, () => { const a = r(11, 99) / 10, b = r(11, 39); return [`${dec(a)} × ${b}`, dec(a * b)]; }, () => { const p = r(2, 9) * 5, n = r(2, 9) * 20; return [`What is ${p}% of ${n}?`, n * p / 100]; });
+// Extra variety for each topic, so worksheets and topic decks don't repeat
+const MEAS = [() => { const kg = r(2, 9); return [`${kg} kg = ? g`, kg * 1000]; }, () => { const l = r(2, 9); return [`${l} litres = ? ml`, l * 1000]; }, () => { const m = r(2, 9); return [`${m} m = ? cm`, m * 100]; }, () => { const c = r(2, 15); return [`${c} cm = ? mm`, c * 10]; }, () => { const g = r(2, 9) * 1000; return [`${g} g = ? kg`, g / 1000]; }, () => { const ml = r(2, 9) * 1000; return [`${ml} ml = ? litres`, ml / 1000]; }, () => { const cm = r(2, 9) * 100; return [`${cm} cm = ? m`, cm / 100]; }];
+const TIMEQ = [() => { const h = r(2, 9); return [`How many minutes are in ${h} hours?`, h * 60]; }, () => { const m = r(2, 6) * 60; return [`${m} minutes = ? hours`, m / 60]; }, () => { const w = r(2, 8); return [`How many days are in ${w} weeks?`, w * 7]; }, () => { const s = r(9, 11), d = [20, 25, 35, 40][r(0, 3)]; return [`A lesson starts at ${s}:15 and lasts ${d} minutes. What time does it end? (like 10:40)`, `${s}:${15 + d}`]; }, () => { const h = r(13, 23); return [`What is ${h}:00 as a 12-hour time? (type the hour)`, h - 12]; }, () => ["How many months are in a year?", 12]];
+const SHAPEQ = [() => { const s = r(3, 12); return [`A square has sides of ${s} cm. What is its perimeter? (cm)`, s * 4]; }, () => { const s = r(2, 12); return [`A square has sides of ${s} cm. What is its area? (cm²)`, s * s]; }, () => { const [n, k] = [["triangle", 3], ["pentagon", 5], ["hexagon", 6], ["octagon", 8]][r(0, 3)]; return [`How many vertices (corners) does a ${n} have?`, k]; }, () => ["How many degrees are in a right angle?", 90], () => ["How many degrees in a full turn?", 360], () => { const [n, f] = [["cube", 6], ["cuboid", 6], ["square-based pyramid", 5], ["triangular prism", 5]][r(0, 3)]; return [`How many faces does a ${n} have?`, f]; }];
+const MONEYQ = [() => { const a = r(1, 9) * 10 + 5; return [`Sweets cost ${a}p. How much change from £1? (p)`, 100 - a]; }, () => { const a = r(2, 9), b = r(2, 9); return [`A pen costs £${a} and a book costs £${b}. How much altogether? (£)`, a + b]; }, () => { const p = r(2, 9) * 5; return [`3 apples cost ${p * 3}p. How much is one apple? (p)`, p]; }];
+MATHS_MORE["Year 3"].push(...MEAS.slice(0, 4), ...TIMEQ.slice(0, 3), ...SHAPEQ.slice(0, 3), ...MONEYQ);
+MATHS_MORE["Year 4"].push(...MEAS, ...TIMEQ, ...SHAPEQ, ...MONEYQ.slice(0, 2));
+MATHS_MORE["Year 5"].push(...MEAS, ...TIMEQ.slice(3), ...SHAPEQ);
+MATHS_MORE["Year 6"].push(...MEAS, ...SHAPEQ.slice(1));
 for (const [y, gens] of Object.entries(MATHS_MORE)) {
   const base = MATHS[y], extra = pick(...gens);
   MATHS[y] = () => Math.random() < .5 ? base() : extra();
@@ -1404,7 +1445,7 @@ function button(icon, label, small, onclick) {
 
 function showSubjects() {
   subject = null; year = ""; stopReading(); if (typeof watching !== "undefined" && watching) stopWatching();
-  $("menu").innerHTML = ""; tileN = 0; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = true; $("rules").hidden = false; $("editor").hidden = true; $("progress").hidden = true; $("writing").hidden = true;
+  $("menu").innerHTML = ""; tileN = 0; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = true; $("rules").hidden = false; $("editor").hidden = true; $("progress").hidden = true; $("writing").hidden = true; $("parents").hidden = true;
   $("sub").textContent = "Pick a subject";
   for (const [k, S] of Object.entries(SUBJECTS)) {
     const n = k === "maths" ? "Endless questions" : k === "sats" ? "Year 6 tests: reading, grammar, spelling, maths" : k === "writing" ? "Write and get feedback" : Object.values(S.decks).reduce((t, d) => t + d.length, 0) + " " + (S.unit || "cards");
@@ -1412,11 +1453,12 @@ function showSubjects() {
   }
   button("💬", "What Does This Mean?", "Ask about school words", openChat);
   { const dn = loadJSON(doneKey(), []).length, an = loadJSON(logKey(), []).length; button("📈", "My Progress", an || dn ? `${an} answers · ${dn} finished` : "Stars, scores and practice", showProgress); }
+  button("👪", "Parents' Corner", "Worksheets, methods and what's covered", () => showParents());
 }
 
 function showDecks(s) {
   stopTimers(); if (typeof watching !== "undefined" && watching) stopWatching();
-  subject = s; year = ""; $("years").hidden = true; const S = SUBJECTS[s]; $("rules").hidden = true; $("editor").hidden = true; $("progress").hidden = true; $("writing").hidden = true;
+  subject = s; year = ""; $("years").hidden = true; const S = SUBJECTS[s]; $("rules").hidden = true; $("editor").hidden = true; $("progress").hidden = true; $("writing").hidden = true; $("parents").hidden = true;
   stopReading();
   $("menu").innerHTML = ""; tileN = 0; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = false;
   $("sub").textContent = `${S.title}: pick a deck`;
@@ -1687,7 +1729,7 @@ function showTopics(s, name) {
   year = name; subject = s; const S = SUBJECTS[s];
   stopReading();
   $("menu").innerHTML = ""; tileN = 0; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = false; $("years").hidden = false;
-  $("rules").hidden = true; $("editor").hidden = true; $("progress").hidden = true; $("writing").hidden = true;
+  $("rules").hidden = true; $("editor").hidden = true; $("progress").hidden = true; $("writing").hidden = true; $("parents").hidden = true;
   $("sub").textContent = `${S.title} · ${name}: pick a topic`;
   button("🎲", `All of ${name}`, AGES[name] || "Every topic mixed", () => start(name));
   for (const [t, icon, n] of topicsFor(s, name)) {
@@ -1721,7 +1763,7 @@ async function begin(cards) {
   results = []; document.documentElement.style.setProperty("--c", SUBJECT_TINT[subject] || "#6c5ce7");
   deck = subject === "sats" && deckName === "Reading" || subject === "comprehension" && deckName !== "Mixed" ? cards : shuffle(cards); i = 0; score = 0; streak = 0; finishing = false; mistakes = []; stopTimers();
   if (subject === "sats" && SATS_INFO[deckName] && SATS_INFO[deckName][2]) startExamTimer(SATS_INFO[deckName][2]);
-  $("menu").hidden = true; $("topbar").hidden = true; $("game").hidden = false; $("progress").hidden = true; $("writing").hidden = true;
+  $("menu").hidden = true; $("topbar").hidden = true; $("game").hidden = false; $("progress").hidden = true; $("writing").hidden = true; $("parents").hidden = true;
   $("sub").textContent = SUBJECTS[subject].note;
   $("credit").textContent = subject === "animals" ? "Photos from Wikipedia" : subject === "flags" ? "Flags from flagcdn.com" : subject === "books" ? "Covers from Open Library" : "";
   await show();
@@ -1896,6 +1938,224 @@ function openWriting(band) {
 }
 SUBJECTS.writing = {title: "Writing Workshop", icon: "🖊️", unit: "prompts", note: "Write, then get instant feedback", decks: {"Years 1–2": [1, 2, 3, 4], "Years 3–4": [1, 2, 3, 4], "Years 5–6": [1, 2, 3, 4]}};
 
+// ---------- Maths methods taught in UK primary schools (National Curriculum and common school calculation policies) ----------
+const METHODS = [
+  {id: "count", title: "Counting on and back", year: "Reception–Year 1", keys: /count(ing)? (on|back)|number line|add(ing)? small|take away small/i,
+    when: "Adding or taking away small numbers.", steps: ["Start at the bigger number.", "Count on to add, or count back to take away, one jump at a time.", "Use your fingers or a number line to keep track."], example: "8 + 3: start at 8 and count on 3 → 9, 10, 11. So 8 + 3 = 11."},
+  {id: "bonds", title: "Number bonds", year: "Year 1–2", keys: /number bonds?|make 10|make ten|make 20|make 100|bonds to/i,
+    when: "Pairs of numbers that make 10, 20 or 100. They help with quick adding.", steps: ["Learn the pairs to 10: 0+10, 1+9, 2+8, 3+7, 4+6, 5+5.", "Use them for 20 (13 + 7 = 20) and 100 (30 + 70 = 100).", "Look for bonds inside bigger sums."], example: "7 + 5: 7 + 3 makes 10, then 2 more → 12."},
+  {id: "partition", title: "Partitioning", year: "Year 2–3", keys: /partition/i,
+    when: "Adding or taking away 2-digit numbers in your head.", steps: ["Split a number into tens and ones.", "Add the tens first, then the ones.", "Put the parts back together."], example: "34 + 25: 30 + 20 = 50, 4 + 5 = 9, so 59."},
+  {id: "colAdd", title: "Column addition", year: "Year 3–6", keys: /column addition|add(ing)? (big|large|3|4)|(\d{3,}\s*\+)/i,
+    when: "Adding numbers with 3 or more digits.", steps: ["Line up the digits: ones under ones, tens under tens, hundreds under hundreds.", "Add the ones column first (start on the right).", "If a column adds to 10 or more, write the ones digit and carry the ten into the next column.", "Keep going left, adding any carried digits."], example: "456 + 278: 6 + 8 = 14 → write 4, carry 1. 5 + 7 + 1 = 13 → write 3, carry 1. 4 + 2 + 1 = 7. Answer 734."},
+  {id: "colSub", title: "Column subtraction (with exchanging)", year: "Year 3–6", keys: /column subtraction|exchang|borrow|subtract(ing)? (big|large)|(\d{3,}\s*[-−])/i,
+    when: "Taking away numbers with 3 or more digits.", steps: ["Put the bigger number on top and line up the columns.", "Start with the ones. Can you take the bottom digit from the top digit?", "If not, exchange: take 1 ten from the next column and make it 10 more ones.", "Subtract each column, moving left."], example: "523 − 268: 3 − 8 can't, exchange → 13 − 8 = 5. Tens: 1 − 6 can't, exchange → 11 − 6 = 5. Hundreds: 4 − 2 = 2. Answer 255."},
+  {id: "inverse", title: "Inverse operations (checking)", year: "Year 2–6", keys: /inverse|check (my|the|your) answer/i,
+    when: "Checking an answer or finding a missing number.", steps: ["Adding and subtracting undo each other.", "Multiplying and dividing undo each other.", "Do the opposite calculation to check."], example: "Check 734 − 278 = 456 by doing 456 + 278 = 734 ✓."},
+  {id: "arrays", title: "Arrays and repeated addition", year: "Year 1–2", keys: /array|repeated addition|groups of/i,
+    when: "Understanding multiplication.", steps: ["Multiplication means equal groups.", "Draw rows and columns (an array).", "Count in steps: 3 × 4 is 4 + 4 + 4."], example: "3 × 5: three rows of five dots = 15."},
+  {id: "grid", title: "Grid method", year: "Year 3–4", keys: /grid method/i,
+    when: "Multiplying a 2-digit or 3-digit number by a 1-digit number (a step before short multiplication).", steps: ["Partition the bigger number into hundreds, tens and ones.", "Draw a grid and multiply each part.", "Add the answers together."], example: "34 × 6: 30 × 6 = 180, 4 × 6 = 24, 180 + 24 = 204."},
+  {id: "shortMul", title: "Short multiplication", year: "Year 4–6", keys: /short multiplication|multiply(ing)? by (a )?(one|1|single)[- ]digit|(\d{2,}\s*[x×*]\s*\d\b)/i,
+    when: "Multiplying a big number by a 1-digit number.", steps: ["Write the big number on top, the 1-digit number underneath on the right.", "Multiply the ones first. Write the ones digit and carry any tens.", "Multiply the tens, then add the carried number.", "Keep going left."], example: "347 × 6: 7 × 6 = 42 → write 2, carry 4. 4 × 6 = 24 + 4 = 28 → write 8, carry 2. 3 × 6 = 18 + 2 = 20. Answer 2,082."},
+  {id: "longMul", title: "Long multiplication", year: "Year 5–6", keys: /long multiplication|multiply(ing)? (two|2)[- ]digit|(\d{2,}\s*[x×*]\s*\d{2,})/i,
+    when: "Multiplying by a 2-digit number.", steps: ["Multiply the top number by the ones digit of the bottom number. Write the answer.", "Put a 0 in the ones column on the next row (because you are multiplying by tens).", "Multiply the top number by the tens digit. Write it after the 0.", "Add the two rows together."], example: "34 × 26: 34 × 6 = 204. 34 × 20 = 680. 204 + 680 = 884."},
+  {id: "shortDiv", title: "Short division (bus stop)", year: "Year 4–6", keys: /short division|bus stop|divide by (a )?(one|1|single)[- ]digit|(\d{2,}\s*[÷/]\s*\d\b)/i,
+    when: "Dividing a big number by a 1-digit number.", steps: ["Draw the bus stop: the number you divide goes inside, the divisor outside.", "How many times does the divisor go into the first digit? Write it on top.", "Carry any remainder to the next digit (write it small in front).", "Repeat for each digit."], example: "852 ÷ 4: 8 ÷ 4 = 2. 5 ÷ 4 = 1 r1 → carry 1 to make 12. 12 ÷ 4 = 3. Answer 213."},
+  {id: "longDiv", title: "Long division", year: "Year 6", keys: /long division|divide by (two|2)[- ]digit|(\d{3,}\s*[÷/]\s*\d{2,})/i,
+    when: "Dividing by a 2-digit number.", steps: ["Write multiples of the divisor to help (e.g. 15, 30, 45…).", "Divide into the first digits. Write how many times on top.", "Multiply, subtract, then bring down the next digit.", "Repeat until there are no digits left. What's left is the remainder."], example: "432 ÷ 12: 43 ÷ 12 = 3 (36), 43 − 36 = 7. Bring down 2 → 72. 72 ÷ 12 = 6. Answer 36."},
+  {id: "chunking", title: "Chunking", year: "Year 4–5", keys: /chunk/i,
+    when: "Dividing by taking away big chunks.", steps: ["Take away easy multiples of the divisor (like ×10).", "Keep taking away chunks until you can't.", "Add up how many lots you took away."], example: "156 ÷ 6: take 60 (10 lots), take 60 (10 lots), 36 left = 6 lots. 10 + 10 + 6 = 26."},
+  {id: "bidmas", title: "Order of operations (BIDMAS)", year: "Year 6", keys: /bidmas|bodmas|order of operations|brackets first/i,
+    when: "Calculations with more than one operation.", steps: ["Brackets first.", "Indices (powers, like 3²).", "Division and Multiplication, left to right.", "Addition and Subtraction, left to right."], example: "3 + 4 × 2 = 3 + 8 = 11 (not 14!)."},
+  {id: "fracOf", title: "Finding a fraction of an amount", year: "Year 2–6", keys: /fraction of|(\d+\/\d+|half|third|quarter) of \d/i,
+    when: "Questions like '3/4 of 20'.", steps: ["Divide by the bottom number (denominator).", "Multiply by the top number (numerator)."], example: "3/4 of 20: 20 ÷ 4 = 5, then 5 × 3 = 15."},
+  {id: "equivFrac", title: "Equivalent fractions and simplifying", year: "Year 3–6", keys: /equivalent fraction|simplif/i,
+    when: "Showing the same amount with different numbers.", steps: ["Multiply or divide the top and bottom by the same number.", "To simplify, divide both by the biggest number that goes into both."], example: "6/8: divide top and bottom by 2 → 3/4."},
+  {id: "addFrac", title: "Adding and subtracting fractions", year: "Year 3–6", keys: /add(ing)? fractions|subtract(ing)? fractions|(\d+\/\d+\s*[+−-]\s*\d+\/\d+)/i,
+    when: "Adding or taking away fractions.", steps: ["If the bottoms (denominators) are the same, add or take away the tops only.", "If they are different, find a common denominator: make equivalent fractions with the same bottom number.", "Then add or take away the tops.", "Simplify the answer if you can."], example: "1/2 + 1/4: 1/2 = 2/4, so 2/4 + 1/4 = 3/4."},
+  {id: "mulFrac", title: "Multiplying fractions", year: "Year 5–6", keys: /multiply(ing)? fractions|(\d+\/\d+\s*[x×*]\s*\d)/i,
+    when: "Fraction × whole number, or fraction × fraction.", steps: ["Fraction × whole number: multiply the top by the whole number, keep the bottom the same.", "Fraction × fraction: multiply the tops, multiply the bottoms.", "Simplify if you can."], example: "2/3 × 4 = 8/3 = 2 2/3. And 1/2 × 3/4 = 3/8."},
+  {id: "divFrac", title: "Dividing a fraction by a whole number", year: "Year 6", keys: /divid(e|ing) (a )?fractions?|(\d+\/\d+\s*[÷/]\s*\d\b)/i,
+    when: "Questions like 1/3 ÷ 2.", steps: ["Multiply the bottom (denominator) by the whole number.", "Keep the top the same."], example: "1/3 ÷ 2 = 1/6."},
+  {id: "percent", title: "Finding a percentage of an amount", year: "Year 5–6", keys: /percent|%/i,
+    when: "Questions like '30% of 80'.", steps: ["Find 10% by dividing by 10.", "Use 10% to build others: 20% is double, 5% is half of 10%.", "50% is half, 25% is a quarter, 1% is ÷ 100."], example: "30% of 80: 10% = 8, so 30% = 8 × 3 = 24."},
+  {id: "decimals", title: "Adding and subtracting decimals", year: "Year 4–6", keys: /decimal/i,
+    when: "Calculations with decimal points.", steps: ["Line up the decimal points.", "Fill empty places with 0s so the numbers are the same length.", "Use column addition or subtraction, and keep the point in line."], example: "4.5 + 2.38: 4.50 + 2.38 = 6.88."},
+  {id: "x10", title: "Multiplying and dividing by 10, 100, 1000", year: "Year 3–6", keys: /(multiply|divide|times)(ing)? by (10|100|1000|ten|hundred|thousand)/i,
+    when: "Making numbers 10, 100 or 1000 times bigger or smaller.", steps: ["× 10: digits move one place to the left. × 100: two places. × 1000: three places.", "÷ 10: digits move one place to the right, and so on.", "Use 0 as a place holder when needed."], example: "3.4 × 100 = 340. 56 ÷ 10 = 5.6."},
+  {id: "round", title: "Rounding", year: "Year 3–6", keys: /round(ing)?/i,
+    when: "Making a number simpler, to the nearest 10, 100, 1000 or whole number.", steps: ["Find the digit in the place you're rounding to.", "Look at the digit to its right.", "5 or more: round up. 4 or less: round down."], example: "4,682 to the nearest 100: look at the 8 → round up → 4,700."},
+  {id: "area", title: "Area and perimeter", year: "Year 3–6", keys: /area|perimeter/i,
+    when: "Measuring flat shapes.", steps: ["Perimeter is the distance all the way round: add up all the sides.", "Area of a rectangle: length × width (square units, like cm²).", "Area of a triangle: base × height ÷ 2.", "Area of a parallelogram: base × height."], example: "A 5 cm by 3 cm rectangle: perimeter = 5 + 3 + 5 + 3 = 16 cm, area = 5 × 3 = 15 cm²."},
+  {id: "volume", title: "Volume of a cuboid", year: "Year 5–6", keys: /volume/i,
+    when: "Finding how much space a 3D box shape takes up.", steps: ["Multiply length × width × height.", "Write the answer in cubic units, like cm³."], example: "4 cm × 3 cm × 2 cm = 24 cm³."},
+  {id: "angles", title: "Angle facts", year: "Year 5–6", keys: /angle/i,
+    when: "Finding missing angles.", steps: ["Angles on a straight line add up to 180°.", "Angles around a point add up to 360°.", "Angles in a triangle add up to 180°; in a quadrilateral, 360°.", "Vertically opposite angles are equal."], example: "Two angles in a triangle are 50° and 60°: 180 − 50 − 60 = 70°."},
+  {id: "mean", title: "Finding the mean (average)", year: "Year 6", keys: /\bmean\b|average/i,
+    when: "Finding a typical value.", steps: ["Add all the numbers together.", "Divide by how many numbers there are."], example: "Mean of 4, 6 and 8: 4 + 6 + 8 = 18, 18 ÷ 3 = 6."},
+  {id: "ratio", title: "Ratio and proportion", year: "Year 6", keys: /ratio|proportion|share in/i,
+    when: "Comparing amounts or sharing in a ratio.", steps: ["Add the parts of the ratio to find the total number of parts.", "Divide the amount by the total parts to find one part.", "Multiply to find each share."], example: "Share 20 sweets in the ratio 3:2: 5 parts, 20 ÷ 5 = 4, so 12 and 8."},
+  {id: "convert", title: "Converting units of measure", year: "Year 4–6", keys: /convert|units|km|metres|grams|litres|mm\b|cm\b|ml\b|kg\b/i,
+    when: "Changing between units.", steps: ["Remember: 10 mm = 1 cm, 100 cm = 1 m, 1000 m = 1 km.", "1000 g = 1 kg, 1000 ml = 1 l.", "Big unit → small unit: multiply. Small unit → big unit: divide."], example: "3.5 km = 3.5 × 1000 = 3,500 m."},
+  {id: "time", title: "Working out time", year: "Year 2–6", keys: /\btime\b|clock|minutes|hours|o'clock/i,
+    when: "Telling the time and finding how long things take.", steps: ["There are 60 minutes in an hour, so you can't add times like normal numbers.", "Count on to the next hour, then on to the end time.", "On a 24-hour clock, take away 12 to get pm times."], example: "10:45 to 12:15: 15 minutes to 11:00, then 1 hour 15 minutes → 1 hour 30 minutes."},
+  {id: "algebra", title: "Solving simple equations (algebra)", year: "Year 6", keys: /algebra|equation|solve for|find (n|x|y)\b|missing number/i,
+    when: "Finding a missing number shown by a letter.", steps: ["Use the inverse to undo each step.", "Do the same thing to both sides.", "Check by putting your answer back in."], example: "3n + 4 = 19: take away 4 → 3n = 15, divide by 3 → n = 5."},
+  {id: "negative", title: "Negative numbers", year: "Year 4–6", keys: /negative|minus number|below zero|temperature/i,
+    when: "Numbers less than zero.", steps: ["Use a number line that goes below 0.", "Adding moves right (up); subtracting moves left (down).", "Count across zero carefully."], example: "−3 + 7: start at −3 and count up 7 → 4."},
+  {id: "roman", title: "Roman numerals", year: "Year 3–6", keys: /roman/i,
+    when: "Reading numbers like XIV.", steps: ["I = 1, V = 5, X = 10, L = 50, C = 100, D = 500, M = 1000.", "Add numerals when a smaller one comes after a bigger one (VI = 6).", "Take away when a smaller one comes before (IV = 4)."], example: "XIV = 10 + 4 = 14."},
+];
+// Worked examples for the actual numbers a child types
+function workedExample(q) {
+  const s = q.replace(/,/g, "").replace(/×|\bx\b|\*/g, "×").replace(/÷/g, "÷").replace(/−/g, "-");
+  let m;
+  if ((m = s.match(/(\d+)\s*\+\s*(\d+)/))) {
+    const a = m[1], b = m[2], n = Math.max(a.length, b.length), A = a.padStart(n, "0"), B = b.padStart(n, "0"), names = ["ones", "tens", "hundreds", "thousands", "ten thousands"];
+    let carry = 0; const steps = []; let ans = "";
+    for (let k = n - 1; k >= 0; k--) { const da = +A[k], db = +B[k], t = da + db + carry, nm = names[n - 1 - k] || "next"; steps.push(`${nm}: ${da} + ${db}${carry ? " + " + carry + " carried" : ""} = ${t}${t >= 10 ? ` → write ${t % 10}, carry 1` : ""}`); ans = (t % 10) + ans; carry = t >= 10 ? 1 : 0; }
+    if (carry) { ans = "1" + ans; steps.push("Write the last carried 1 at the front."); }
+    return `Column addition for ${a} + ${b}:\nLine up the digits, then add from the right.\n• ${steps.join("\n• ")}\nAnswer: ${Number(ans)}`;
+  }
+  if ((m = s.match(/(\d+)\s*-\s*(\d+)/)) && +m[1] >= +m[2]) {
+    const a = m[1], b = m[2].padStart(m[1].length, "0"), names = ["ones", "tens", "hundreds", "thousands", "ten thousands"]; const top = a.split("").map(Number); const steps = [];
+    for (let k = top.length - 1; k >= 0; k--) { const nm = names[top.length - 1 - k] || "next"; let t = top[k]; const bb = +b[k]; if (t < bb) { let j = k - 1; while (top[j] === 0) { top[j] = 9; j--; } top[j]--; t += 10; steps.push(`${nm}: ${t - 10} − ${bb} can't be done, so exchange 1 from the next column → ${t} − ${bb} = ${t - bb}`); } else steps.push(`${nm}: ${t} − ${bb} = ${t - bb}`); top[k] = t - bb; }
+    return `Column subtraction for ${a} − ${m[2]}:\nPut the bigger number on top and start with the ones.\n• ${steps.join("\n• ")}\nAnswer: ${+a - +m[2]}`;
+  }
+  if ((m = s.match(/(\d+)\s*×\s*(\d+)/))) {
+    const a = +m[1], b = +m[2];
+    if (b < 10) { const digits = String(a).split("").map(Number).reverse(), names = ["ones", "tens", "hundreds", "thousands"]; let carry = 0; const steps = [];
+      digits.forEach((d, k) => { const t = d * b + carry; steps.push(`${names[k] || "next"}: ${d} × ${b}${carry ? " + " + carry + " carried" : ""} = ${t}${t >= 10 && k < digits.length - 1 ? ` → write ${t % 10}, carry ${Math.floor(t / 10)}` : ""}`); carry = Math.floor(t / 10); });
+      return `Short multiplication for ${a} × ${b}:\nMultiply each digit by ${b}, starting with the ones.\n• ${steps.join("\n• ")}\nAnswer: ${(a * b).toLocaleString("en-GB")}`; }
+    const ones = b % 10, tens = b - ones;
+    return `Long multiplication for ${a} × ${b}:\n• Multiply by the ones: ${a} × ${ones} = ${a * ones}\n• Multiply by the tens (put a 0 first): ${a} × ${tens} = ${a * tens}\n• Add the rows: ${a * ones} + ${a * tens} = ${a * b}\nAnswer: ${(a * b).toLocaleString("en-GB")}`;
+  }
+  if ((m = s.match(/(\d+)\s*÷\s*(\d+)/)) && +m[2] > 0) {
+    const a = m[1], b = +m[2]; let rem = 0, out = ""; const steps = [];
+    for (const ch of a) { const cur = rem * 10 + +ch, q2 = Math.floor(cur / b); rem = cur % b; out += q2; steps.push(`${cur} ÷ ${b} = ${q2}${rem ? ` remainder ${rem} (carry ${rem})` : ""}`); }
+    return `${b < 10 ? "Short division (bus stop)" : "Long division"} for ${a} ÷ ${b}:\nDivide each digit from the left, carrying any remainder.\n• ${steps.join("\n• ")}\nAnswer: ${Number(out)}${rem ? ` remainder ${rem}` : ""}`;
+  }
+  if ((m = s.match(/(\d+)\s*%\s*of\s*(\d+)/i))) { const p = +m[1], n = +m[2]; return `Finding ${p}% of ${n}:\n• 10% of ${n} is ${n} ÷ 10 = ${n / 10}\n• ${p}% is ${p / 10} lots of 10%: ${n / 10} × ${p / 10} = ${n * p / 100}\nAnswer: ${n * p / 100}`; }
+  if ((m = s.match(/(\d+)\/(\d+)\s*of\s*(\d+)/i))) { const t = +m[1], d = +m[2], n = +m[3]; return `Finding ${t}/${d} of ${n}:\n• Divide by the denominator: ${n} ÷ ${d} = ${n / d}\n• Multiply by the numerator: ${n / d} × ${t} = ${n / d * t}\nAnswer: ${n / d * t}`; }
+  return null;
+}
+function methodAnswer(q) {
+  const ex = workedExample(q);
+  const mth = METHODS.find(x => x.keys.test(q));
+  if (ex) return ex + (mth ? `\n\n(This method is taught in ${mth.year}.)` : "");
+  if (mth) return `${mth.title} (${mth.year})\nUse it for: ${mth.when}\n• ${mth.steps.join("\n• ")}\nExample: ${mth.example}`;
+  return null;
+}
+const ASKS_METHOD = /method|how (do|can|would|should) (i|you|we)|steps|work (it )?out|explain how|show me how|solve/i;
+
+// ---------- Parents' Corner: printable worksheets, method guides and what's covered ----------
+const esc2 = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+function showParents(tab = "sheets") {
+  stopReading(); stopTimers(); subject = null; year = "";
+  $("menu").hidden = true; $("rules").hidden = true; $("game").hidden = true; $("progress").hidden = true; $("writing").hidden = true; $("parents").hidden = true; $("editor").hidden = true;
+  $("topbar").hidden = false; $("years").hidden = true;
+  $("sub").textContent = "Parents' Corner";
+  const P = $("parents"); P.hidden = false;
+  const subjOpts = [["maths", "Maths"], ["spelling", "Spelling"], ...Object.entries(QUIZ).map(([k, q]) => [k, q.title]), ["sats", "Year 6 SATs papers"]];
+  P.innerHTML = `
+    <div class="tabs" role="tablist">
+      <button class="tab ${tab === "sheets" ? "on" : ""}" data-tab="sheets" type="button">🖨️ Worksheets</button>
+      <button class="tab ${tab === "methods" ? "on" : ""}" data-tab="methods" type="button">🧮 Maths methods</button>
+      <button class="tab ${tab === "covered" ? "on" : ""}" data-tab="covered" type="button">✅ What's covered</button>
+    </div>
+    <div class="panel" id="ptab"></div>`;
+  P.querySelectorAll(".tab").forEach(b => b.onclick = () => showParents(b.dataset.tab));
+  const T = $("ptab");
+  if (tab === "sheets") {
+    T.innerHTML = `<h2>🖨️ Make a worksheet</h2><p>Pick a subject, year and topic. Each sheet is new, with an answer page at the end.</p>
+      <div class="formGrid">
+        <label>Subject<select id="wsSubj">${subjOpts.map(([k, t]) => `<option value="${k}">${esc2(t)}</option>`).join("")}</select></label>
+        <label>Year group<select id="wsYear"></select></label>
+        <label>Topic<select id="wsTopic"></select></label>
+        <label>Questions<select id="wsCount"><option>10</option><option selected>20</option><option>30</option></select></label>
+        <label>Child's name (optional)<input id="wsName" maxlength="30" value="${esc2(player === "Me" ? "" : player)}"></label>
+        <label class="check"><input type="checkbox" id="wsAns" checked> Include answers page</label>
+      </div>
+      <div class="edBtns"><button class="btn" id="wsMake" type="button">Make worksheet</button><button class="btn ghost" id="wsPrint" type="button" disabled>🖨️ Print</button></div>
+      <div class="sheetPreview" id="wsPreview"></div>`;
+    const fillYears = () => {
+      const s = $("wsSubj").value, years = s === "sats" ? ["Arithmetic (Paper 1)", "Reasoning (Papers 2 & 3)", "Grammar & Punctuation (Paper 1)", "Spelling (Paper 2)"] : Object.keys(SUBJECTS[s].decks);
+      $("wsYear").innerHTML = years.map(y => `<option>${esc2(y)}</option>`).join(""); fillTopics();
+    };
+    const fillTopics = () => {
+      const s = $("wsSubj").value, y = $("wsYear").value;
+      const ts = TOPICS[s] && s !== "sats" ? topicsFor(s, y).map(t => t[0]) : [];
+      $("wsTopic").innerHTML = `<option value="">All topics</option>` + ts.map(t => `<option>${esc2(t)}</option>`).join("");
+      $("wsTopic").disabled = !ts.length;
+    };
+    $("wsSubj").onchange = fillYears; $("wsYear").onchange = fillTopics; fillYears();
+    $("wsMake").onclick = () => { $("wsPreview").innerHTML = buildSheet($("wsSubj").value, $("wsYear").value, $("wsTopic").value, +$("wsCount").value, $("wsName").value.trim(), $("wsAns").checked); $("wsPrint").disabled = false; };
+    $("wsPrint").onclick = () => printHTML($("wsPreview").innerHTML);
+  } else if (tab === "methods") {
+    const groups = ["Reception–Year 1", "Year 1–2", "Year 2–3", "Year 2–6", "Year 3–4", "Year 3–6", "Year 4–5", "Year 4–6", "Year 5–6", "Year 6"];
+    T.innerHTML = `<h2>🧮 How your child is taught to calculate</h2><p>These are the written and mental methods children learn in UK primary schools. Schools' calculation policies vary a little, so check with your child's teacher if a method looks different.</p>
+      <div class="edBtns"><button class="btn" id="mPrint" type="button">🖨️ Print all methods</button></div>
+      <div id="mList">${METHODS.slice().sort((a, b) => groups.indexOf(a.year) - groups.indexOf(b.year)).map(methodCard).join("")}</div>`;
+    $("mPrint").onclick = () => printHTML(`<h1>Maths methods taught in primary school</h1>${$("mList").innerHTML}`);
+  } else {
+    T.innerHTML = coverageHTML();
+  }
+}
+function methodCard(m) {
+  return `<div class="method"><h3>${esc2(m.title)} <small>${esc2(m.year)}</small></h3><p><b>Use it for:</b> ${esc2(m.when)}</p><ol>${m.steps.map(s => `<li>${esc2(s)}</li>`).join("")}</ol><p class="eg"><b>Example:</b> ${esc2(m.example)}</p></div>`;
+}
+function sheetCards(s, y, topic, n) {
+  if (s === "sats") return satsDeck(y).slice(0, n);
+  if (s === "spelling") return shuffle(SUBJECTS.spelling.decks[y].slice()).slice(0, n);
+  if (topic) { const out = [], seen = new Set(); for (let k = 0; out.length < n && k < 6; k++) for (const c of topicCards(s, y, topic)) if (!seen.has(c.question)) { seen.add(c.question); out.push(c); } return shuffle(out).slice(0, n); }
+  if (s === "maths") { const out = []; while (out.length < n) out.push(...mathsDeck(y)); return out.slice(0, n); }
+  return shuffle(SUBJECTS[s].decks[y].slice()).slice(0, n);
+}
+function buildSheet(s, y, topic, n, name, withAnswers) {
+  const title = s === "sats" ? `Year 6 SATs practice · ${y}` : `${SUBJECTS[s].title} · ${y}${topic ? " · " + topic : ""}`;
+  const cards = sheetCards(s, y, topic, n);
+  const head = `<div class="ws"><div class="wsHead"><h1>⚡ Speedy Learning</h1><div>Name: <span class="line">${esc2(name) || "&nbsp;"}</span> Date: <span class="line short"></span></div></div><h2>${esc2(title)}</h2>`;
+  let body = "";
+  if (s === "spelling") {
+    body = `<p>A grown-up reads each word aloud. Look, say, cover, write, check!</p><table class="lscwc"><tr><th>Word</th><th>Try 1</th><th>Try 2</th><th>Try 3</th></tr>${cards.map(c => `<tr><td>${esc2(c.answer)}</td><td></td><td></td><td></td></tr>`).join("")}</table>
+      <h3>Spelling test (fold this half over)</h3><ol class="qs">${cards.map(() => `<li><span class="line long"></span></li>`).join("")}</ol>`;
+  } else {
+    body = `<ol class="qs">${cards.map(c => {
+      if (c.kind === "quiz") { const opts = shuffle([c.answer, ...c.wrong]); return `<li>${esc2(c.question)}${c.passage ? `<div class="psg">${esc2(c.passage)}</div>` : ""}<div class="opts3">${opts.map((o, k) => `<span>${"abc"[k]}) ${esc2(o)}</span>`).join("")}</div></li>`; }
+      if (c.kind === "spell") return `<li>${esc2((c.clue || "").replace("___", "________"))} <span class="line"></span></li>`;
+      const q = c.worded ? c.question : c.question + " =";
+      return `<li>${c.passage ? `<div class="psg">${esc2(c.passage)}</div>` : ""}${esc2(q).replace(/\n/g, "<br>")} <span class="line"></span></li>`;
+    }).join("")}</ol>`;
+  }
+  const answers = withAnswers ? `<div class="pagebreak"></div><h2>Answers · ${esc2(title)}</h2><ol class="ans">${cards.map(c => `<li>${esc2(c.answer)}</li>`).join("")}</ol>` : "";
+  return head + body + answers + `<p class="foot">Made with Speedy Learning · ${new Date().toLocaleDateString("en-GB")}</p></div>`;
+}
+function printHTML(inner) {
+  const area = $("printArea"); area.innerHTML = inner;
+  document.body.classList.add("printing");
+  setTimeout(() => { window.print(); setTimeout(() => document.body.classList.remove("printing"), 500); }, 50);
+}
+function coverageHTML() {
+  const rows = [];
+  for (const [k, S] of Object.entries(SUBJECTS)) {
+    if (k === "sats" || k === "writing" || k === "animals" || k === "flags" || k === "books" || k === "stories") continue;
+    const decks = Object.keys(S.decks);
+    rows.push(`<h3>${S.icon} ${esc2(S.title)}</h3><ul>${decks.map(d => {
+      if (k === "maths") return `<li><b>${esc2(d)}:</b> ${topicsFor(k, d).map(t => esc2(t[0])).join(", ")} (new questions every time)</li>`;
+      if (k === "spelling") return `<li><b>${esc2(d)}:</b> ${S.decks[d].length} words${/Years/.test(d) ? " (full statutory word list)" : ""}</li>`;
+      const ts = TOPICS[k] ? topicsFor(k, d).map(t => `${t[0]} (${t[2].split(" ")[0]})`) : [`${S.decks[d].length} questions`];
+      return `<li><b>${esc2(d)}:</b> ${esc2(ts.join(", "))}</li>`;
+    }).join("")}</ul>`);
+  }
+  return `<h2>✅ What Speedy Learning covers</h2>
+    <p>Based on the National Curriculum in England (Key Stages 1 and 2) and the Early Years Foundation Stage. Every topic below has questions written for that age group.</p>
+    <h3>🎓 Year 6 SATs practice</h3><ul><li>Reading paper, Grammar & Punctuation (Paper 1), Spelling (Paper 2), Arithmetic (Paper 1, 30-minute timer), Reasoning (Papers 2 & 3, 40-minute timer), plus links to official past papers</li><li>Also: Year 1 Phonics Check (in Spelling Bee) and Year 4 Times Tables Check (in Maths)</li></ul>
+    <h3>📖 Reading and writing</h3><ul><li>Reading Comprehension passages for Years 1–2, 3–4 and 5–6</li><li>Story Time: 35 levelled stories, read-along or watch</li><li>Book Ideas: 280 recommended books by year</li><li>Writing Workshop: prompts with instant feedback on each year's writing skills</li></ul>
+    ${rows.join("")}
+    <h3>Not covered</h3><ul><li>Local history and local geography fieldwork (these must be about your own area)</li><li>Practical skills: experiments, playing instruments, PE performance, cooking and making. The quizzes cover the knowledge behind them.</li><li>Speaking and listening, drama and debate</li></ul>`;
+}
+
 // ---------- Progress tracking: who's playing, what they've answered, what to practise ----------
 const loadJSON = (k, d) => { try { return JSON.parse(store.get(k)) ?? d; } catch (e) { return d; } };
 const saveJSON = (k, v) => store.set(k, JSON.stringify(v));
@@ -1936,7 +2196,7 @@ function streakDays(days) { let n = 0; const d = new Date(); for (;;) { const k 
 function showProgress() {
   stopReading(); stopTimers();
   subject = null; year = "";
-  $("menu").hidden = true; $("rules").hidden = true; $("game").hidden = true; $("editor").hidden = true; $("topbar").hidden = false; $("years").hidden = true; $("writing").hidden = true;
+  $("menu").hidden = true; $("rules").hidden = true; $("game").hidden = true; $("editor").hidden = true; $("topbar").hidden = false; $("years").hidden = true; $("writing").hidden = true; $("parents").hidden = true;
   $("sub").textContent = "My Progress";
   const log = loadJSON(logKey(), []), days = loadJSON(dayKey(), []), miss = loadJSON(missKey(), {}), done = loadJSON(doneKey(), []), booksSeen = loadJSON(`speedy-books|${player}`, []);
   const total = log.length, right = log.filter(x => x.ok).length, pct = total ? Math.round(right / total * 100) : 0;
@@ -1969,7 +2229,7 @@ function showProgress() {
   p.querySelectorAll(".kid").forEach(b => b.onclick = () => { player = b.dataset.name; store.set("speedy-player", player); showProgress(); });
   $("addKid").onclick = () => { const n = $("newKid").value.trim().slice(0, 20); if (!n || players.includes(n)) return; players.push(n); saveJSON("speedy-players", players); player = n; store.set("speedy-player", player); showProgress(); };
   $("newKid").onkeydown = e => { if (e.key === "Enter") $("addKid").click(); };
-  if ($("practise")) $("practise").onclick = () => { const m = loadJSON(missKey(), {}); const cards = Object.values(m).map(x => ({...x.card, subj: x.s, tag: "Practise my mistakes · " + ((SUBJECTS[x.s] || {}).title || "")})); subject = Object.values(m)[0].s; deckName = ""; $("progress").hidden = true; $("writing").hidden = true; begin(cards.slice(-30)); };
+  if ($("practise")) $("practise").onclick = () => { const m = loadJSON(missKey(), {}); const cards = Object.values(m).map(x => ({...x.card, subj: x.s, tag: "Practise my mistakes · " + ((SUBJECTS[x.s] || {}).title || "")})); subject = Object.values(m)[0].s; deckName = ""; $("progress").hidden = true; $("writing").hidden = true; $("parents").hidden = true; begin(cards.slice(-30)); };
   let armed = false;
   $("resetKid").onclick = () => { if (!armed) { armed = true; $("resetMsg").textContent = "Press again to confirm."; return; } store.set(logKey(), "[]"); store.set(missKey(), "{}"); store.set(dayKey(), "[]"); store.set(doneKey(), "[]"); store.set(`speedy-books|${player}`, "[]"); showProgress(); };
 }
@@ -3587,8 +3847,12 @@ const NOT_SURE = "Hmm, I'm not sure about that one. I can help with words you le
 async function ask(question) {
   question = question.trim(); if (!question) return;
   addMsg(question, "me"); $("chatIn").value = "";
+  if (ASKS_METHOD.test(question) || /\d\s*[+\-−×x*÷/]\s*\d.*\?*$/.test(question) && /how|method|solve|work/i.test(question)) {
+    const how = methodAnswer(question);
+    if (how) { addMsg(how, "bot"); return; }
+  }
   const known = lookUp(question);
-  if (known) { addMsg(known, "bot"); return; }
+  if (known) { addMsg(known + (/^The answer is/.test(known) ? "\nTip: ask \"How do I solve " + question.replace(/^what\s*(is|'s)\s*/i, "").replace(/\?$/, "") + "?\" to see the method." : ""), "bot"); return; }
   if (!HELPER_URL) { addMsg(NOT_SURE, "bot"); return; }
   const wait = addMsg("Thinking…", "bot");
   try {
@@ -3602,7 +3866,7 @@ function openChat() {
   if (!$("msgs").children.length) {
     addMsg("Hello! I'm Ollie the Owl. Ask me what a school word means, like \"What is an adverb?\"" + (Listen ? " You can type, or press 🎤 and say your question." : ""), "bot");
     $("chips").innerHTML = "";
-    for (const s of ["What is an adverb?", "What is a fraction?", "What does habitat mean?", "Who were the Vikings?", "What is a simile?", "What is perimeter?"]) {
+    for (const s of ["What is an adverb?", "How do I solve 456 + 278?", "What method do I use for long division?", "What does habitat mean?", "How do I find 30% of 80?", "Who were the Vikings?"]) {
       const c = document.createElement("button"); c.className = "chip"; c.type = "button"; c.textContent = s; c.onclick = () => ask(s); $("chips").appendChild(c);
     }
   }
