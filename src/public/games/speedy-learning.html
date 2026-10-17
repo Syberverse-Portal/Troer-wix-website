@@ -83,7 +83,15 @@
   .bubble { animation:smoke 4s ease-out infinite; }
   .flag { animation:flap .6s ease-in-out infinite alternate; }
   .scene .act, .scene .cam, .scene .bubble-in, .scene .zzz, .scene .floatUp, .scene .raincloud, .scene .drip, .scene .popIn, .scene .crumb, .scene .speed, .scene .splash, .scene .dust, .scene .tear { transform-box:fill-box; transform-origin:center bottom; }
-  .scene .cam { transform-box:view-box; transform-origin:50% 60%; animation:kb1 14s ease-in-out both; }
+  .scene .cam { transform-box:view-box; transform-origin:50% 60%; }
+  .scene .fg { animation:fgSway 4s ease-in-out infinite alternate; transform-box:view-box; }
+  @keyframes fgSway { to { transform:translateX(-12px); } }
+  .scene.iris { animation:iris .8s ease-out; }
+  @keyframes iris { from { clip-path:circle(0% at 50% 55%); } to { clip-path:circle(80% at 50% 55%); } }
+  .talking .mouth { animation:talk .16s ease-in-out infinite alternate; transform-box:fill-box; transform-origin:center; }
+  @keyframes talk { to { transform:scaleY(2.6) scaleX(.8); } }
+  .watchBig { order:2; margin-top:12px; font-size:1.2rem; }
+  .card.watching .story { font-size:1.1rem; }
   .scene .cam.kb2 { animation-name:kb2; } .scene .cam.kb3 { animation-name:kb3; } .scene .cam.kb4 { animation-name:kb4; }
   @keyframes kb1 { from { transform:scale(1.02); } to { transform:scale(1.14) translate(-8px,-4px); } }
   @keyframes kb2 { from { transform:scale(1.14) translate(8px,-4px); } to { transform:scale(1.02); } }
@@ -298,11 +306,13 @@
     <div class="cover" id="cover" hidden></div>
     <div class="big" id="big" hidden></div>
     <div class="scene" id="scene" hidden></div>
+    <button class="btn watchBig" id="watchBig" type="button" hidden>📺 Watch the cartoon</button>
     <div class="story" id="story" hidden></div>
     <div class="opts" id="opts" hidden></div>
     <div class="pager" id="pager" hidden>
       <button class="btn" id="prevPg" aria-label="Previous page">◀</button>
-      <button class="btn" id="readPg" aria-label="Read this page to me">🔊 Read to me</button>
+      <button class="btn" id="readPg" aria-label="Read this page to me">🔊 Read</button>
+      <button class="btn" id="watchPg" aria-label="Watch the story like a cartoon">📺 Watch</button>
       <button class="btn" id="nextPg" aria-label="Next page">▶</button>
     </div>
     <button class="speak" id="speak" hidden aria-label="Hear the word">🔊</button>
@@ -1108,7 +1118,7 @@ function button(icon, label, small, onclick) {
 }
 
 function showSubjects() {
-  subject = null; year = ""; stopReading();
+  subject = null; year = ""; stopReading(); if (typeof watching !== "undefined" && watching) stopWatching();
   $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = true; $("rules").hidden = false; $("editor").hidden = true; $("chat").hidden = true; $("progress").hidden = true;
   $("sub").textContent = "Pick a subject";
   for (const [k, S] of Object.entries(SUBJECTS)) {
@@ -1120,7 +1130,7 @@ function showSubjects() {
 }
 
 function showDecks(s) {
-  stopTimers();
+  stopTimers(); if (typeof watching !== "undefined" && watching) stopWatching();
   subject = s; year = ""; $("years").hidden = true; const S = SUBJECTS[s]; $("rules").hidden = true; $("editor").hidden = true; $("chat").hidden = true; $("progress").hidden = true;
   stopReading();
   $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = false;
@@ -1458,7 +1468,7 @@ function say(word) {
 
 async function show() {
   revealed = false; ready = false;
-  for (const id of ["pic", "big", "speak", "clue", "spellForm", "cover", "story", "scene", "pager", "opts"]) $(id).hidden = true;
+  for (const id of ["pic", "big", "speak", "clue", "spellForm", "cover", "story", "scene", "pager", "opts", "watchBig"]) $(id).hidden = true;
   $("big").className = "big";
   stopReading(); $("card").classList.remove("reading"); $("readQ").hidden = false;
   page = -1;
@@ -1475,6 +1485,7 @@ async function show() {
   }
   const c = deck[i];
   $("tag").textContent = c.tag;
+  $("readQ").hidden = c.kind === "story";
   if (c.kind === "photo" || c.kind === "flag") {
     $("pic").src = c.kind === "photo" ? images[c.title] : c.src;
     $("pic").className = c.kind === "flag" ? "pic flag" : "pic";
@@ -1492,7 +1503,7 @@ async function show() {
     showCover(c);
   } else if (c.kind === "story") {
     $("scene").innerHTML = sceneSVG(c, 0); $("scene").className = "scene"; $("scene").hidden = false;
-    $("name").textContent = c.answer;
+    $("name").textContent = c.answer; $("watchBig").hidden = false;
   } else if (c.kind === "sum") {
     $("big").textContent = c.worded ? c.question : c.question + " = ?"; $("big").hidden = false;
     openForm(c.passage || c.accept ? "Type your answer" : "Type the answer", c.passage || c.accept || /[a-z]{3}/i.test(c.question) && !/\(like|\(in|\(cm|\(ml|\(°|\(£/.test(c.question) && isNaN(c.answer) ? "text" : "decimal");
@@ -1506,7 +1517,7 @@ async function show() {
     say(c.sentence ? `${c.answer}. ${c.sentence}. ${c.answer}.` : c.answer);
   }
   $("count").textContent = `Card ${i + 1} of ${deck.length}` + (typed(c) || c.kind === "quiz" ? ` · ⭐ ${score}` : "");
-  $("hint").textContent = c.kind === "spell" ? "Type the word and press Check. Tap 🔊 to hear it again" : c.kind === "sum" ? (c.tries === 1 ? "Type your answer and press Check. One try, like the real test" : "Type your answer and press Check. You have 3 tries") : c.kind === "story" ? "Tap the card to open the story" : c.kind === "quiz" ? "Tap the answer you think is right" : "Tap the card to reveal the answer";
+  $("hint").textContent = c.kind === "spell" ? "Type the word and press Check. Tap 🔊 to hear it again" : c.kind === "sum" ? (c.tries === 1 ? "Type your answer and press Check. One try, like the real test" : "Type your answer and press Check. You have 3 tries") : c.kind === "story" ? "Press 📺 to watch it like a cartoon, or tap the card to read it yourself" : c.kind === "quiz" ? "Tap the answer you think is right" : "Tap the card to reveal the answer";
   const card = $("card"); card.classList.remove("pop"); void card.offsetWidth; card.classList.add("pop");
   ready = true;
   if (autoRead && c.kind !== "spell" && c.kind !== "story") setTimeout(() => { if (deck[i] === c && !revealed) readCard(); }, 400);
@@ -1789,7 +1800,7 @@ const DRAW = {
       <circle cx="0" cy="-102" r="22" fill="${skin}"/>
       <path d="M-22 -104 Q-20 -128 0 -127 Q20 -128 22 -104 Q12 -116 -22 -104Z" fill="${hair}"/>
       ${girl ? `<circle cx="-24" cy="-100" r="7" fill="${hair}"/><circle cx="24" cy="-100" r="7" fill="${hair}"/>` : ""}
-      ${eyes(-8, 8, -102)}${o.mood === "sad" ? `<path d="M-7 -88 Q0 -94 7 -88" stroke="#222" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M-9 -98 q-2 6 0 9 q2 -3 0 -9Z" fill="#5dade2" class="tear"/>` : o.mood === "scared" || o.mood === "surprised" ? `<ellipse cx="0" cy="-90" rx="4" ry="5" fill="#222"/>` : o.mood === "happy" ? `<path d="M-8 -93 Q0 -83 8 -93Z" fill="#b03a2e"/>` : `<path d="M-7 -92 Q0 -86 7 -92" stroke="#222" stroke-width="2.5" fill="none" stroke-linecap="round"/>`}<circle cx="-14" cy="-94" r="4" fill="#ff8a8a" opacity=".45"/><circle cx="14" cy="-94" r="4" fill="#ff8a8a" opacity=".45"/>
+      ${eyes(-8, 8, -102)}${o.mood === "sad" ? `<path class="mouth" d="M-7 -88 Q0 -94 7 -88" stroke="#222" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M-9 -98 q-2 6 0 9 q2 -3 0 -9Z" fill="#5dade2" class="tear"/>` : o.mood === "scared" || o.mood === "surprised" ? `<ellipse class="mouth" cx="0" cy="-90" rx="4" ry="5" fill="#222"/>` : o.mood === "happy" ? `<path class="mouth" d="M-8 -93 Q0 -83 8 -93Z" fill="#b03a2e"/>` : `<path class="mouth" d="M-7 -92 Q0 -86 7 -92" stroke="#222" stroke-width="2.5" fill="none" stroke-linecap="round"/>`}<circle cx="-14" cy="-94" r="4" fill="#ff8a8a" opacity=".45"/><circle cx="14" cy="-94" r="4" fill="#ff8a8a" opacity=".45"/>
       ${o.crown ? `<path d="M-16 -122 L-16 -136 L-8 -128 L0 -140 L8 -128 L16 -136 L16 -122Z" fill="#f4c20d"/>` : ""}
       ${o.helmet ? `<path d="M-24 -100 Q-24 -130 0 -130 Q24 -130 24 -100 L24 -96 L-24 -96Z" fill="#b8c2cc"/><rect x="-14" y="-106" width="28" height="5" fill="#57606a"/>` : ""}
       ${o.space ? `<circle cx="0" cy="-102" r="29" fill="#bfe6ff" opacity=".45" stroke="#fff" stroke-width="3"/>` : ""}
@@ -2018,6 +2029,12 @@ const ACTIONS = [
   ["talk", /\b(said|says|say|shout|asked|whisper|called|replied|told|explain)/i],
   ["walk", /\b(walk|went|go|goes|set off|climb|journey|travel|explor|follow|row)/i],
 ];
+// Grass, shells or snow in front of everything, so the camera moves feel deeper
+function foreground(setting) {
+  if (["home", "school", "stage", "space", "city"].includes(setting)) return "";
+  const col = {beach: "#e6c88a", underwater: "#2e8b57", snow: "#ffffff", river: "#4f9a3a", volcano: "#5d4037"}[setting] || "#3f8f35";
+  return `<g class="fg">${Array.from({length: 9}, (_, k) => `<path d="M${k * 50 - 10} 240 q6 -26 12 0 q6 -20 12 0 q6 -30 12 0Z" fill="${col}" opacity=".95"/>`).join("")}</g>`;
+}
 function bubble(x, y, words, think) {
   const lines = []; let line = "";
   for (const w of words.split(" ")) { if ((line + " " + w).trim().length > 20) { lines.push(line.trim()); line = w; } else line += " " + w; }
@@ -2071,7 +2088,7 @@ function sceneSVG(story, n) {
     const enter = ["walkL", "walkR", "pop"][k % 3];
     const doing = k === 0 || act === "hug" || act === "celebrate" || act === "scared" ? act : "";
     const hugShift = act === "hug" && cast.length > 1 ? (k === 0 ? "--hx:40px" : "--hx:-40px") : "";
-    svg += `<g transform="translate(${slots[k]},${y})"><g class="enter ${enter}" style="animation-delay:${(.15 + k * .35).toFixed(2)}s"><g class="act ${doing ? "do-" + doing : ""}" style="animation-delay:${(1.3 + k * .35).toFixed(2)}s;${hugShift}"><g class="idle ${c.kind}" style="animation-delay:${(k * .4).toFixed(1)}s"><g transform="scale(${(big * flip).toFixed(2)},${big})">${DRAW[c.kind](c.opts)}</g></g></g></g></g>`;
+    svg += `<g transform="translate(${slots[k]},${y})"><g class="enter ${enter}" style="animation-delay:${(.15 + k * .35).toFixed(2)}s"><g class="act ${doing ? "do-" + doing : ""} ${k === 0 ? "lead" : ""}" style="animation-delay:${(1.3 + k * .35).toFixed(2)}s;${hugShift}"><g class="idle ${c.kind}" style="animation-delay:${(k * .4).toFixed(1)}s"><g transform="scale(${(big * flip).toFixed(2)},${big})">${DRAW[c.kind](c.opts)}</g></g></g></g></g>`;
     if (k === 0) svg += effectsFor(act, slots[k], y, text, c.kind);
   });
   // Weather on top
@@ -2083,9 +2100,15 @@ function sceneSVG(story, n) {
     if (w === "smoke") svg += Array.from({length: 6}, (_, k) => `<circle cx="${r(40, 360)}" cy="${r(60, 160)}" r="${r(14, 26)}" fill="#9e9e9e" opacity=".5" class="smoke" style="animation-delay:${k * .5}s"/>`).join("");
   }
   if (/magic|glow|shimmer|sparkl|wish|silver|starlight|golden/i.test(text)) svg += Array.from({length: 18}, () => `<path d="M0 -6 L1.5 -1.5 L6 0 L1.5 1.5 L0 6 L-1.5 1.5 L-6 0 L-1.5 -1.5Z" fill="#fff6b0" transform="translate(${r(10, 390)},${r(10, 200)}) scale(${(Math.random() + .5).toFixed(2)})" class="twinkle" style="animation-delay:${(Math.random() * 2).toFixed(1)}s"/>`).join("");
-  const cam = ["kb1", "kb2", "kb3", "kb4"][n % 4];
+  // Camera shots like a cartoon: wide, then a close-up on the main character, then a medium shot
+  const lx = cast.length === 1 ? 200 : cast.length === 2 ? 150 : 110, ly = (setting === "underwater" ? 196 : 206) - 70, S = 1.85;
+  const tx = (-S * (lx - 200)).toFixed(1), ty = (120 - 144 - S * (ly - 144)).toFixed(1), id = "shot" + Math.random().toString(36).slice(2, 8);
+  const secs = Math.max(6, text.split(" ").length * .42 + 2).toFixed(1);
+  const order = n % 2 ? [`translate(${tx}px,${ty}px) scale(${S})`, "scale(1)", "scale(1.3) translate(-10px,-8px)"] : ["scale(1.25) translate(12px,-6px)", `translate(${tx}px,${ty}px) scale(${S})`, "scale(1)"];
+  const camStyle = `<style>@keyframes ${id} { 0% { transform:scale(1.08); } 8% { transform:scale(1); } 30% { transform:${order[0]}; } 36% { transform:${order[0]}; } 60% { transform:${order[1]}; } 66% { transform:${order[1]}; } 100% { transform:${order[2]}; } }</style>`;
+  const cam = "";
   const shade = night ? `<rect width="400" height="240" fill="url(#vig)"/>` : `<rect width="400" height="240" fill="url(#vig)" opacity=".35"/>`;
-  return `<svg viewBox="0 0 400 240" preserveAspectRatio="xMidYMax slice" role="img" aria-label="Picture for this page"><defs><radialGradient id="vig" cx=".5" cy=".5" r=".75"><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".45"/></radialGradient></defs><g class="cam ${cam}">${svg}</g>${shade}</svg>`;
+  return `<svg viewBox="0 0 400 240" preserveAspectRatio="xMidYMax slice" role="img" aria-label="Picture for this page"><defs><radialGradient id="vig" cx=".5" cy=".5" r=".75"><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".45"/></radialGradient></defs>${camStyle}<g class="cam" style="animation:${id} ${secs}s ease-in-out both">${svg}${foreground(setting)}</g>${shade}</svg>`;
 }
 
 // Story Time: an animated scene for each page, with the words lighting up as they're read
@@ -2093,6 +2116,7 @@ const PACE = {"Reception":1300,"Year 1":950,"Year 2":750,"Year 3":600,"Year 4":5
 let readTimer = null, wordAt = 0, speaking = false;
 function stopReading() {
   clearInterval(readTimer); readTimer = null; speaking = false;
+  document.querySelectorAll(".scene .lead.talking").forEach(el => el.classList.remove("talking"));
   if (window.speechSynthesis) speechSynthesis.cancel();
 }
 function words() { return [...$("story").querySelectorAll(".w")]; }
@@ -2101,12 +2125,14 @@ function lightTo(n) {
 }
 function pageDone() {
   stopReading(); lightTo(1e9);
+  if (watching) { const c0 = deck[i], p0 = page; setTimeout(() => { if (watching && deck[i] === c0 && page === p0) turnPage(1); }, 1600); }
   $("scene").classList.add("still");
   const c = deck[i];
   $("hint").textContent = page + 1 < c.pages.length ? "Swipe or press ▶ for the next page" : "Swipe or press ▶ to finish the story";
 }
 function runWords(ms) {
   clearInterval(readTimer);
+  const lead = document.querySelector(".scene .lead"); if (lead) lead.classList.add("talking");
   const ws = words();
   lightTo(wordAt);
   readTimer = setInterval(() => { wordAt++; if (wordAt >= ws.length) pageDone(); else lightTo(wordAt); }, ms);
@@ -2118,13 +2144,15 @@ function showPage(n) {
   if (page >= c.pages.length) {
     $("story").hidden = true; $("pager").hidden = true; $("card").classList.remove("reading");
     $("scene").classList.add("still"); $("name").textContent = "The End";
+    if (watching) { watching = false; $("card").classList.remove("watching"); music(false); sfx("win"); confetti(80); }
     $("count").textContent = `Story ${i + 1} of ${deck.length}`;
     $("hint").textContent = i + 1 < deck.length ? "Tap for the next story" : "That was the last story! Tap to start again";
     return;
   }
   const [pic, text] = c.pages[page];
   const scene = $("scene");
-  scene.className = "scene"; scene.innerHTML = sceneSVG(c, page);
+  scene.className = "scene"; scene.innerHTML = sceneSVG(c, page); void scene.offsetWidth; scene.classList.add("iris");
+  $("watchBig").hidden = true;
   $("story").innerHTML = "";
   text.split(" ").forEach((w, k) => { if (k) $("story").append(" "); const s = document.createElement("span"); s.className = "w"; s.textContent = w; $("story").appendChild(s); });
   scene.hidden = false; $("story").hidden = false; $("pager").hidden = false; $("card").classList.add("reading");
@@ -2132,7 +2160,8 @@ function showPage(n) {
   $("count").textContent = `Page ${page + 1} of ${c.pages.length}`;
   $("hint").textContent = "Read along as the words light up";
   wordAt = 0;
-  setTimeout(() => { if (page === n && deck[i] === c && !readTimer && !speaking) runWords(PACE[c.year] || 600); }, 900);
+  if (watching) { setTimeout(() => { if (page === n && deck[i] === c && watching) readAloud(); }, 900); music(true, /sad|cried|scared|storm|dark/i.test(text)); }
+  else setTimeout(() => { if (page === n && deck[i] === c && !readTimer && !speaking) runWords(PACE[c.year] || 600); }, 900);
 }
 function readAloud() {
   const c = deck[i];
@@ -2148,6 +2177,7 @@ function readAloud() {
   u.lang = voice ? voice.lang : "en-GB"; u.rate = .85;
   let gotBoundary = false;
   wordAt = 0; lightTo(0); speaking = true;
+  const lead = document.querySelector(".scene .lead"); if (lead) lead.classList.add("talking");
   u.onboundary = e => {
     if (e.name && e.name !== "word") return;
     gotBoundary = true; clearInterval(readTimer); readTimer = null;
@@ -2159,6 +2189,34 @@ function readAloud() {
   // Some devices don't report each word, so keep the highlight moving at speaking pace
   setTimeout(() => { if (speaking && !gotBoundary) runWords(380); }, 700);
 }
+// Watch mode: plays the whole story like a cartoon, reading each page aloud and turning the pages by itself
+let watching = false, musicTimer = null;
+function music(on, sad) {
+  clearInterval(musicTimer); musicTimer = null;
+  if (!on || muted) return;
+  try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return; }
+  const scale = sad ? [220, 261.6, 293.7, 329.6, 392] : [261.6, 293.7, 329.6, 392, 440, 523.3];
+  let step = 0, note = 2;
+  musicTimer = setInterval(() => {
+    if (muted || !watching) { clearInterval(musicTimer); return; }
+    note = Math.max(0, Math.min(scale.length - 1, note + [-1, 0, 1, 1, -1, 2, -2][r(0, 6)]));
+    tone(scale[note], 0, .5, "sine", .035);
+    if (step % 4 === 0) tone(scale[0] / 2, 0, 1.1, "triangle", .03);
+    step++;
+  }, 420);
+}
+function startWatching() {
+  const c = deck[i]; if (!c || c.kind !== "story") return;
+  watching = true; $("card").classList.add("watching");
+  $("watchPg").textContent = "⏸ Pause";
+  if (page < 0 || page >= c.pages.length) showPage(0); else { showPage(page); }
+}
+function stopWatching() {
+  watching = false; music(false); $("card").classList.remove("watching"); $("watchPg").textContent = "📺 Watch";
+  stopReading(); $("scene").classList.add("still");
+}
+$("watchPg").onclick = () => watching ? stopWatching() : startWatching();
+$("watchBig").onclick = e => { e.stopPropagation(); startWatching(); };
 function turnPage(dir) {
   const c = deck[i];
   if (page >= c.pages.length) { if (dir > 0) next(); return; }
@@ -2167,7 +2225,7 @@ function turnPage(dir) {
   showPage(n);
 }
 $("pager").onclick = e => e.stopPropagation();
-$("prevPg").onclick = () => turnPage(-1);
+$("prevPg").onclick = () => { if (watching) stopWatching(); turnPage(-1); };
 $("nextPg").onclick = () => turnPage(1);
 $("readPg").onclick = readAloud;
 // Swipe left for the next page, right to go back
