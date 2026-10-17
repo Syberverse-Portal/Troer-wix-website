@@ -31,6 +31,9 @@
   @keyframes shake { 25% { transform:translateX(-8px); } 75% { transform:translateX(8px); } }
   .tries { min-height:1.4em; margin-top:8px; font-weight:bold; text-align:center; }
   .tries.good { color:#1f6f43; } .tries.bad { color:#b3261e; }
+  .cover { width:70%; height:62%; margin-top:20px; border-radius:6px 14px 14px 6px; background:linear-gradient(135deg,var(--accent),#e0762b); color:#fff; display:flex; align-items:center; justify-content:center; text-align:center; padding:16px; font-size:1.5rem; font-weight:bold; box-shadow:inset 8px 0 0 #0002, 0 4px 8px #0003; overflow-wrap:anywhere; }
+  .pic.book { object-fit:contain; background:none; width:70%; height:62%; }
+  .story { font-size:1.3rem; line-height:1.5; text-align:center; padding:0 6px; overflow-y:auto; max-height:45%; }
   .topbar { width:100%; max-width:760px; margin-bottom:12px; }
   .btn { background:var(--accent); border:none; border-radius:10px; padding:8px 14px; font-weight:bold; cursor:pointer; font-family:inherit; font-size:1rem; }
   #game { flex-direction:column; align-items:center; width:100%; }
@@ -41,6 +44,8 @@
   .pic.flag { object-fit:contain; background:none; height:50%; filter:drop-shadow(0 3px 4px #0004); }
   .big { white-space:pre-line; font-size:3.4rem; font-weight:bold; text-align:center; line-height:1.2; }
   .speak { font-size:4.5rem; background:none; border:none; cursor:pointer; }
+  .clue { white-space:pre-line; order:2; }
+  .name { order:1; } .spellForm { order:3; } .tries { order:4; }
   .clue { color:var(--muted); text-align:center; font-size:1.1rem; padding:0 8px; }
   .name { margin-top:18px; font-size:2rem; font-weight:bold; min-height:2.6rem; text-align:center; padding:0 10px; overflow-wrap:anywhere; }
   .name { white-space:pre-line; }
@@ -67,6 +72,7 @@
     <li>Tap again for the next card.</li>
   </ol>
   <p>In Spelling Bee, listen to the word and type it in, then press Check. You get 3 tries for each word. Tap 🔊 to hear it again.</p>
+  <p>In Story Time, tap the card to turn the pages. Book Ideas shows great books to look out for at the library.</p>
   <p>In Maths, type your answer and press Check. You get 3 tries for each question.</p>
 </div>
 <div id="menu" class="cats"></div>
@@ -85,7 +91,9 @@
   <div class="card" id="card">
     <div class="tag" id="tag"></div>
     <img class="pic" id="pic" alt="" hidden>
+    <div class="cover" id="cover" hidden></div>
     <div class="big" id="big" hidden></div>
+    <div class="story" id="story" hidden></div>
     <button class="speak" id="speak" hidden aria-label="Hear the word">🔊</button>
     <div class="clue" id="clue" hidden></div>
     <div class="name" id="name"></div>
@@ -194,6 +202,357 @@ const SPELLING = {
   "Years 5–6": "accommodate,accompany,according,achieve,aggressive,amateur,ancient,apparent,appreciate,attached,available,average,awkward,bargain,bruise,category,cemetery,committee,communicate,community,competition,conscience,conscious,controversy,convenience,correspond,criticise,curiosity,definite,desperate,determined,develop,dictionary,disastrous,embarrass,environment,equip,equipped,equipment,especially,exaggerate,excellent,existence,explanation,familiar,foreign,forty,frequently,government,guarantee,harass,hindrance,identity,immediate,immediately,individual,interfere,interrupt,language,leisure,lightning,marvellous,mischievous,muscle,necessary,neighbour,nuisance,occupy,occur,opportunity,parliament,persuade,physical,prejudice,privilege,profession,programme,pronunciation,queue,recognise,recommend,relevant,restaurant,rhyme,rhythm,sacrifice,secretary,shoulder,signature,sincere,sincerely,soldier,stomach,sufficient,suggest,symbol,system,temperature,thorough,twelfth,variety,vegetable,vehicle,yacht"
 };
 
+// Book ideas by school year: "Title|Author|What it's about"
+const BOOKS = {
+  "Reception": [
+    "The Gruffalo|Julia Donaldson|A clever mouse tricks the animals of the deep dark wood.",
+    "The Very Hungry Caterpillar|Eric Carle|A tiny caterpillar eats his way through the week.",
+    "Dear Zoo|Rod Campbell|A child writes to the zoo asking for the perfect pet.",
+    "We're Going on a Bear Hunt|Michael Rosen|A family splashes, squelches and tiptoes on a bear hunt.",
+    "Owl Babies|Martin Waddell|Three baby owls wait for their mother to come home.",
+    "The Tiger Who Came to Tea|Judith Kerr|A hungry tiger eats everything in Sophie's house.",
+    "Where's Spot?|Eric Hill|Lift the flaps to help find Spot the puppy.",
+    "Brown Bear, Brown Bear, What Do You See?|Bill Martin Jr.|A rhyming parade of colourful animals.",
+    "Room on the Broom|Julia Donaldson|A kind witch keeps making room for new friends.",
+    "Hairy Maclary from Donaldson's Dairy|Lynley Dodd|A scruffy dog and his friends go for a walk.",
+    "Handa's Surprise|Eileen Browne|Animals sneak fruit from Handa's basket.",
+    "Rosie's Walk|Pat Hutchins|Rosie the hen goes for a walk, followed by a fox.",
+    "Peace at Last|Jill Murphy|Mr Bear just can't get to sleep.",
+    "Kipper|Mick Inkpen|Kipper the dog decides his basket isn't comfy any more.",
+    "Mr Gumpy's Outing|John Burningham|Everyone wants to ride in Mr Gumpy's boat.",
+    "Elmer|David McKee|Elmer the patchwork elephant learns to love being different.",
+    "Each Peach Pear Plum|Janet and Allan Ahlberg|Spot nursery rhyme characters hiding in the pictures.",
+    "Goodnight Moon|Margaret Wise Brown|A little bunny says goodnight to everything in the room.",
+    "Lost and Found|Oliver Jeffers|A boy tries to take a lost penguin home.",
+    "Not Now, Bernard|David McKee|Bernard's parents are too busy to notice a monster.",
+    "Super Worm|Julia Donaldson|A super-strong worm saves his friends.",
+    "Supertato|Sue Hendra|A heroic potato stops the Evil Pea.",
+    "The Smartest Giant in Town|Julia Donaldson|George gives away his new clothes to help others.",
+    "Whatever Next!|Jill Murphy|Baby Bear flies to the moon in a cardboard box.",
+    "Funnybones|Janet and Allan Ahlberg|Skeletons go out for a spooky night-time stroll.",
+    "Oi Frog!|Kes Gray|Frogs sit on logs, and cats sit on mats!",
+    "The Snail and the Whale|Julia Donaldson|A tiny snail travels the world on a whale's tail.",
+    "Where the Wild Things Are|Maurice Sendak|Max sails to the land of the wild things.",
+    "Monkey Puzzle|Julia Donaldson|A little monkey searches for his mum.",
+    "Guess How Much I Love You|Sam McBratney|Little Nutbrown Hare shows how much he loves his dad.",
+    "The Rainbow Fish|Marcus Pfister|The most beautiful fish learns to share.",
+    "Spot Goes to School|Eric Hill|Spot the puppy has his first day at school.",
+    "Mrs Armitage on Wheels|Quentin Blake|Mrs Armitage keeps adding gadgets to her bike.",
+    "Shark in the Park|Nick Sharratt|Timothy thinks he spots a shark through his telescope.",
+    "Pants|Giles Andreae|A silly rhyming book all about pants.",
+    "Hug|Jez Alborough|A little chimp looks for a hug.",
+    "Dinosaur Roar!|Paul Stickland|Dinosaurs big and small, fast and slow.",
+    "Avocado Baby|John Burningham|A baby gets super-strong eating avocados.",
+    "Pumpkin Soup|Helen Cooper|Three friends fall out over who stirs the soup.",
+    "Little Red Hen|Traditional tale|Who will help the little red hen bake her bread?"
+  ],
+  "Year 1": [
+    "The Gingerbread Man|Traditional tale|Run, run, as fast as you can!",
+    "Biff, Chip and Kipper: The Magic Key|Roderick Hunt|The magic key takes the children on adventures.",
+    "Stick Man|Julia Donaldson|Stick Man tries to get back to his family tree.",
+    "The Owl Who Was Afraid of the Dark|Jill Tomlinson|Plop the baby owl learns the dark can be wonderful.",
+    "Zog|Julia Donaldson|A keen young dragon goes to dragon school.",
+    "Mr Men: Mr Tickle|Roger Hargreaves|Mr Tickle's extraordinarily long arms tickle everyone.",
+    "Frog and Toad Are Friends|Arnold Lobel|Five stories about two best friends.",
+    "The Cat in the Hat|Dr. Seuss|A mischievous cat turns a rainy day upside down.",
+    "Green Eggs and Ham|Dr. Seuss|Sam-I-Am won't stop until you try green eggs and ham.",
+    "Oliver's Vegetables|Vivian French|Oliver finds out vegetables are tasty after all.",
+    "The Jolly Postman|Janet and Allan Ahlberg|Open real letters sent to fairy tale characters.",
+    "Meg and Mog|Helen Nicoll|A witch and her stripy cat go to a Halloween party.",
+    "Mog the Forgetful Cat|Judith Kerr|Mog forgets things but saves the day.",
+    "Burglar Bill|Janet and Allan Ahlberg|A burglar finds a baby in a box he stole.",
+    "Traction Man Is Here!|Mini Grey|An action figure has bathtime adventures.",
+    "Lost in the Toy Museum|David Lucas|Toys go looking for the lost cat.",
+    "Aliens Love Underpants|Claire Freedman|Aliens come to Earth to find underpants.",
+    "The Day the Crayons Quit|Drew Daywalt|Duncan's crayons go on strike.",
+    "Grandad's Island|Benji Davies|Syd visits Grandad's special island.",
+    "Beegu|Alexis Deacon|A little lost alien looks for a friend on Earth.",
+    "Little Beaver and the Echo|Amy MacDonald|A lonely beaver looks for a friend across the pond.",
+    "The Paper Dolls|Julia Donaldson|A girl's paper dolls have big adventures.",
+    "The Lion Inside|Rachel Bright|A shy mouse wants a big roar.",
+    "Tidy|Emily Gravett|Pete the badger tidies up the whole forest.",
+    "Penguin|Polly Dunbar|Ben tries everything to make Penguin talk.",
+    "Lost and Found|Oliver Jeffers|A boy and a penguin learn what friendship is.",
+    "The Koala Who Could|Rachel Bright|Kevin the koala learns to try new things.",
+    "The Pirates Next Door|Jonny Duddle|A pirate family moves into a quiet town.",
+    "Rosie Revere, Engineer|Andrea Beaty|Rosie learns that failing is part of inventing.",
+    "Bog Baby|Jeanne Willis|Two sisters find a magical creature in a pond.",
+    "Dogger|Shirley Hughes|Dave loses his favourite toy dog.",
+    "Alfie Gets in First|Shirley Hughes|Alfie locks himself in the house by mistake.",
+    "Q Pootle 5|Nick Butterworth|A friendly alien needs help fixing his rocket.",
+    "The Train Ride|June Crebbin|Look out of the window on an exciting train ride.",
+    "The Three Little Pigs|Traditional tale|Who is afraid of the big bad wolf?",
+    "Goldilocks and the Three Bears|Traditional tale|Goldilocks tries the bears' porridge.",
+    "Jack and the Beanstalk|Traditional tale|Magic beans grow up to a giant's castle.",
+    "Here We Are|Oliver Jeffers|A guide to life on planet Earth.",
+    "Hooray for Fish!|Lucy Cousins|Meet all sorts of fish in the sea.",
+    "Hattie and the Fox|Mem Fox|Hattie the hen spots something in the bushes."
+  ],
+  "Year 2": [
+    "The Enormous Crocodile|Roald Dahl|A greedy crocodile plans to eat children.",
+    "Flat Stanley|Jeff Brown|Stanley is squashed flat and posts himself on holiday.",
+    "The Hodgeheg|Dick King-Smith|A young hedgehog tries to cross the road.",
+    "Fantastic Mr Fox|Roald Dahl|A clever fox outsmarts three nasty farmers.",
+    "The Magic Finger|Roald Dahl|A girl's magic finger teaches some hunters a lesson.",
+    "Winnie the Witch|Valerie Thomas|Winnie keeps losing her black cat Wilbur in her black house.",
+    "Mr Majeika|Humphrey Carpenter|The new teacher is secretly a wizard.",
+    "The Worst Witch|Jill Murphy|Mildred Hubble is hopeless at witch school.",
+    "Paddington|Michael Bond|A bear from Peru arrives at Paddington station.",
+    "Pippi Longstocking|Astrid Lindgren|The strongest girl in the world lives alone with a horse.",
+    "Amazing Grace|Mary Hoffman|Grace wants to play Peter Pan in the school play.",
+    "Katie Morag Delivers the Mail|Mairi Hedderwick|Katie Morag mixes up the island's parcels.",
+    "The Owl and the Pussycat|Edward Lear|A nonsense poem about a sea voyage.",
+    "Horrid Henry|Francesca Simon|Henry is horrid, and his brother Peter is perfect.",
+    "Claude in the City|Alex T. Smith|A dog in a beret has adventures in the city.",
+    "Rabbit and Bear: Rabbit's Bad Habits|Julian Gough|A grumpy rabbit meets a friendly bear.",
+    "Oliver Moon and the Potion Commotion|Sue Mongredien|A young wizard makes a potion go wrong.",
+    "The Hundred-Mile-an-Hour Dog|Jeremy Strong|Streaker is the fastest dog in town.",
+    "Dinosaurs and All That Rubbish|Michael Foreman|Dinosaurs clean up the planet people spoiled.",
+    "The Lighthouse Keeper's Lunch|Ronda and David Armitage|Seagulls keep stealing Mr Grinling's lunch.",
+    "The Giraffe and the Pelly and Me|Roald Dahl|A window-cleaning company with a difference.",
+    "Ottoline and the Yellow Cat|Chris Riddell|Ottoline solves a mystery in the big city.",
+    "Princess Smartypants|Babette Cole|A princess who doesn't want to marry.",
+    "The Smeds and the Smoos|Julia Donaldson|Two alien families must learn to get along.",
+    "Cave Baby|Julia Donaldson|A cave baby is carried off by a mammoth.",
+    "Mrs Pepperpot|Alf Prøysen|An old lady keeps shrinking to the size of a pepperpot.",
+    "Isadora Moon Goes to School|Harriet Muncaster|Half fairy, half vampire, Isadora picks a school.",
+    "Cyril and Pat|Emily Gravett|A squirrel makes friends with a rat.",
+    "Grandpa Christmas|Michael Morpurgo|Grandpa writes about caring for the planet.",
+    "The Proudest Blue|Ibtihaj Muhammad|Faizah's sister wears her hijab to school for the first time.",
+    "Major Glad, Major Dizzy|Jan Oke|Two toy soldiers have a long adventure.",
+    "Hamish and the WorldStoppers|Danny Wallace|Hamish must save the world when time stops.",
+    "Little Red Riding Hood|Traditional tale|Watch out for the wolf in the woods.",
+    "Hansel and Gretel|Traditional tale|Two children find a house made of sweets.",
+    "Rapunzel|Traditional tale|A girl with very long hair is locked in a tower.",
+    "Fox's Socks|Julia Donaldson|Fox has lost his socks, can you help find them?",
+    "Rumble in the Jungle|Giles Andreae|Funny poems about jungle animals.",
+    "Look Up!|Nathan Bryon|Rocket wants to be an astronaut.",
+    "The Last Wolf|Mini Grey|Red goes into the woods to find a wolf.",
+    "Fergus Crane|Paul Stewart|Fergus gets a mysterious message in a flying box."
+  ],
+  "Year 3": [
+    "The Iron Man|Ted Hughes|A giant metal man comes to the countryside.",
+    "Charlie and the Chocolate Factory|Roald Dahl|Charlie wins a golden ticket to Willy Wonka's factory.",
+    "George's Marvellous Medicine|Roald Dahl|George mixes a medicine for his grumpy grandma.",
+    "The Twits|Roald Dahl|Mr and Mrs Twit play horrible tricks on each other.",
+    "Esio Trot|Roald Dahl|Mr Hoppy has a plan to win Mrs Silver's heart.",
+    "The Owl Who Was Afraid of the Dark|Jill Tomlinson|Plop learns about the dark.",
+    "Charlotte's Web|E. B. White|A spider saves her friend Wilbur the pig.",
+    "Stig of the Dump|Clive King|Barney finds a caveman living in a chalk pit.",
+    "The Sheep-Pig|Dick King-Smith|Babe the pig learns to herd sheep.",
+    "Mr Gum: You're a Bad Man, Mr Gum!|Andy Stanton|The meanest man in Lamonic Bibber.",
+    "Diary of a Killer Cat|Anne Fine|Tuffy the cat tells his side of the story.",
+    "The Abominables|Eva Ibbotson|A family of yetis needs a new home.",
+    "Flat Stanley|Jeff Brown|Stanley is flattened by a noticeboard.",
+    "Pugs of the Frozen North|Philip Reeve|A race to the top of the world with 66 pugs.",
+    "Oliver and the Seawigs|Philip Reeve|Oliver searches for his missing explorer parents.",
+    "The Butterfly Lion|Michael Morpurgo|A boy and a white lion cub become friends.",
+    "Leon and the Place Between|Graham Baker-Smith|Leon disappears into a magician's box.",
+    "Varjak Paw|S. F. Said|A cat learns a secret martial art.",
+    "Mr Gum and the Biscuit Billionaire|Andy Stanton|Polly and friends face more Mr Gum mayhem.",
+    "Bill's New Frock|Anne Fine|Bill wakes up as a girl and sees school differently.",
+    "The Battle of Bubble and Squeak|Philippa Pearce|Two gerbils cause family trouble.",
+    "Into the Forest|Anthony Browne|A boy meets fairy tale characters in a wood.",
+    "The Tin Forest|Helen Ward|An old man turns rubbish into a forest.",
+    "Seal Surfer|Michael Foreman|A boy and a seal share a friendship over years.",
+    "Gorilla|Anthony Browne|Hannah's toy gorilla comes to life.",
+    "Escape from Pompeii|Christina Balit|Two children flee the volcano.",
+    "Stone Age Boy|Satoshi Kitamura|A boy falls back in time to the Stone Age.",
+    "The Firework-Maker's Daughter|Philip Pullman|Lila goes on a quest to become a firework-maker.",
+    "Cinderella of the Nile|Beverley Naidoo|An ancient Egyptian Cinderella story.",
+    "The Midnight Fox|Betsy Byars|A boy watches a rare black fox all summer.",
+    "Sophie's Snail|Dick King-Smith|Sophie wants to be a lady farmer.",
+    "Dragon Rider|Cornelia Funke|A young dragon searches for the Rim of Heaven.",
+    "The Legend of Spud Murphy|Eoin Colfer|Two brothers are sent to a scary librarian.",
+    "Ottoline at Sea|Chris Riddell|Ottoline searches for her friend Mr Munroe.",
+    "Fing|David Walliams|Myrtle wants a Fing, whatever that is.",
+    "Grandpa Chatterji|Jamila Gavin|Grandpa visits from India with lots of stories.",
+    "The Wild Robot|Peter Brown|A robot learns to survive on a wild island.",
+    "Amelia Fang and the Barbaric Ball|Laura Ellen Anderson|A young vampire who loves rainbows.",
+    "Polar Bear Explorers' Club|Alex Bell|Stella joins an expedition into the snow.",
+    "The Worst Witch Strikes Again|Jill Murphy|Mildred has to look after a new girl."
+  ],
+  "Year 4": [
+    "The Lion, the Witch and the Wardrobe|C. S. Lewis|Four children step through a wardrobe into Narnia.",
+    "Matilda|Roald Dahl|A brilliant girl with special powers stands up to Miss Trunchbull.",
+    "The BFG|Roald Dahl|Sophie and a big friendly giant stop the bad giants.",
+    "James and the Giant Peach|Roald Dahl|James travels inside a giant peach with huge insects.",
+    "The Witches|Roald Dahl|A boy and his grandmother fight real witches.",
+    "Harry Potter and the Philosopher's Stone|J. K. Rowling|Harry finds out he is a wizard.",
+    "The Hodgeheg|Dick King-Smith|Max the hedgehog's road-crossing mission.",
+    "Charlie and the Great Glass Elevator|Roald Dahl|Charlie's adventures continue in space.",
+    "The Legend of Podkin One-Ear|Kieran Larwood|A rabbit chieftain's son must become a hero.",
+    "Kensuke's Kingdom|Michael Morpurgo|Michael is washed up on an island with a mysterious man.",
+    "Krindlekrax|Philip Ridley|Ruskin must defeat the monster under his street.",
+    "The Iron Woman|Ted Hughes|A giant woman rises from the marsh to protect nature.",
+    "The Firework-Maker's Daughter|Philip Pullman|Lila journeys to the fire-fiend's cave.",
+    "Wonder|R. J. Palacio|Auggie starts school for the first time.",
+    "The Boy at the Back of the Class|Onjali Q. Raúf|Friends help a refugee boy.",
+    "The Explorer|Katherine Rundell|Children crash in the Amazon rainforest.",
+    "Cosmic|Frank Cottrell-Boyce|A tall boy goes into space pretending to be a dad.",
+    "The Christmasaurus|Tom Fletcher|A boy and a dinosaur at the North Pole.",
+    "Mr Stink|David Walliams|Chloe hides a homeless man in her garden shed.",
+    "The Midnight Gang|David Walliams|Children have secret adventures in hospital.",
+    "Nevermoor|Jessica Townsend|Morrigan escapes to a magical city.",
+    "Stig of the Dump|Clive King|A friendship with a Stone Age boy.",
+    "Fortunately, the Milk|Neil Gaiman|Dad's trip to buy milk becomes an adventure.",
+    "The Worst Witch to the Rescue|Jill Murphy|Mildred saves a tortoise.",
+    "Tom's Midnight Garden|Philippa Pearce|Tom finds a magic garden when the clock strikes thirteen.",
+    "The Borrowers|Mary Norton|Tiny people live under the floorboards.",
+    "Pippi Longstocking|Astrid Lindgren|The strongest girl in the world.",
+    "The Iron Man|Ted Hughes|A metal giant saves the world from a space monster.",
+    "Beast Quest: Ferno the Fire Dragon|Adam Blade|Tom must free a fire dragon from a curse.",
+    "Malamander|Thomas Taylor|A sea monster legend in a seaside town.",
+    "The Last Bear|Hannah Gold|April finds a polar bear on Bear Island.",
+    "Charlotte's Web|E. B. White|A spider helps a pig.",
+    "Arthur and the Golden Rope|Joe Todd-Stanton|Arthur must save his town from a wolf.",
+    "Jumanji|Chris Van Allsburg|A board game comes to life.",
+    "Gulliver's Travels|Jonathan Swift (retold)|Gulliver lands among tiny people.",
+    "The Tear Thief|Carol Ann Duffy|A thief collects children's tears in a silver sack.",
+    "Grimwood|Nadia Shireen|Two fox cubs flee the city to a wild forest.",
+    "The Miraculous Journey of Edward Tulane|Kate DiCamillo|A china rabbit learns to love.",
+    "Varjak Paw|S. F. Said|A cat learns The Way.",
+    "Beowulf|Michael Morpurgo (retold)|The hero who fought Grendel."
+  ],
+  "Year 5": [
+    "Holes|Louis Sachar|Stanley is sent to a camp where boys dig holes all day.",
+    "The Hobbit|J. R. R. Tolkien|Bilbo joins dwarves on a quest to win back treasure from a dragon.",
+    "Private Peaceful|Michael Morpurgo|Two brothers go off to fight in the First World War.",
+    "Street Child|Berlie Doherty|Jim runs away from the workhouse in Victorian London.",
+    "Wolf Brother|Michelle Paver|Torak and a wolf cub fight an evil bear.",
+    "The Wolves of Willoughby Chase|Joan Aiken|Two cousins and wolves in a snowy England.",
+    "Cogheart|Peter Bunzl|Lily searches for her father in a world of mechanical things.",
+    "Percy Jackson and the Lightning Thief|Rick Riordan|Percy discovers he is the son of a Greek god.",
+    "The Secret Garden|Frances Hodgson Burnett|Mary finds a hidden garden.",
+    "Goodnight Mister Tom|Michelle Magorian|An evacuee boy finds a home with grumpy Tom.",
+    "Rooftoppers|Katherine Rundell|Sophie searches the rooftops of Paris for her mother.",
+    "The Nowhere Emporium|Ross MacKenzie|A magical shop that appears and disappears.",
+    "Where the World Ends|Geraldine McCaughrean|Boys are stranded on a sea stack.",
+    "The Wind in the Willows|Kenneth Grahame|Mole, Rat, Badger and the reckless Toad.",
+    "Alice's Adventures in Wonderland|Lewis Carroll|Alice falls down a rabbit hole.",
+    "A Christmas Carol|Charles Dickens|Scrooge is visited by three ghosts.",
+    "Skellig|David Almond|Michael finds a strange creature in the garage.",
+    "Wonder|R. J. Palacio|Auggie's first year at school.",
+    "The Girl Who Drank the Moon|Kelly Barnhill|A girl fed moonlight grows magical powers.",
+    "The London Eye Mystery|Siobhan Dowd|Ted solves the mystery of his missing cousin.",
+    "Letters from the Lighthouse|Emma Carroll|An evacuee finds secrets on the Devon coast.",
+    "Frost Hollow Hall|Emma Carroll|Tilly meets a ghost after nearly drowning.",
+    "The Jamie Drake Equation|Christopher Edge|Jamie gets a message from space.",
+    "The Wild Robot Escapes|Peter Brown|Roz the robot tries to get home.",
+    "A Kind of Spark|Elle McNicoll|An autistic girl campaigns for a memorial to witches.",
+    "Pax|Sara Pennypacker|A boy and his fox find each other again.",
+    "Kick|Mitch Johnson|A boy who makes football boots dreams of playing.",
+    "The Boy in the Tower|Polly Ho-Yen|Strange plants take over the city.",
+    "Swallows and Amazons|Arthur Ransome|Children sail and camp on a lake.",
+    "Black Beauty|Anna Sewell|The life story of a horse, told by the horse.",
+    "The Explorer|Katherine Rundell|Survival in the Amazon.",
+    "Clockwork|Philip Pullman|A story told by a clockmaker's apprentice.",
+    "The Thieves of Ostia|Caroline Lawrence|A mystery in ancient Rome.",
+    "Varjak Paw|S. F. Said|A cat's adventures in the city.",
+    "Tom's Midnight Garden|Philippa Pearce|A garden that appears at midnight.",
+    "Who Let the Gods Out?|Maz Evans|Elliot meets a Greek god who crash-lands on Earth.",
+    "The Ice Palace|Robert Swindells|Ivan journeys to rescue his brother from Starjik.",
+    "Arthur: High King of Britain|Michael Morpurgo|The legends of King Arthur.",
+    "Wonderscape|Jennifer Bell|Children are trapped in a futuristic game.",
+    "Hidden Figures (Young Readers' Edition)|Margot Lee Shetterly|The women who helped NASA reach space."
+  ],
+  "Year 6": [
+    "Kensuke's Kingdom|Michael Morpurgo|A boy stranded on an island learns from an old man.",
+    "Holes|Louis Sachar|Stanley digs up a family mystery.",
+    "The Boy in the Striped Pyjamas|John Boyne|A friendship across a fence in wartime.",
+    "Goodnight Mister Tom|Michelle Magorian|Willie is evacuated to the countryside.",
+    "Carrie's War|Nina Bawden|Carrie and her brother are evacuated to Wales.",
+    "Friend or Foe|Michael Morpurgo|Evacuees meet two German airmen.",
+    "Once|Morris Gleitzman|Felix escapes an orphanage in wartime Poland.",
+    "The Hobbit|J. R. R. Tolkien|Bilbo's journey there and back again.",
+    "Northern Lights|Philip Pullman|Lyra travels north to rescue kidnapped children.",
+    "Harry Potter and the Prisoner of Azkaban|J. K. Rowling|A prisoner escapes and Harry learns the truth.",
+    "Wonder|R. J. Palacio|Auggie shows everyone what kindness means.",
+    "Pig-Heart Boy|Malorie Blackman|Cameron gets a heart transplant from a pig.",
+    "Cloud Busting|Malorie Blackman|A story in poems about an unlikely friendship.",
+    "Floodworld|Tom Huddleston|London is underwater and two children uncover a plot.",
+    "The Nowhere Emporium|Ross MacKenzie|Daniel enters a magical shop.",
+    "The Graveyard Book|Neil Gaiman|A boy raised by ghosts in a graveyard.",
+    "Coraline|Neil Gaiman|Coraline finds a door to another world with an Other Mother.",
+    "Skellig|David Almond|A boy finds a strange being in his garage.",
+    "Wolf Wilder|Katherine Rundell|Feo returns wolves to the wild in snowy Russia.",
+    "The Girl of Ink and Stars|Kiran Millwood Hargrave|Isabella maps a dangerous island.",
+    "Boy 87|Ele Fountain|A boy flees his home and searches for safety.",
+    "Malamander|Thomas Taylor|A mystery in Eerie-on-Sea.",
+    "Artemis Fowl|Eoin Colfer|A criminal mastermind kidnaps a fairy.",
+    "Stormbreaker|Anthony Horowitz|Alex Rider becomes a teenage spy.",
+    "Murder Most Unladylike|Robin Stevens|Two schoolgirls solve a murder.",
+    "Rooftoppers|Katherine Rundell|An adventure across the rooftops of Paris.",
+    "Moonfleet|J. Meade Falkner|Smugglers and a lost diamond.",
+    "Treasure Island|Robert Louis Stevenson|Jim hunts for pirate treasure.",
+    "Journey to the River Sea|Eva Ibbotson|Maia moves to the Amazon.",
+    "The Wolves of Willoughby Chase|Joan Aiken|Wolves and wicked governesses.",
+    "War Horse|Michael Morpurgo|Joey the horse is sent to war.",
+    "The Last Wild|Piers Torday|A boy who can talk to animals.",
+    "Small Steps|Louis Sachar|Armpit from Holes tries to make a fresh start.",
+    "Brightstorm|Vashti Hardy|Twins enter a race to the South Polaris.",
+    "Can You See Me?|Libby Scott and Rebecca Westcott|Tally starts secondary school as an autistic girl.",
+    "The Boy at the Back of the Class|Onjali Q. Raúf|Friendship with a refugee boy.",
+    "Running on Empty|S. E. Durrant|AJ looks after his parents and loves running.",
+    "Nevermoor|Jessica Townsend|Morrigan's trials in a magical city.",
+    "The Explorer|Katherine Rundell|Four children survive in the jungle.",
+    "Macbeth (retold)|Andrew Matthews|Shakespeare's story of ambition, retold for children."
+  ]
+};
+
+// Short stories to read in the game, written for each year's reading level: [picture, words] per page
+const STORIES = {
+  "Reception": [
+    ["🐱", "The Cat and the Hat", [["🐱","A cat."],["🎩","A hat."],["🐱🎩","The cat is in the hat."],["🐶","A dog!"],["🏃","The cat ran."],["😺","The cat is in the hat again."]]],
+    ["🐷", "Pig in the Mud", [["🐷","Pig is big."],["🟫","Pig sees mud."],["🐷🟫","Pig is in the mud."],["🛁","Mum gets the tub."],["🫧","Pig is in the tub."],["🐷🟫","Pig is back in the mud!"]]],
+    ["☀️", "Sun and Fun", [["☀️","The sun is hot."],["🏖️","We go to the sand."],["🪣","I dig and dig."],["🦀","I see a crab."],["🌊","The sea is wet."],["😄","It is fun!"]]],
+    ["🚌", "The Red Bus", [["🚌","The bus is red."],["👦","Tom gets on."],["👧","Pam gets on."],["🐶","Can a dog get on?"],["👍","Yes! The dog gets on."],["🚌","Off we go!"]]],
+    ["🐸", "Frog on a Log", [["🐸","A frog."],["🪵","A log."],["🐸🪵","The frog is on the log."],["🦆","A duck is on the log."],["💦","Splash! The frog is wet."],["🐸","The frog hops off."]]]
+  ],
+  "Year 1": [
+    ["🚀", "Ben Goes to Space", [["🚀","Ben has a box. He says it is a rocket."],["🧑‍🚀","He puts on his helmet and gets in."],["🌙","Three, two, one, blast off! Ben zooms to the moon."],["👽","On the moon he meets a little green friend."],["🍪","They share a biscuit and look at the stars."],["🏠","Then Mum calls, 'Tea time!' and Ben zooms home."]]],
+    ["🐢", "Slow Shelly", [["🐢","Shelly the tortoise is very slow."],["🐇","Rabbit laughs. 'You will never win the race!'"],["🏁","Ready, steady, go! Rabbit runs off fast."],["😴","Rabbit stops for a nap under a tree."],["🐢","Shelly keeps going, step by step."],["🏆","Shelly wins! Slow and steady wins the race."]]],
+    ["🌧️", "The Rainy Day", [["🌧️","It is raining. Mia cannot play in the park."],["😞","She sits by the window and feels sad."],["📦","Then she finds a big box of toys."],["🏰","She makes a castle with blocks."],["🌈","When she looks up, there is a rainbow!"],["☀️","Now she can go outside and jump in puddles."]]],
+    ["🐉", "The Little Dragon", [["🐉","Dot is a little dragon. She cannot make fire."],["🔥","Her big brother can make big flames."],["😢","Dot tries and tries, but only smoke comes out."],["🌶️","Grandad gives her a hot red pepper."],["💥","Dot eats it. WHOOSH! Out comes a flame!"],["🎉","Now Dot can light the candles on the cake."]]],
+    ["🦔", "Hedgehog's Lost Leaf", [["🦔","Hedgehog had a big red leaf. It was his bed."],["🍃","The wind blew and the leaf flew away."],["🐿️","Squirrel had not seen it. Owl had not seen it."],["🦊","Fox said, 'Look up in the tree!'"],["🍂","Squirrel ran up and threw it down."],["😴","Hedgehog curled up on his leaf and went to sleep."]]]
+  ],
+  "Year 2": [
+    ["🦖", "The Dinosaur in the Garden", [["🦖","When Sam woke up, there was a dinosaur in the garden. It was eating the hedge."],["😮","'Mum!' shouted Sam. 'There's a dinosaur!' Mum just laughed and made toast."],["🥕","Sam went outside with a carrot. The dinosaur sniffed it and gobbled it up."],["🤝","'I'm Rex,' said the dinosaur. 'I'm lost. My home is in the museum.'"],["🏛️","So Sam rode on Rex's back all the way into town, past the shocked postman."],["🌟","At the museum, Rex climbed back on his stand and winked. Nobody ever believed Sam."]]],
+    ["🧁", "Ava's Cake Disaster", [["🧁","Ava wanted to bake a birthday cake for her grandma."],["🥚","She cracked the eggs, but the shells fell in the bowl too."],["💨","She turned the mixer on high and flour went everywhere!"],["🔥","The cake came out of the oven flat and burnt at the edges."],["😢","Ava cried. But Grandma hugged her and said, 'It's the best cake ever, because you made it.'"],["🍰","They ate it with lots of cream and laughed about the flour on the ceiling."]]],
+    ["🐙", "Octopus Has a Plan", [["🐙","Olive the octopus lived in a rock pool. A crab kept stealing her shells."],["🦀","Every morning, one more shell was gone."],["🤔","Olive thought hard. She had eight arms, so she could make a clever trap."],["🐚","She hid behind a big shell and waited, very still."],["🦀","When the crab crept in, Olive popped out and tickled him with all eight arms."],["😂","The crab laughed so much he gave back every shell, and they became friends."]]],
+    ["🏰", "The Knight Who Was Scared", [["🏰","Sir Tom was a knight, but he was scared of almost everything."],["🐉","One day the king said, 'A dragon is near the castle. Go and stop it!'"],["😰","Sir Tom's knees wobbled, but he picked up his shield and set off."],["🐲","The dragon was crying. 'I have a thorn in my foot,' it sniffed."],["🩹","Sir Tom gently pulled out the thorn and put on a bandage."],["🏆","The king gave him a medal. Being brave doesn't mean you aren't scared."]]],
+    ["🌱", "The Magic Seed", [["🌱","Leo found a shiny seed on the way to school and planted it in a pot."],["💧","He watered it every day, and on Monday a tiny shoot appeared."],["🌿","By Wednesday it was taller than Leo. By Friday it went through the roof!"],["☁️","Leo climbed up and up until he was above the clouds."],["🍎","At the top was a tree with golden apples. He picked one for each person in his class."],["😋","Everyone said they were the tastiest apples in the world."]]]
+  ],
+  "Year 3": [
+    ["🗝️", "The Key Under the Stairs", [["🗝️","When Priya's family moved into the old house, she found a tiny silver key hidden under a loose stair."],["🚪","She tried it in every lock. None of them fitted, until she noticed a small door behind the wardrobe."],["✨","The key turned with a click. Behind the door was a garden glowing with silver flowers, even though it was night."],["🦉","An owl with spectacles landed on a branch. 'At last,' he said. 'We have been waiting for a keeper.'"],["🌙","Every night after that, Priya looked after the moon garden, watering the flowers with starlight."],["😊","And nobody in her family ever guessed why she always smiled at breakfast."]]],
+    ["🤖", "Robot Repair", [["🤖","Jamal's robot, Bolt, had stopped working the day before the science fair."],["🔧","He opened Bolt's back panel and found a mess of tangled wires."],["📘","He read the instructions carefully, fixing one wire at a time. It took all evening."],["⚡","When he flicked the switch, Bolt's eyes flickered and he said, 'Good morning!' even though it was midnight."],["🏅","At the fair, Bolt danced, told jokes and tidied the table. The judges loved him."],["💡","Jamal didn't win first prize, but he learned that patience can fix almost anything."]]],
+    ["🌋", "Escape from the Volcano", [["🌋","Long ago, in a town by a mountain, a girl called Livia felt the ground shake beneath her feet."],["💨","Grey smoke poured from the top of the mountain and ash began to fall like snow."],["🏃","'We must go to the sea!' shouted her father. They grabbed what they could carry and ran."],["⛵","At the harbour, a fisherman helped them into his boat and rowed hard."],["🔥","From the water they watched the mountain glow orange in the dark sky."],["📜","Livia wrote down everything she saw, so that people would always remember."]]],
+    ["🐺", "Wolf's Side of the Story", [["🐺","Everyone thinks I'm the big bad wolf, but nobody ever asks for my side of the story."],["🤧","I had a terrible cold, and I only wanted to borrow a cup of sugar from the pigs."],["🏠","I knocked on the straw house. Then I sneezed. A huge sneeze! The house fell down."],["😳","It was an accident, I promise. The same thing happened at the house made of sticks."],["🧱","The third pig, in the brick house, called the police before I could explain."],["📰","So the newspapers made me the villain. Do you believe me?"]]],
+    ["🐋", "Saving the Whale", [["🐋","One morning, Ella and her brother found a young whale stranded on the beach."],["☎️","Ella's brother ran to phone the rescue team while Ella stayed with the whale."],["🪣","She kept its skin wet with buckets of sea water and spoke to it softly."],["🚤","The rescuers arrived and wrapped the whale in wet sheets until the tide came in."],["🌊","Together, they gently pushed it back into the waves."],["💙","As the whale swam away, it blew a big spout of water, as if to say thank you."]]]
+  ],
+  "Year 4": [
+    ["🧭", "The Map in the Bottle", [["🧭","Halfway through the summer holidays, Finn found a glass bottle washed up on the shingle. Inside was a curled-up map."],["🗺️","The paper was brown and crackly. A red cross marked a spot on the cliffs above the bay, beside a crooked tree."],["🧗","Finn and his friend Aisha climbed the cliff path, checking the map at every bend."],["🌳","The crooked tree was still there, bent by a hundred years of wind. Between its roots, the soil was loose."],["📦","They dug until their fingers ached and found a small tin box. Inside were letters from a lighthouse keeper's daughter, written in 1912."],["📮","They took the letters to the town museum, where her great-granddaughter cried when she read them."]]],
+    ["❄️", "The Snow Day Mystery", [["❄️","Overnight, the snow fell so thickly that the school was closed. But someone had been inside."],["👣","Mr Patel, the caretaker, found small footprints leading from the hall to the kitchen."],["🍞","Half a loaf of bread was missing, and a window had been left open just a crack."],["🔎","Zara, who lived next door, followed the footprints with her magnifying glass. They weren't human. They were paw prints!"],["🦊","Behind the bins, curled up in a box, was a fox with three tiny cubs, keeping warm."],["🏡","The school made the fox family a cosy shelter, and the cubs became the school's secret mascots."]]],
+    ["⚡", "Zeus and the Thunderbolt", [["⚡","In ancient Greece, people said that Zeus, king of the gods, hurled thunderbolts from Mount Olympus."],["⛰️","One day, his thunderbolt went missing. The sky stayed silent and the crops began to dry up."],["🏹","A shepherd boy named Nikos offered to help. He followed a trail of scorch marks across the hills."],["🐍","In a cave he found a giant serpent curled around the glowing bolt, keeping it for itself."],["🎶","Nikos played a gentle tune on his flute until the serpent fell asleep, then carried the thunderbolt home."],["🌧️","Zeus threw it into the sky, and rain fell at last. From then on, Nikos was welcome on Olympus."]]],
+    ["🛸", "The New Girl", [["🛸","The new girl in class 4B was called Lumi. She never ate lunch and her hair shimmered blue in the sunlight."],["🤔","Oscar was sure she was hiding something. She solved maths problems before Mrs Hill finished writing them."],["🌌","One evening, Oscar saw a light hovering over the playing field. Lumi was standing underneath it."],["🙊","'Please don't tell,' she said. 'My family is studying Earth. We want to learn about friendship.'"],["🤝","Oscar promised. He taught her football, and she taught him the names of stars no one on Earth had discovered."],["⭐","When Lumi left at the end of term, a new star appeared in the sky. Oscar knew it was her waving."]]],
+    ["🐝", "Save the Bees", [["🐝","Mya noticed there were hardly any bees in her garden. Her grandad said there used to be hundreds."],["📚","She read that bees were in trouble because they didn't have enough wild flowers to feed on."],["🌼","So Mya started a plan. She planted lavender, sunflowers and foxgloves along the fence."],["📣","Then she gave a talk in assembly and the whole school planted a wildflower meadow."],["🍯","By summer, the meadow was buzzing. The school even got its own beehive."],["🌍","Mya learned that one person's idea can grow into something that helps the whole planet."]]]
+  ],
+  "Year 5": [
+    ["🏔️", "Above the Clouds", [["🏔️","Kai had trained for two years to climb the mountain his mother had never finished. Now, at dawn, he stood at the bottom with her old compass in his pocket."],["🥶","The higher he climbed, the thinner the air became. Every step felt like walking through deep water, and the wind bit through his gloves."],["🌫️","At the last ridge, cloud swallowed everything. He couldn't see his own feet, but the compass needle stayed steady, pointing the way."],["☀️","Then, all at once, he broke through into dazzling sunshine. Below him lay a sea of white cloud, stretching to the edge of the world."],["🚩","At the summit, he tied his mother's faded red ribbon beside his own flag. 'We made it,' he whispered."],["💭","Climbing down, Kai realised the mountain hadn't changed. He had."]]],
+    ["⏳", "The Clockmaker's Apprentice", [["⏳","In a cobbled street in Victorian London, twelve-year-old Ada swept the floor of Mr Grimshaw's clock shop."],["🕰️","Every clock in the shop ticked in perfect time, except for one: a tall grandfather clock that always ran exactly one minute slow."],["🔩","One night, curious, Ada opened its case. Behind the pendulum was a tiny hidden door, no bigger than a matchbox."],["🌀","When she turned its key, the shop melted away. She was standing in the same street, but the year was 1666, and the city was on fire."],["🪣","Ada helped a baker's family escape and passed buckets along a line of strangers, before the clock pulled her home."],["📖","The next day she found the baker's name in a history book, saved by 'a girl in strange clothes'. Mr Grimshaw only smiled."]]],
+    ["🌳", "The Last Tree", [["🌳","In the middle of the city, between car parks and grey office blocks, stood the last oak tree. It was three hundred years old."],["🚧","One Monday, a sign appeared: SITE TO BE CLEARED FOR DEVELOPMENT. Rosa, who walked past it every day, felt sick."],["✍️","She wrote to the council. She started a petition and collected signatures outside the supermarket every weekend."],["📸","Rosa found out that a family of rare bats lived in a hollow in the trunk, so she photographed them and sent the pictures to newspapers."],["🗳️","Thousands of people signed. At the council meeting, Rosa's hands shook as she spoke, but her voice was clear."],["🌱","The tree was saved, and the land became a park. Today a plaque under the oak reads: 'Planted by nature. Protected by Rosa.'"]]],
+    ["🛶", "River Journey", [["🛶","Sam and his older sister Jo had planned the canoe trip for months: three days down the river to their aunt's farm."],["🗺️","The first day was perfect. Kingfishers flashed blue along the bank, and they camped under the stars."],["⛈️","On the second day, a storm rolled in. The river rose fast and turned brown and angry."],["😨","Their canoe hit a hidden rock and tipped. Sam was swept downstream until Jo grabbed his life jacket and pulled him to the bank."],["🔥","Soaked and shivering, they lit a fire with the dry matches Jo had packed in a sealed bag, just as their aunt had taught them."],["🏡","They reached the farm a day late, muddy and exhausted, and closer than they had ever been."]]],
+    ["🧪", "The Invention", [["🧪","Nadia's bedroom looked more like a laboratory than a bedroom. Wires, magnets and old phone parts covered every surface."],["💡","Her latest invention was a machine to turn sunlight into enough power to run her grandma's hearing aid."],["❌","The first test fizzled. The second test melted a spoon. The third test tripped every fuse in the house."],["📝","Instead of giving up, Nadia wrote down what went wrong each time and changed one thing."],["🎉","On the twenty-third attempt, the little light on the hearing aid glowed green. Grandma heard birdsong clearly for the first time in years."],["🏅","Nadia entered the national young inventors' competition. In her speech, she said, 'Every failure was a step on the staircase.'"]]]
+  ],
+  "Year 6": [
+    ["📻", "Evacuee", [["📻","September 1939. The station was a sea of children with cardboard boxes around their necks and labels pinned to their coats. Eleven-year-old Peter held his little sister's hand so tightly his knuckles turned white."],["🚂","Nobody would tell them where the train was going. Through the steamy window, London's chimneys gave way to fields Peter had only seen in books."],["🏡","In a Welsh village, they were chosen last, by a stern farmer called Mrs Evans who barely spoke. Peter was sure she didn't want them."],["🐑","But slowly, things changed. Mrs Evans taught him to milk cows and showed his sister how to bake bara brith. At night, she left a candle burning because she knew they were afraid of the dark."],["✉️","When a letter came saying their house in London had been bombed, it was Mrs Evans who held them both while they cried."],["🕊️","When the war ended and their mother came to fetch them, Peter saw the stern farmer turn away to hide her tears. He wrote to her every month for the rest of her life."]]],
+    ["🛰️", "Signal", [["🛰️","Nobody believed Leila when she said she'd picked up a signal from space on the old radio telescope at the edge of town. It had been abandoned for twenty years."],["📡","But every night at 2:14 a.m., the same pattern of pulses crackled through her headphones: three short, one long, then a string of prime numbers."],["🧮","Primes don't happen by accident. Leila's heart thudded as she realised that someone, or something, out there understood mathematics."],["📧","She emailed scientists all over the world. Most ignored her. One professor in Chile replied with a single line: 'Send me everything.'"],["🌍","Within a week, telescopes on every continent were pointed at the same patch of sky. The signal was real."],["✨","Leila was asked to help write humanity's reply. She chose to begin it the same way the message had begun: with a simple pattern that says, 'We are here. We are listening.'"]]],
+    ["🎭", "The Understudy", [["🎭","Marcus had learned every single line of the school play, even though his part was 'Tree Number Three'. He was the understudy for the lead role of the king."],["🤒","On opening night, half an hour before curtain-up, the boy playing the king went home with a fever. Mrs Okafor turned to Marcus. 'You're on.'"],["😰","His mouth went dry. His hands were shaking so badly that his crown kept slipping. Through the curtain he could hear three hundred people chatting."],["🎤","When the lights came up, he forgot his first line. The silence stretched forever. Then he caught his best friend's eye in the wings, mouthing the words."],["👑","Something clicked. Marcus became the king: proud, foolish and finally wise. By the final scene, the audience were wiping their eyes."],["👏","At the standing ovation, Marcus realised that being brave isn't about not being frightened. It's about stepping into the light anyway."]]],
+    ["🌊", "Rising Water", [["🌊","By 2080, the sea had swallowed half of Kayla's home town. Her family lived on the fourth floor now, and the streets below were canals."],["🚣","Every morning, Kayla rowed her little brother to the floating school, dodging rubbish and drifting rooftops."],["🌿","One day, while diving for scrap, she noticed something extraordinary. On the sunken walls, a new kind of seaweed was growing, and it was cleaning the water around it."],["🔬","Kayla took samples to her teacher, who sent them to a university. Scientists discovered that the seaweed absorbed carbon faster than any plant ever recorded."],["🌏","Within a few years, seaweed farms were being grown in flooded cities across the world, slowly helping to cool the planet."],["💙","Kayla never thought of herself as a hero. 'I was just curious,' she said. 'And I paid attention to what the sea was telling me.'"]]],
+    ["🗡️", "The Shield-Maiden", [["🗡️","The Viking longships appeared out of the morning mist, and the villagers of the little Saxon settlement ran for the hills. But Eadgyth, the blacksmith's daughter, stayed behind."],["🔥","She had heard her father's stories: raiders burned what they could not carry. So she lit a single beacon on the hilltop, a signal to the king's soldiers in the next valley."],["🛡️","A tall Viking girl, about Eadgyth's age, found her by the fire. She carried a shield painted with a white wolf. For a long moment, neither moved."],["🤝","Then the Viking girl lowered her shield. In broken words, she explained that her family was starving after a terrible winter. They had come to trade, not to fight."],["🍞","When the soldiers arrived, Eadgyth stood between the two sides and translated, with gestures and drawings in the mud. By nightfall, grain was being swapped for iron and furs."],["📜","Years later, the two girls were still friends, and a village chronicle recorded the day 'a fire on the hill brought peace instead of war.'"]]]
+  ]
+};
+
 const SUBJECTS = {
   animals: { title: "Guess the Animal", icon: "🦁", note: "Look at the photo and guess the animal",
     icons: {Jungle:"🌴",Pets:"🐶",Bugs:"🐞",African:"🦁",Birds:"🦜",Exotic:"🦘",Reptiles:"🦎",Amphibians:"🐸",Fish:"🐠",Dinosaurs:"🦖"},
@@ -204,6 +563,12 @@ const SUBJECTS = {
   maths: { title: "Maths", icon: "➗", note: "Work out the answer, then tap to check",
     icons: {"Reception":"🧸","Year 1":"1️⃣","Year 2":"2️⃣","Year 3":"3️⃣","Year 4":"4️⃣","Year 5":"5️⃣","Year 6":"6️⃣"},
     decks: Object.fromEntries(Object.keys(MATHS).map(k => [k, null])) },
+  books: { title: "Book Ideas", icon: "📚", unit: "books", note: "Look at the cover, then tap to find out about the book",
+    icons: {"Reception":"🧸","Year 1":"1️⃣","Year 2":"2️⃣","Year 3":"3️⃣","Year 4":"4️⃣","Year 5":"5️⃣","Year 6":"6️⃣"},
+    decks: Object.fromEntries(Object.entries(BOOKS).map(([c, l]) => [c, l.map(s => { const [title, author, about] = s.split("|"); return {kind: "book", answer: title, author, about, tag: `Book Ideas · ${c} · ${AGES[c]}`}; })])) },
+  stories: { title: "Story Time", icon: "📖", unit: "stories", note: "Tap the card to turn the page. Tap 🔊 to hear it read aloud",
+    icons: {"Reception":"🧸","Year 1":"1️⃣","Year 2":"2️⃣","Year 3":"3️⃣","Year 4":"4️⃣","Year 5":"5️⃣","Year 6":"6️⃣"},
+    decks: Object.fromEntries(Object.entries(STORIES).map(([c, l]) => [c, l.map(([emoji, title, pages]) => ({kind: "story", emoji, answer: title, pages, tag: `Story Time · ${c} · ${AGES[c]}`}))])) },
   spelling: { title: "Spelling Bee", icon: "🐝", note: "Listen to the word, spell it out loud, then tap to check",
     icons: {"Reception":"🧸","Year 1":"1️⃣","Year 2":"2️⃣","Years 3–4":"🐝","Years 5–6":"🏆"},
     decks: Object.fromEntries(Object.entries(SPELLING).map(([c, l]) => [c, l.split(",").map(s => { const [w, clue] = s.split(":"); return {kind: "spell", answer: w, clue, tag: `Spelling · ${c} · ${AGES[c]}`}; })])) }
@@ -213,7 +578,7 @@ const $ = id => document.getElementById(id);
 const r = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
 function shuffle(a) { for (let k = a.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [a[k], a[j]] = [a[j], a[k]]; } return a; }
 
-let score = 0, triesLeft = 3;
+let score = 0, triesLeft = 3, page = -1;
 let subject = null, deck = [], i = 0, revealed = false, ready = false;
 const images = {}; // wiki title -> image url, or null if none
 
@@ -297,7 +662,7 @@ function showSubjects() {
   $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = true; $("rules").hidden = false; $("editor").hidden = true;
   $("sub").textContent = "Pick a subject";
   for (const [k, S] of Object.entries(SUBJECTS)) {
-    const n = k === "maths" ? "Endless questions" : Object.values(S.decks).reduce((t, d) => t + d.length, 0) + " cards";
+    const n = k === "maths" ? "Endless questions" : Object.values(S.decks).reduce((t, d) => t + d.length, 0) + " " + (S.unit || "cards");
     button(S.icon, S.title, n, () => showDecks(k));
   }
 }
@@ -308,7 +673,7 @@ function showDecks(s) {
   $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = false;
   $("sub").textContent = `${S.title}: pick a deck`;
   for (const name of [...Object.keys(S.decks), "Mixed"]) {
-    const size = s === "maths" ? "30 questions" : (name === "Mixed" ? Object.values(S.decks).reduce((t, d) => t + d.length, 0) : S.decks[name].length) + " cards";
+    const size = s === "maths" ? "30 questions" : (name === "Mixed" ? Object.values(S.decks).reduce((t, d) => t + d.length, 0) : S.decks[name].length) + " " + (S.unit || "cards");
     const mixedSums = Object.keys(MATHS).length * 8 + " questions";
     const small = s === "maths" && name === "Mixed" ? mixedSums : (AGES[name] ? `${AGES[name]} · ${size}` : size);
     button(name === "Mixed" ? "🎲" : S.icons[name], name === "Mixed" ? "Mix of Everything" : name, small, () => start(name));
@@ -338,7 +703,7 @@ async function begin(cards) {
   deck = shuffle(cards); i = 0; score = 0;
   $("menu").hidden = true; $("topbar").hidden = true; $("game").hidden = false;
   $("sub").textContent = SUBJECTS[subject].note;
-  $("credit").textContent = subject === "animals" ? "Photos from Wikipedia" : subject === "flags" ? "Flags from flagcdn.com" : "";
+  $("credit").textContent = subject === "animals" ? "Photos from Wikipedia" : subject === "flags" ? "Flags from flagcdn.com" : subject === "books" ? "Covers from Open Library" : "";
   await show();
 }
 
@@ -373,7 +738,8 @@ function say(word) {
 
 async function show() {
   revealed = false; ready = false;
-  for (const id of ["pic", "big", "speak", "clue", "spellForm"]) $(id).hidden = true;
+  for (const id of ["pic", "big", "speak", "clue", "spellForm", "cover", "story"]) $(id).hidden = true;
+  page = -1;
   $("tries").textContent = ""; $("tries").className = "tries";
   $("name").textContent = ""; $("name").className = "name"; $("hint").textContent = "Loading…";
   if (deck[i].kind === "photo") {
@@ -391,6 +757,11 @@ async function show() {
     $("pic").src = c.kind === "photo" ? images[c.title] : c.src;
     $("pic").className = c.kind === "flag" ? "pic flag" : "pic";
     $("pic").hidden = false;
+  } else if (c.kind === "book") {
+    showCover(c);
+  } else if (c.kind === "story") {
+    $("big").textContent = c.emoji; $("big").hidden = false;
+    $("name").textContent = c.answer;
   } else if (c.kind === "sum") {
     $("big").textContent = c.worded ? c.question : c.question + " = ?"; $("big").hidden = false;
     openForm("Type the answer", "decimal");
@@ -400,7 +771,7 @@ async function show() {
     say(c.answer);
   }
   $("count").textContent = `Card ${i + 1} of ${deck.length}` + (typed(c) ? ` · ⭐ ${score}` : "");
-  $("hint").textContent = c.kind === "spell" ? "Type the word and press Check. Tap 🔊 to hear it again" : c.kind === "sum" ? "Type your answer and press Check. You have 3 tries" : "Tap the card to reveal the answer";
+  $("hint").textContent = c.kind === "spell" ? "Type the word and press Check. Tap 🔊 to hear it again" : c.kind === "sum" ? "Type your answer and press Check. You have 3 tries" : c.kind === "story" ? "Tap the card to start reading" : "Tap the card to reveal the answer";
   const card = $("card"); card.classList.remove("pop"); void card.offsetWidth; card.classList.add("pop");
   ready = true;
   const next = deck[i + 1];
@@ -409,7 +780,7 @@ async function show() {
   if (deck[i + 10] && deck[i + 10].kind === "photo" && !(deck[i + 10].title in images)) loadImages(i + 10);
 }
 
-$("speak").onclick = e => { e.stopPropagation(); say(deck[i].answer); };
+$("speak").onclick = e => { e.stopPropagation(); const c = deck[i]; say(c.kind === "story" ? c.pages[page][1] : c.answer); };
 const typed = c => c.kind === "spell" || c.kind === "sum";
 function openForm(placeholder, mode) {
   triesLeft = 3; const inp = $("spellIn");
@@ -452,8 +823,46 @@ $("spellForm").onsubmit = e => {
     }
   }
 };
+// Book covers come from Open Library; if there isn't one, draw a plain cover with the title
+const covers = {};
+async function findCover(c) {
+  if (c.answer in covers) return covers[c.answer];
+  try {
+    const q = `https://openlibrary.org/search.json?limit=1&fields=cover_i&title=${encodeURIComponent(c.answer.replace(/\s*\(.*\)$/, ""))}&author=${encodeURIComponent(c.author.replace(/\s*\(.*\)$/, ""))}`;
+    const d = await (await fetch(q)).json();
+    const id = d.docs && d.docs[0] && d.docs[0].cover_i;
+    covers[c.answer] = id ? `https://covers.openlibrary.org/b/id/${id}-L.jpg` : null;
+  } catch (e) { return null; }
+  return covers[c.answer];
+}
+async function showCover(c) {
+  $("cover").textContent = c.answer; $("cover").hidden = false;
+  const url = await findCover(c);
+  if (!url || deck[i] !== c || revealed) return;
+  const img = $("pic");
+  img.onload = () => { if (deck[i] === c && !revealed) { $("cover").hidden = true; img.hidden = false; } };
+  img.className = "pic book"; img.src = url;
+  const n = deck[i + 1]; if (n && n.kind === "book") findCover(n);
+}
+function turnPage() {
+  const c = deck[i]; page++;
+  $("big").hidden = true; $("name").textContent = "";
+  if (page < c.pages.length) {
+    const [pic, words] = c.pages[page];
+    $("big").textContent = pic; $("big").hidden = false;
+    $("story").textContent = words; $("story").hidden = false; $("speak").hidden = false;
+    $("count").textContent = `Page ${page + 1} of ${c.pages.length}`;
+    $("hint").textContent = page + 1 < c.pages.length ? "Tap the card to turn the page" : "Tap the card to finish the story";
+  } else if (page === c.pages.length) {
+    $("story").hidden = true; $("speak").hidden = true;
+    $("big").textContent = "⭐"; $("big").hidden = false; $("name").textContent = "The End";
+    $("count").textContent = `Story ${i + 1} of ${deck.length}`;
+    $("hint").textContent = i + 1 < deck.length ? "Tap for the next story" : "That was the last story! Tap to start again";
+  } else next();
+}
 $("card").onclick = () => {
   if (!ready) { show(); return; }
+  if (deck[i].kind === "story") { turnPage(); return; }
   if (typed(deck[i])) { if (revealed) next(); else $("spellIn").focus(); return; }
   if (!revealed) {
     revealed = true;
@@ -461,6 +870,11 @@ $("card").onclick = () => {
     $("name").textContent = c.kind === "sum" ? (c.worded ? `${c.question}\n${c.answer}` : `${c.question} = ${c.answer}`) : c.answer;
     if (c.kind === "spell") $("name").className = "name spell";
     if (c.kind === "sum") $("big").hidden = true;
+    if (c.kind === "book") {
+      $("pic").hidden = true; $("cover").hidden = true;
+      $("big").textContent = "📖"; $("big").hidden = false;
+      $("clue").textContent = `by ${c.author}\n\n${c.about}`; $("clue").hidden = false;
+    }
     $("hint").textContent = i + 1 < deck.length ? "Tap again for the next card" : "Last card! Tap to shuffle and play again";
   } else next();
 };
