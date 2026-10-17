@@ -32,7 +32,7 @@
   .card .tag { position:absolute; top:12px; left:0; right:0; text-align:center; font-size:.9rem; letter-spacing:2px; text-transform:uppercase; color:var(--muted); }
   .pic { width:92%; height:66%; object-fit:cover; border-radius:14px; background:#eee; margin-top:20px; }
   .pic.flag { object-fit:contain; background:none; height:50%; filter:drop-shadow(0 3px 4px #0004); }
-  .big { font-size:3.4rem; font-weight:bold; text-align:center; line-height:1.2; }
+  .big { white-space:pre-line; font-size:3.4rem; font-weight:bold; text-align:center; line-height:1.2; }
   .speak { font-size:4.5rem; background:none; border:none; cursor:pointer; }
   .clue { color:var(--muted); text-align:center; font-size:1.1rem; padding:0 8px; }
   .name { margin-top:18px; font-size:2rem; font-weight:bold; min-height:2.6rem; text-align:center; padding:0 10px; overflow-wrap:anywhere; }
@@ -110,20 +110,74 @@ const FLAGS = {
   "Oceania": "au:Australia,nz:New Zealand,pg:Papua New Guinea,fj:Fiji,sb:Solomon Islands,vu:Vanuatu,ws:Samoa,to:Tonga,ki:Kiribati,tv:Tuvalu,nr:Nauru,pw:Palau,fm:Micronesia,mh:Marshall Islands"
 };
 
+// Maths by school year, following the National Curriculum in England
+const pick = (...gens) => () => gens[r(0, gens.length - 1)]();
+const dec = n => String(Math.round(n * 100) / 100);
 const MATHS = {
-  "Adding": () => { const a = r(1, 20), b = r(1, 20); return [`${a} + ${b}`, a + b]; },
-  "Taking Away": () => { const a = r(5, 30), b = r(1, a); return [`${a} − ${b}`, a - b]; },
-  "Times Tables": () => { const a = r(2, 12), b = r(1, 12); return [`${a} × ${b}`, a * b]; },
-  "Dividing": () => { const b = r(2, 12), c = r(1, 12); return [`${b * c} ÷ ${b}`, c]; },
-  "Doubles & Halves": () => { const n = r(2, 50); return Math.random() < .5 ? [`Double ${n}`, n * 2] : [`Half of ${n * 2}`, n]; },
-  "Tricky Mix": () => { const a = r(10, 99), b = r(10, 99); return [[`${a} + ${b}`, a + b], [`${Math.max(a, b)} − ${Math.min(a, b)}`, Math.abs(a - b)], [`${r(2, 12)} × ${r(11, 15)}`, null]][r(0, 2)]; }
+  "Reception": pick(
+    () => { const a = r(0, 5), b = r(0, 5); return [`${a} + ${b}`, a + b]; },
+    () => { const a = r(2, 10), b = r(0, a); return [`${a} − ${b}`, a - b]; },
+    () => { const a = r(0, 10); return [`${a} + ? = 10`, 10 - a]; },
+    () => { const n = r(1, 19); return [`One more than ${n}`, n + 1]; },
+    () => { const n = r(2, 20); return [`One less than ${n}`, n - 1]; },
+    () => { const n = r(1, 5); return [`Double ${n}`, n * 2]; }),
+  "Year 1": pick(
+    () => { const a = r(1, 12), b = r(1, 20 - a); return [`${a} + ${b}`, a + b]; },
+    () => { const a = r(5, 20), b = r(1, a); return [`${a} − ${b}`, a - b]; },
+    () => { const a = r(0, 20); return [`${a} + ? = 20`, 20 - a]; },
+    () => { const n = r(1, 10); return [`Double ${n}`, n * 2]; },
+    () => { const n = r(1, 10); return [`Half of ${n * 2}`, n]; },
+    () => { const s = [2, 5, 10][r(0, 2)], k = r(1, 8); return [`What comes next?\n${s * k}, ${s * (k + 1)}, ${s * (k + 2)}, ?`, s * (k + 3)]; }),
+  "Year 2": pick(
+    () => { const a = r(11, 89), b = r(1, 9); return [`${a} + ${b}`, a + b]; },
+    () => { const a = r(11, 69), b = r(1, 3) * 10; return [`${a} + ${b}`, a + b]; },
+    () => { const a = r(20, 99), b = r(1, 9); return [`${a} − ${b}`, a - b]; },
+    () => { const t = r(1, 9) * 10; return [`${t} + ? = 100`, 100 - t]; },
+    () => { const t = [2, 5, 10][r(0, 2)], n = r(1, 12); return [`${n} × ${t}`, n * t]; },
+    () => { const t = [2, 5, 10][r(0, 2)], n = r(1, 12); return [`${n * t} ÷ ${t}`, n]; },
+    () => { const n = r(1, 10); return [`¼ of ${n * 4}`, n]; }),
+  "Year 3": pick(
+    () => { const t = [3, 4, 8][r(0, 2)], n = r(1, 12); return [`${n} × ${t}`, n * t]; },
+    () => { const t = [3, 4, 8][r(0, 2)], n = r(1, 12); return [`${n * t} ÷ ${t}`, n]; },
+    () => { const a = r(100, 899), b = r(1, 9) * [1, 10, 100][r(0, 2)]; return [`${a} + ${b}`, a + b]; },
+    () => { const a = r(200, 999), b = r(1, 9) * [1, 10, 100][r(0, 1)]; return [`${a} − ${b}`, a - b]; },
+    () => { const n = r(100, 899); return [`100 more than ${n}`, n + 100]; },
+    () => { const d = [2, 3, 4, 5, 10][r(0, 4)], n = r(2, 10); return [`1/${d} of ${n * d}`, n]; }),
+  "Year 4": pick(
+    () => { const a = r(2, 12), b = r(2, 12); return [`${a} × ${b}`, a * b]; },
+    () => { const a = r(2, 12), b = r(2, 12); return [`${a * b} ÷ ${a}`, b]; },
+    () => { const n = r(2, 99), m = [10, 100][r(0, 1)]; return [`${n} × ${m}`, n * m]; },
+    () => { const n = r(1000, 8999); return [`1000 more than ${n}`, n + 1000]; },
+    () => { const a = r(2, 5), b = r(2, 5), c = r(2, 5); return [`${a} × ${b} × ${c}`, a * b * c]; },
+    () => { const n = r(12, 25), t = r(3, 9); return [`${n} × ${t}`, n * t]; },
+    () => { const d = [4, 5, 8, 10][r(0, 3)], k = r(2, d - 1), n = r(2, 9); return [`${k}/${d} of ${n * d}`, k * n]; }),
+  "Year 5": pick(
+    () => { const n = r(2, 99), m = [10, 100, 1000][r(0, 2)]; return [`${n} × ${m}`, n * m]; },
+    () => { const m = [10, 100, 1000][r(0, 2)], n = r(1, 99) * 10; return [`${n * m / 10} ÷ ${m}`, dec(n * m / 10 / m)]; },
+    () => { const n = r(2, 12); return [`${n}²`, n * n]; },
+    () => { const n = r(1, 5); return [`${n}³`, n ** 3]; },
+    () => { const a = r(11, 59) / 10, b = r(11, 49) / 10; return [`${dec(a)} + ${dec(b)}`, dec(a + b)]; },
+    () => { const p = [10, 25, 50][r(0, 2)], n = r(1, 10) * 20; return [`${p}% of ${n}`, n * p / 100]; },
+    () => { const a = r(1000, 9999), b = r(100, 999); return [`${a} − ${b}`, a - b]; }),
+  "Year 6": pick(
+    () => { const a = r(2, 12), b = r(2, 9), c = r(2, 9); return [`${a} + ${b} × ${c}`, a + b * c]; },
+    () => { const a = r(2, 9), b = r(2, 9), c = r(2, 9); return [`(${a} + ${b}) × ${c}`, (a + b) * c]; },
+    () => { const p = [5, 10, 20, 25, 75][r(0, 4)], n = r(1, 12) * 20; return [`${p}% of ${n}`, n * p / 100]; },
+    () => { const d = [3, 4, 5, 6, 8][r(0, 4)], k = r(2, d - 1), n = r(3, 12); return [`${k}/${d} of ${n * d}`, k * n]; },
+    () => { const a = r(11, 25), b = r(11, 19); return [`${a} × ${b}`, a * b]; },
+    () => { const a = -r(1, 10), b = r(1, 15); return [`${a} + ${b}`, a + b]; },
+    () => { const a = r(11, 99) / 10, m = [10, 100][r(0, 1)]; return [`${dec(a)} × ${m}`, dec(a * m)]; },
+    () => { const a = r(2, 9) * 0.1, b = r(2, 9); return [`${dec(a)} × ${b}`, dec(a * b)]; })
 };
+const AGES = {"Reception":"Age 4–5","Year 1":"Age 5–6","Year 2":"Age 6–7","Year 3":"Age 7–8","Year 4":"Age 8–9","Year 5":"Age 9–10","Year 6":"Age 10–11","Years 3–4":"Age 7–9","Years 5–6":"Age 9–11"};
 
-// Spelling: "word:clue"
+// Spelling by school year: phonics words and the statutory word lists in the National Curriculum
 const SPELLING = {
-  "Easy": "cat:A furry pet that purrs,dog:A pet that barks,sun:It shines in the sky,hat:You wear it on your head,fish:It swims in water,frog:A green animal that hops,tree:It has leaves and branches,book:You read it,ball:You kick or throw it,milk:A white drink from cows,cake:A sweet treat for birthdays,duck:A bird that quacks,jump:To leap up high,red:The colour of a strawberry,blue:The colour of the sky,ship:A big boat,star:It twinkles at night,rain:Water falling from clouds,bed:You sleep in it,door:You open it to go in,shop:A place where you buy things,moon:You see it at night,house:A place people live,happy:Feeling glad,apple:A crunchy fruit,school:Where you go to learn,green:The colour of grass,water:You drink it,horse:An animal you can ride,chair:You sit on it",
-  "Medium": "because:For the reason that,friend:Someone you like to play with,people:More than one person,beautiful:Very pretty,said:Past of say,could:Was able to,would:A word for wishes and offers,should:Ought to,children:More than one child,different:Not the same,animal:A living creature,elephant:A huge grey animal with a trunk,dinosaur:A giant reptile from long ago,February:The second month,Wednesday:The middle of the school week,little:Small,another:One more,through:In one side and out the other,thought:Past of think,caught:Past of catch,laugh:What you do when something is funny,enough:As much as you need,island:Land with water all around,believe:To think something is true,knight:A soldier in armour,castle:A big stone building with towers,rhythm:A beat in music,science:The study of how things work,library:A place to borrow books,surprise:Something you did not expect",
-  "Hard": "necessary:Needed,separate:Apart,definitely:For certain,accommodate:To make room for,embarrass:To make someone feel awkward,occasion:A special event,rhinoceros:A big animal with a horn on its nose,conscience:Your sense of right and wrong,environment:The world around us,government:The people who run a country,queue:A line of people waiting,mischievous:Naughty in a playful way,parliament:Where laws are made,temperature:How hot or cold something is,vegetable:A plant you eat like a carrot,restaurant:A place to buy a meal,silhouette:A dark shape against light,millennium:A thousand years,pronunciation:How a word is said,questionnaire:A list of questions,chrysanthemum:A big colourful flower,onomatopoeia:A word that sounds like its meaning,Mediterranean:A sea between Europe and Africa,exaggerate:To make something seem bigger,hippopotamus:A huge animal that lives in rivers,archaeologist:Someone who digs up old things,miniature:Very small,privilege:A special right,guarantee:A promise,yacht:A fancy sailing boat"
+  "Reception": "cat,dog,pig,sun,hat,bed,red,top,mum,dad,big,run,fish,shop,chip,ship,that,this,with,then,the,to,I,no,go,into,he,she,we,me,be,was,my,you,they,all,are",
+  "Year 1": "the,a,do,to,today,of,said,says,are,were,was,is,his,has,I,you,your,they,be,he,me,she,we,no,go,so,by,my,here,there,where,love,come,some,one,once,ask,friend,school,put,push,pull,full,house,our",
+  "Year 2": "door,floor,poor,because,find,kind,mind,behind,child,children,wild,climb,most,only,both,old,cold,gold,hold,told,every,everybody,even,great,break,steak,pretty,beautiful,after,fast,last,past,father,class,grass,pass,plant,path,bath,hour,move,prove,improve,sure,sugar,eye,could,should,would,who,whole,any,many,clothes,busy,people,water,again,half,money,parents,Christmas",
+  "Years 3–4": "accident,actually,address,answer,appear,arrive,believe,bicycle,breath,breathe,build,busy,business,calendar,caught,centre,century,certain,circle,complete,consider,continue,decide,describe,different,difficult,disappear,early,earth,eight,enough,exercise,experience,experiment,extreme,famous,favourite,February,forward,fruit,grammar,group,guard,guide,heard,heart,height,history,imagine,increase,important,interest,island,knowledge,learn,length,library,material,medicine,mention,minute,natural,naughty,notice,occasion,often,opposite,ordinary,particular,peculiar,perhaps,popular,position,possess,possession,possible,potatoes,pressure,probably,promise,purpose,quarter,question,recent,regular,reign,remember,sentence,separate,special,straight,strange,strength,suppose,surprise,therefore,though,although,thought,through,various,weight,woman,women",
+  "Years 5–6": "accommodate,accompany,according,achieve,aggressive,amateur,ancient,apparent,appreciate,attached,available,average,awkward,bargain,bruise,category,cemetery,committee,communicate,community,competition,conscience,conscious,controversy,convenience,correspond,criticise,curiosity,definite,desperate,determined,develop,dictionary,disastrous,embarrass,environment,equip,equipped,equipment,especially,exaggerate,excellent,existence,explanation,familiar,foreign,forty,frequently,government,guarantee,harass,hindrance,identity,immediate,immediately,individual,interfere,interrupt,language,leisure,lightning,marvellous,mischievous,muscle,necessary,neighbour,nuisance,occupy,occur,opportunity,parliament,persuade,physical,prejudice,privilege,profession,programme,pronunciation,queue,recognise,recommend,relevant,restaurant,rhyme,rhythm,sacrifice,secretary,shoulder,signature,sincere,sincerely,soldier,stomach,sufficient,suggest,symbol,system,temperature,thorough,twelfth,variety,vegetable,vehicle,yacht"
 };
 
 const SUBJECTS = {
@@ -134,11 +188,11 @@ const SUBJECTS = {
     icons: {Europe:"🏰",Africa:"🦒",Asia:"🏯",Americas:"🗽",Oceania:"🦘"},
     decks: Object.fromEntries(Object.entries(FLAGS).map(([c, l]) => [c, l.split(",").map(s => { const [code, name] = s.split(":"); return {kind: "flag", src: `https://flagcdn.com/w640/${code}.png`, answer: name, tag: c}; })])) },
   maths: { title: "Maths", icon: "➗", note: "Work out the answer, then tap to check",
-    icons: {"Adding":"➕","Taking Away":"➖","Times Tables":"✖️","Dividing":"➗","Doubles & Halves":"🎯","Tricky Mix":"🧠"},
+    icons: {"Reception":"🧸","Year 1":"1️⃣","Year 2":"2️⃣","Year 3":"3️⃣","Year 4":"4️⃣","Year 5":"5️⃣","Year 6":"6️⃣"},
     decks: Object.fromEntries(Object.keys(MATHS).map(k => [k, null])) },
   spelling: { title: "Spelling Bee", icon: "🐝", note: "Listen to the word, spell it out loud, then tap to check",
-    icons: {Easy:"🐣",Medium:"🐝",Hard:"🏆"},
-    decks: Object.fromEntries(Object.entries(SPELLING).map(([c, l]) => [c, l.split(",").map(s => { const [w, clue] = s.split(":"); return {kind: "spell", answer: w, clue, tag: "Spelling · " + c}; })])) }
+    icons: {"Reception":"🧸","Year 1":"1️⃣","Year 2":"2️⃣","Years 3–4":"🐝","Years 5–6":"🏆"},
+    decks: Object.fromEntries(Object.entries(SPELLING).map(([c, l]) => [c, l.split(",").map(s => { const [w, clue] = s.split(":"); return {kind: "spell", answer: w, clue, tag: `Spelling · ${c} · ${AGES[c]}`}; })])) }
 };
 
 const $ = id => document.getElementById(id);
@@ -151,9 +205,8 @@ const images = {}; // wiki title -> image url, or null if none
 function mathsDeck(name) {
   const out = [];
   while (out.length < 30) {
-    let [q, a] = MATHS[name]();
-    if (a === null) { const [x, y] = q.split(" × ").map(Number); a = x * y; }
-    out.push({kind: "sum", question: q, answer: String(a), tag: "Maths · " + name});
+    const [q, a] = MATHS[name]();
+    out.push({kind: "sum", question: q, answer: String(a), worded: q.includes("?") || /[A-Za-z]/.test(q.replace(" of ", "")), tag: `Maths · ${name} · ${AGES[name]}`});
   }
   return out;
 }
@@ -241,7 +294,9 @@ function showDecks(s) {
   $("sub").textContent = `${S.title}: pick a deck`;
   for (const name of [...Object.keys(S.decks), "Mixed"]) {
     const size = s === "maths" ? "30 questions" : (name === "Mixed" ? Object.values(S.decks).reduce((t, d) => t + d.length, 0) : S.decks[name].length) + " cards";
-    button(name === "Mixed" ? "🎲" : S.icons[name], name === "Mixed" ? "Mix of Everything" : name, s === "maths" && name === "Mixed" ? "48 questions" : size, () => start(name));
+    const mixedSums = Object.keys(MATHS).length * 8 + " questions";
+    const small = s === "maths" && name === "Mixed" ? mixedSums : (AGES[name] ? `${AGES[name]} · ${size}` : size);
+    button(name === "Mixed" ? "🎲" : S.icons[name], name === "Mixed" ? "Mix of Everything" : name, small, () => start(name));
   }
   if (CUSTOM[s]) button("✏️", s === "maths" ? "My Own Sums" : "My Own Words", "Type your own", () => openEditor(s));
 }
