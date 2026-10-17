@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Speedy Learning</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@500;700;800&display=swap">
 <style>
   :root { --bg:#1f6f43; --card:#fffdf5; --ink:#222; --accent:#f4b400; --muted:#777; }
   * { box-sizing:border-box; }
@@ -244,29 +247,118 @@
   @keyframes pop { from { transform:scale(.85); opacity:0; } to { transform:scale(1); opacity:1; } }
   @media (prefers-reduced-motion: reduce) { .pop { animation:none; } }
   [hidden] { display:none !important; }
+
+  .steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin:6px 0 10px; }
+  .steps div { background:var(--soft); border-radius:16px; padding:12px; font-weight:800; display:flex; align-items:center; gap:10px; }
+  .steps span { flex:none; width:32px; height:32px; border-radius:50%; background:var(--accent); color:#fff; display:grid; place-items:center; font-family:var(--display); }
+  .more summary { cursor:pointer; color:var(--muted); font-weight:800; }
+  .more p { margin:8px 0 0; color:var(--muted); }
+  /* ---------- Modern theme ---------- */
+  /* Layout: a light, calm page; colour comes from each subject, not the background */
+  :root { --bg:#f5f6fb; --card:#ffffff; --ink:#1f2540; --muted:#6b7185; --line:#e6e8f2; --accent:#6c5ce7; --accent-ink:#ffffff; --good:#16a34a; --good-bg:#e7f8ec; --bad:#dc2626; --bad-bg:#fdecec; --c:#6c5ce7; --soft:#f0eefe;
+    --shadow:0 10px 30px rgba(31,37,64,.08); --display:"Baloo 2","Nunito",system-ui,sans-serif; --body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#12141f; --card:#1d2030; --ink:#eef0fa; --muted:#a3a8c3; --line:#2c3047; --soft:#272a40; --good-bg:#14301f; --bad-bg:#3a1a1a; --shadow:0 10px 30px rgba(0,0,0,.35); color-scheme:dark; } }
+  :root[data-theme="dark"] { --bg:#12141f; --card:#1d2030; --ink:#eef0fa; --muted:#a3a8c3; --line:#2c3047; --soft:#272a40; --good-bg:#14301f; --bad-bg:#3a1a1a; --shadow:0 10px 30px rgba(0,0,0,.35); color-scheme:dark; }
+  body { background:var(--bg); background-image:radial-gradient(circle at 10% -10%, #e9e5ff 0, transparent 40%), radial-gradient(circle at 110% 10%, #ffeccf 0, transparent 35%); background-attachment:fixed; font-family:var(--body); color:var(--ink); padding:16px max(16px, env(safe-area-inset-left, 0px)) 32px; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) body { background-image:none; } }
+  h1 { color:var(--ink); text-shadow:none; font-family:var(--display); font-weight:800; letter-spacing:-.5px; font-size:clamp(1.6rem,6vw,2.4rem); margin:4px 0 0; padding:0 110px 0 0; text-align:left; width:100%; max-width:760px; text-wrap:balance; }
+  @media (min-width:700px) { h1 { padding:0; text-align:center; } }
+  h1 .logo { background:linear-gradient(90deg,#6c5ce7,#ff7a59); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .sub { color:var(--muted); opacity:1; margin:2px 0 18px; font-weight:700; width:100%; max-width:760px; text-align:left; }
+  @media (min-width:700px) { .sub { text-align:center; } }
+  .mute { background:var(--card); border:1px solid var(--line); box-shadow:var(--shadow); width:44px; height:44px; font-size:1.2rem; }
+  .mute.auto { right:calc(62px + env(safe-area-inset-right, 0px)); }
+  .mute.auto.on { background:#fff3c4; border-color:#ffd54a; }
+  .btn { background:var(--accent); color:var(--accent-ink); border:none; border-radius:999px; padding:10px 18px; font-family:var(--body); font-weight:800; font-size:1rem; cursor:pointer; box-shadow:0 4px 0 rgba(0,0,0,.12); transition:transform .1s; }
+  .btn:active { transform:translateY(2px); box-shadow:none; }
+  .btn.ghost { background:var(--card); color:var(--ink); border:1px solid var(--line); box-shadow:none; }
+  .btn:focus-visible, .cat:focus-visible, .opt:focus-visible { outline:3px solid #ffb703; outline-offset:2px; }
+  .cats { gap:14px; }
+  .cat { background:var(--card); border:1px solid var(--line); border-radius:22px; padding:16px 12px 14px; box-shadow:var(--shadow); font-family:var(--body); font-weight:800; color:var(--ink); transition:transform .15s, box-shadow .15s; position:relative; overflow:hidden; text-decoration:none; }
+  .cat::before { content:""; position:absolute; inset:0 0 auto; height:5px; background:var(--c); }
+  .cat span { width:64px; height:64px; margin:4px auto 8px; display:flex !important; align-items:center; justify-content:center; font-size:2.1rem; border-radius:20px; background:color-mix(in srgb, var(--c) 16%, var(--card)); }
+  .cat small { color:var(--muted); font-weight:700; }
+  .cat:hover { transform:translateY(-4px); box-shadow:0 16px 34px rgba(31,37,64,.14); }
+  .cat .best { color:#b07d00; }
+  .rules, .panel, .chat { background:var(--card); border:1px solid var(--line); border-radius:22px; box-shadow:var(--shadow); }
+  .rules h2, .panel h2 { font-family:var(--display); }
+  .topbar .btn { margin-right:6px; }
+  #game { max-width:520px; }
+  .bar { max-width:440px; color:var(--ink); }
+  .pill { display:inline-block; background:var(--card); border:1px solid var(--line); border-radius:999px; padding:3px 10px; font-weight:800; font-size:.9rem; font-variant-numeric:tabular-nums; }
+  .pill.good { color:var(--good); } .pill.bad { color:var(--bad); }
+  .track { display:flex; gap:3px; width:100%; max-width:440px; margin:0 0 12px; min-height:8px; }
+  .track i { flex:1; height:8px; border-radius:999px; background:var(--line); }
+  .track i.now { background:var(--c); opacity:.5; }
+  .track i.ok { background:var(--good); } .track i.no { background:var(--bad); }
+  .track b { display:block; height:8px; border-radius:999px; background:var(--c); }
+  .card { background:var(--card); border:none; border-radius:28px; box-shadow:0 18px 40px rgba(31,37,64,.12); overflow:hidden; aspect-ratio:auto; min-height:min(78vh,640px); padding:22px 18px 18px; justify-content:flex-start; gap:6px; }
+  .card::before { content:""; position:absolute; inset:0 0 auto; height:8px; background:var(--c); }
+  .card .tag { position:static; order:-2; align-self:center; background:color-mix(in srgb, var(--c) 14%, var(--card)); color:color-mix(in srgb, var(--c) 70%, var(--ink)); border-radius:999px; padding:4px 12px; font-size:.75rem; font-weight:800; letter-spacing:1px; max-width:85%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .readQ { top:14px; right:12px; background:var(--card); border:1px solid var(--line); box-shadow:var(--shadow); }
+  .big { font-family:var(--display); color:var(--ink); margin-top:auto; }
+  .big.q { font-size:clamp(1.3rem,5vw,1.7rem); line-height:1.25; margin-top:18px; }
+  .card:has(.opts:not([hidden])) .big, .card:has(.fb:not([hidden])) .big { margin-top:18px; }
+  .name { font-family:var(--display); }
+  .opts { gap:10px; margin-top:auto; }
+  .opt { border:2px solid var(--line); border-radius:16px; padding:14px; font-weight:800; font-family:var(--body); background:var(--card); color:var(--ink); text-align:left; transition:transform .1s, border-color .15s; }
+  .opt:hover:not(:disabled) { border-color:var(--c); transform:translateX(3px); }
+  .opt.right { background:var(--good-bg); border-color:var(--good); color:var(--good); }
+  .opt.wrong { background:var(--bad-bg); border-color:var(--bad); color:var(--bad); }
+  .opt:disabled:not(.right):not(.wrong) { opacity:.5; }
+  .spellForm { margin-top:auto; }
+  .spellForm input, .chatForm input, .who input, .writing textarea, .editor textarea { border:2px solid var(--line); background:var(--card); color:var(--ink); border-radius:14px; }
+  .spellForm input:focus, .chatForm input:focus { border-color:var(--c); }
+  .fb { order:6; width:100%; border-radius:18px; padding:14px 16px; margin-top:10px; animation:pop .3s ease; }
+  .fb.good { background:var(--good-bg); color:var(--good); }
+  .fb.bad { background:var(--bad-bg); color:var(--bad); }
+  .fbHead { display:flex; align-items:center; gap:8px; font-family:var(--display); font-size:1.35rem; }
+  .fbIcon { font-size:1.6rem; }
+  .fbLine { color:var(--ink); margin-top:4px; font-size:1.05rem; }
+  .fbLine b { font-size:1.15rem; }
+  .nextBtn { width:100%; margin-top:12px; font-size:1.1rem; background:var(--ink); color:var(--card); }
+  .fb.good .nextBtn { background:var(--good); color:#fff; } .fb.bad .nextBtn { background:var(--bad); color:#fff; }
+  .selfMark { order:6; display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center; margin-top:12px; font-weight:800; }
+  .selfMark .yes { background:var(--good); } .selfMark .no { background:var(--bad); }
+  .tries { order:5; }
+  .hint { color:var(--muted); font-weight:700; }
+  .credit { color:var(--muted); }
+  .scene { border-radius:20px; }
+  .story .w.read, .story .w.now { color:var(--ink); }
+  .story .w { color:color-mix(in srgb, var(--ink) 35%, var(--card)); }
+  .story.passage { background:var(--soft); color:var(--ink); }
+  .finish { background:rgba(20,22,40,.55); backdrop-filter:blur(4px); }
+  .finish .box { background:var(--card); border:none; border-radius:28px; color:var(--ink); }
+  .finish h2 { font-family:var(--display); }
+  .ring { width:120px; height:120px; margin:6px auto; border-radius:50%; display:grid; place-items:center; background:conic-gradient(var(--good) calc(var(--p) * 1%), var(--line) 0); }
+  .ring b { width:92px; height:92px; border-radius:50%; background:var(--card); display:grid; place-items:center; font-family:var(--display); font-size:1.7rem; }
+  .stat { background:var(--soft); }
+  .msg.bot { background:var(--soft); color:var(--ink); } .msg.me { background:var(--accent); }
+  .chip { background:var(--soft); border-color:var(--line); color:var(--ink); }
+  .wPrompt { background:var(--soft); }
 </style>
 </head>
 <body>
 <button class="mute" id="mute" type="button" aria-label="Sound effects on or off">🔊</button>
 <button class="mute auto" id="autoRead" type="button" aria-label="Read every question out loud automatically" aria-pressed="false">🗣️</button>
 <canvas id="confetti" aria-hidden="true"></canvas>
-<h1>⚡ Speedy Learning ⚡</h1>
+<h1>⚡ <span class="logo">Speedy Learning</span></h1>
 <p class="sub" id="sub">Pick a subject</p>
 
 <div class="topbar" id="topbar" hidden><button class="btn" id="home">← Subjects</button> <button class="btn" id="years" hidden>← Year groups</button></div>
 <div class="rules" id="rules">
   <h2>How to play <button class="hear readRules" id="readRules" type="button" aria-label="Read the rules out loud">🔊</button></h2>
-  <ol>
-    <li>Pick a subject, then pick a deck.</li>
-    <li>Look at the card and say your answer out loud.</li>
-    <li>Tap the card to see if you were right.</li>
-    <li>Tap again for the next card.</li>
-  </ol>
-  <p>In Spelling Bee, listen to the word and type it in, then press Check. You get 3 tries for each word. Tap 🔊 to hear it again.</p>
-  <p>In Story Time, watch the picture and read along as the words light up. Swipe or press ▶ for the next page, or press 🔊 Read to me to hear it. Book Ideas shows great books to look out for at the library.</p>
-  <p>In the subject quizzes (Science, History, Geography and more), tap the answer you think is right.</p>
-  <p>Can't read yet? Press 🔊 on any card to hear it, or press 🗣️ at the top so every question is read out automatically.</p>
-  <p>In Maths, type your answer and press Check. You get 3 tries for each question.</p>
+  <div class="steps">
+    <div><span>1</span>Pick a subject and your year</div>
+    <div><span>2</span>Answer the question</div>
+    <div><span>3</span>See if you're right, then press Next</div>
+  </div>
+  <details class="more"><summary>More help for grown-ups</summary>
+    <p>🔊 on any card reads it aloud. 🗣️ at the top reads every question automatically, for children who can't read yet.</p>
+    <p>Maths and spelling: type the answer and press Check (3 tries; SATs papers give 1 try, like the real tests).</p>
+    <p>Story Time: press 📺 Watch to play a story like a cartoon, or read it page by page.</p>
+    <p>📈 My Progress shows scores, streaks, topics to work on and a "Practise my mistakes" deck for each child.</p>
+  </details>
 </div>
 <div id="menu" class="cats"></div>
 
@@ -303,6 +395,7 @@
 
 <div class="finish" id="finish" hidden>
   <div class="box">
+    <div class="ring" id="finRing"><b id="finPct"></b></div>
     <div class="stars" id="finStars"></div>
     <h2 id="finTitle"></h2>
     <p id="finText"></p>
@@ -312,7 +405,8 @@
 </div>
 
 <div id="game" style="display:flex" hidden>
-  <div class="bar"><button class="btn" id="back">← Decks</button><span id="clock" class="clock" hidden></span><span id="count"></span></div>
+  <div class="bar"><button class="btn ghost" id="back">← Back</button><span id="clock" class="clock" hidden></span><span id="count"></span></div>
+  <div class="track" id="track" aria-hidden="true"></div>
   <div class="card" id="card">
     <div class="tag" id="tag"></div>
     <button class="readQ" id="readQ" type="button" aria-label="Read this out loud">🔊</button>
@@ -338,6 +432,17 @@
       <button class="btn" id="spellGo">Check</button>
     </form>
     <div class="tries" id="tries"></div>
+    <div class="fb" id="fb" hidden>
+      <div class="fbHead"><span class="fbIcon" id="fbIcon"></span><b id="fbTitle"></b></div>
+      <div class="fbLine" id="fbYou"></div>
+      <div class="fbLine" id="fbAns"></div>
+      <button class="btn nextBtn" id="nextBtn" type="button">Next ➜</button>
+    </div>
+    <div class="selfMark" id="selfMark" hidden>
+      <span>Did you know it?</span>
+      <button class="btn yes" id="markYes" type="button">👍 Yes</button>
+      <button class="btn no" id="markNo" type="button">👎 Not yet</button>
+    </div>
   </div>
   <div class="hint" id="hint"></div>
   <div class="credit" id="credit"></div>
@@ -1183,9 +1288,12 @@ function deckFor(s, name) {
   return name === "Mixed" ? Object.values(S.decks).flat() : [...S.decks[name]];
 }
 
+const TINTS = ["#6c5ce7", "#ff7a59", "#00b894", "#0984e3", "#e84393", "#fdab3d", "#00a8b5", "#a55eea", "#e17055", "#20bf6b", "#4b7bec", "#eb3b5a"];
+let tileN = 0;
+const SUBJECT_TINT = {};
 function button(icon, label, small, onclick) {
   const b = document.createElement("button");
-  b.className = "cat";
+  b.className = "cat"; b.style.setProperty("--c", TINTS[tileN++ % TINTS.length]);
   b.innerHTML = `<span>${icon}</span>${label}${small ? `<small>${small}</small>` : ""}`;
   b.onclick = onclick;
   $("menu").appendChild(b);
@@ -1193,11 +1301,11 @@ function button(icon, label, small, onclick) {
 
 function showSubjects() {
   subject = null; year = ""; stopReading(); if (typeof watching !== "undefined" && watching) stopWatching();
-  $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = true; $("rules").hidden = false; $("editor").hidden = true; $("chat").hidden = true; $("progress").hidden = true; $("writing").hidden = true;
+  $("menu").innerHTML = ""; tileN = 0; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = true; $("rules").hidden = false; $("editor").hidden = true; $("chat").hidden = true; $("progress").hidden = true; $("writing").hidden = true;
   $("sub").textContent = "Pick a subject";
   for (const [k, S] of Object.entries(SUBJECTS)) {
-    const n = k === "maths" ? "Endless questions" : k === "sats" ? "Every Year 1, 2, 4 and 6 test" : k === "writing" ? "Write and get feedback" : Object.values(S.decks).reduce((t, d) => t + d.length, 0) + " " + (S.unit || "cards");
-    button(S.icon, S.title, n, () => showDecks(k));
+    const n = k === "maths" ? "Endless questions" : k === "sats" ? "Year 6 tests: reading, grammar, spelling, maths" : k === "writing" ? "Write and get feedback" : Object.values(S.decks).reduce((t, d) => t + d.length, 0) + " " + (S.unit || "cards");
+    SUBJECT_TINT[k] = TINTS[tileN % TINTS.length]; button(S.icon, S.title, n, () => showDecks(k));
   }
   button("💬", "What Does This Mean?", "Ask about school words", openChat);
   button("📈", "My Progress", player === "Me" ? "Stars, scores and practice" : `${player}'s stars, scores and practice`, showProgress);
@@ -1207,7 +1315,7 @@ function showDecks(s) {
   stopTimers(); if (typeof watching !== "undefined" && watching) stopWatching();
   subject = s; year = ""; $("years").hidden = true; const S = SUBJECTS[s]; $("rules").hidden = true; $("editor").hidden = true; $("chat").hidden = true; $("progress").hidden = true; $("writing").hidden = true;
   stopReading();
-  $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = false;
+  $("menu").innerHTML = ""; tileN = 0; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = false;
   $("sub").textContent = `${S.title}: pick a deck`;
   if (s === "writing") {
     $("sub").textContent = "Writing Workshop: pick your year group";
@@ -1215,7 +1323,7 @@ function showDecks(s) {
     return;
   }
   if (s === "sats") {
-    $("sub").textContent = "SATs Practice: pick a test. One try per question, just like the real thing";
+    $("sub").textContent = "Year 6 SATs: pick a paper. One try per question, just like the real thing";
     for (const [name, [icon, info]] of Object.entries(SATS_INFO)) {
       button(icon, name, info, () => start(name));
       const best = store.get(`speedy-best|sats|${name}`);
@@ -1233,6 +1341,8 @@ function showDecks(s) {
     const best = store.get(`speedy-best|${s}|${name}`);
     if (best) { const t = document.createElement("span"); t.className = "best"; t.textContent = `Best: ⭐ ${best}`; $("menu").lastChild.appendChild(t); }
   }
+  if (s === "maths") button("⏱️", "Times Tables Check", "Year 4 · 25 questions · 6 seconds each", () => { deckName = "Times Tables Check"; begin(satsDeck("Times Tables Check")); });
+  if (s === "spelling") button("🔤", "Phonics Check", "Year 1 · 40 words · a grown-up marks", () => { deckName = "Phonics Screening Check"; begin(satsDeck("Phonics Screening Check")); });
   if (CUSTOM[s]) button("✏️", s === "maths" ? "My Own Sums" : "My Own Words", "Type your own", () => openEditor(s));
 }
 
@@ -1336,9 +1446,6 @@ function satsDeck(name) {
   return [];
 }
 const SATS_INFO = {
-  "Phonics Screening Check": ["🔤", "Year 1 · 40 words · a grown-up marks", null],
-  "Year 2 Maths (KS1)": ["2️⃣", "Year 2 · 25 questions", null],
-  "Times Tables Check": ["⏱️", "Year 4 · 25 questions · 6 seconds each", null],
   "Reading": ["📖", "Year 6 · 4 texts · 24 questions", null],
   "Grammar & Punctuation (Paper 1)": ["✏️", "Year 6 · 30 questions", null],
   "Spelling (Paper 2)": ["🐝", "Year 6 · 20 words", null],
@@ -1476,7 +1583,7 @@ function topicsFor(s, name) {
 function showTopics(s, name) {
   year = name; subject = s; const S = SUBJECTS[s];
   stopReading();
-  $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = false; $("years").hidden = false;
+  $("menu").innerHTML = ""; tileN = 0; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = false; $("years").hidden = false;
   $("rules").hidden = true; $("editor").hidden = true; $("chat").hidden = true; $("progress").hidden = true; $("writing").hidden = true;
   $("sub").textContent = `${S.title} · ${name}: pick a topic`;
   button("🎲", `All of ${name}`, AGES[name] || "Every topic mixed", () => start(name));
@@ -1508,6 +1615,7 @@ async function loadImages(from) {
 let deckName = "";
 function start(name) { deckName = name; return begin(deckFor(subject, name)); }
 async function begin(cards) {
+  results = []; document.documentElement.style.setProperty("--c", SUBJECT_TINT[subject] || "#6c5ce7");
   deck = subject === "sats" && deckName === "Reading" || subject === "comprehension" && deckName !== "Mixed" ? cards : shuffle(cards); i = 0; score = 0; streak = 0; finishing = false; mistakes = []; stopTimers();
   if (subject === "sats" && SATS_INFO[deckName] && SATS_INFO[deckName][2]) startExamTimer(SATS_INFO[deckName][2]);
   $("menu").hidden = true; $("topbar").hidden = true; $("game").hidden = false; $("progress").hidden = true; $("writing").hidden = true;
@@ -1547,7 +1655,8 @@ function say(word) {
 
 async function show() {
   revealed = false; ready = false;
-  for (const id of ["pic", "big", "speak", "clue", "spellForm", "cover", "story", "scene", "pager", "opts", "watchBig"]) $(id).hidden = true;
+  for (const id of ["pic", "big", "speak", "clue", "spellForm", "cover", "story", "scene", "pager", "opts", "watchBig", "fb", "selfMark"]) $(id).hidden = true;
+  renderTrack();
   $("big").className = "big";
   stopReading(); $("card").classList.remove("reading"); $("readQ").hidden = false;
   page = -1;
@@ -1585,7 +1694,7 @@ async function show() {
     $("scene").innerHTML = sceneSVG(c, 0); $("scene").className = "scene"; $("scene").hidden = false;
     $("name").textContent = c.answer; $("watchBig").hidden = false;
   } else if (c.kind === "sum") {
-    $("big").textContent = c.worded ? c.question : c.question + " = ?"; $("big").hidden = false;
+    $("big").textContent = c.worded ? c.question : c.question + " = ?"; $("big").className = c.worded && c.question.length > 18 ? "big q" : "big"; $("big").hidden = false;
     openForm(c.passage || c.accept ? "Type your answer" : "Type the answer", c.passage || c.accept || /[a-z]{3}/i.test(c.question) && !/\(like|\(in|\(cm|\(ml|\(°|\(£/.test(c.question) && isNaN(c.answer) ? "text" : "decimal");
     if (c.tries) triesLeft = c.tries;
     if (c.passage) { $("story").textContent = c.passage; $("story").className = "story passage"; $("story").hidden = false; $("big").className = "big q small"; }
@@ -1596,8 +1705,8 @@ async function show() {
     $("speak").hidden = false; $("clue").textContent = c.clue ? "Clue: " + c.clue : "Listen carefully!"; $("clue").hidden = false;
     say(c.sentence ? `${c.answer}. ${c.sentence}. ${c.answer}.` : c.answer);
   }
-  $("count").textContent = `Card ${i + 1} of ${deck.length}` + (typed(c) || c.kind === "quiz" ? ` · ⭐ ${score}` : "");
-  $("hint").textContent = c.kind === "spell" ? "Type the word and press Check. Tap 🔊 to hear it again" : c.kind === "sum" ? (c.tries === 1 ? "Type your answer and press Check. One try, like the real test" : "Type your answer and press Check. You have 3 tries") : c.kind === "story" ? "Press 📺 to watch it like a cartoon, or tap the card to read it yourself" : c.kind === "quiz" ? "Tap the answer you think is right" : "Tap the card to reveal the answer";
+  if (c.kind === "story" || c.kind === "book") $("count").innerHTML = `<span class="pill">${i + 1} / ${deck.length}</span>`; else renderTrack();
+  $("hint").textContent = c.kind === "spell" ? "Type the word and press Check. Tap 🔊 to hear it again" : c.kind === "sum" ? (c.tries === 1 ? "Type your answer and press Check. One try, like the real test" : "Type your answer and press Check. You have 3 tries") : c.kind === "story" ? "Press 📺 to watch it like a cartoon, or tap the card to read it yourself" : c.kind === "quiz" ? "" : "Tap the card to reveal the answer";
   const card = $("card"); card.classList.remove("pop"); void card.offsetWidth; card.classList.add("pop");
   ready = true;
   if (autoRead && c.kind !== "spell" && c.kind !== "story") setTimeout(() => { if (deck[i] === c && !revealed) readCard(); }, 400);
@@ -1628,7 +1737,7 @@ let autoRead = store.get("speedy-autoread") === "1";
 const showAuto = () => { $("autoRead").classList.toggle("on", autoRead); $("autoRead").setAttribute("aria-pressed", autoRead); };
 showAuto();
 $("autoRead").onclick = () => { autoRead = !autoRead; store.set("speedy-autoread", autoRead ? "1" : "0"); showAuto(); say(autoRead ? "I will read every question out loud." : "Reading out loud is off."); };
-$("readRules").onclick = () => say($("rules").innerText.replace("🔊", ""));
+$("readRules").onclick = () => say("How to play. One: pick a subject and your year. Two: answer the question. Three: see if you're right, then press Next.");
 $("speak").onclick = e => { e.stopPropagation(); const c = deck[i]; say(c.sentence ? `${c.answer}. ${c.sentence}. ${c.answer}.` : c.answer); };
 const typed = c => c.kind === "spell" || c.kind === "sum";
 function openForm(placeholder, mode) {
@@ -1780,13 +1889,14 @@ function drawConfetti() {
 const PRAISE = ["Correct! Well done!", "Brilliant!", "Super star!", "Fantastic!", "Amazing!", "You got it!"];
 function scored(right) {
   const card = $("card");
-  record(deck[i], right);
+  record(deck[i], right); results[i] = right ? 1 : 0;
   if (right) {
     streak++; sfx("right"); confetti(streak >= 3 ? 70 : 35);
     card.classList.remove("cheer"); void card.offsetWidth; card.classList.add("cheer");
-    $("tries").textContent = "✅ " + PRAISE[r(0, PRAISE.length - 1)] + (streak >= 3 ? ` 🔥 ${streak} in a row!` : "");
+
   } else { streak = 0; sfx("wrong"); const c = deck[i]; mistakes.push([c.question || c.clue || c.answer, c.answer]); }
-  if (i + 1 >= deck.length) { finishing = true; const final = score; setTimeout(() => finishDeck(final), 900); }
+  renderTrack();
+  if (i + 1 >= deck.length) { finishing = true; const final = score; setTimeout(() => { if (finishing && $("finish").hidden && $("fb").hidden) finishDeck(final); }, 900); }
 }
 let qTimer = null, examTimer = null, examEnds = 0, mistakes = [];
 function startQTimer(c) {
@@ -1815,9 +1925,10 @@ function finishDeck(final = score, timeUp = false) {
     if (score > old) store.set(key, `${score}/${deck.length}`);
   }
   $("finStars").textContent = "⭐".repeat(stars) + "☆".repeat(3 - stars);
+  $("finRing").style.setProperty("--p", Math.round(pct * 100)); $("finPct").textContent = `${score}/${deck.length}`;
   $("finTitle").textContent = stars === 3 ? "Superstar!" : stars === 2 ? "Great work!" : "Good try!";
   $("finText").textContent = (timeUp ? "⏳ Time's up! " : "") + `You got ${score} out of ${deck.length}.` + (stars < 3 ? " Play again to get 3 stars!" : "");
-  if (subject === "sats") $("finText").textContent += deckName === "Phonics Screening Check" ? " The pass mark has been 32 out of 40 every year since 2014." : deckName === "Times Tables Check" ? " There's no pass mark for the real check, but the aim is to answer all 25 within 6 seconds each." : deckName === "Year 2 Maths (KS1)" ? ` That's ${Math.round(pct * 100)}%.` : ` That's ${Math.round(pct * 100)}%. In recent years, around half marks or more has usually been close to the expected standard (a scaled score of 100), but the pass mark changes every year.`;
+  if (subject === "sats" || /Phonics|Times Tables Check/.test(deckName)) $("finText").textContent += deckName === "Phonics Screening Check" ? " The pass mark has been 32 out of 40 every year since 2014." : deckName === "Times Tables Check" ? " There's no pass mark for the real check, but the aim is to answer all 25 within 6 seconds each." : deckName === "Year 2 Maths (KS1)" ? ` That's ${Math.round(pct * 100)}%.` : ` That's ${Math.round(pct * 100)}%. In recent years, around half marks or more has usually been close to the expected standard (a scaled score of 100), but the pass mark changes every year.`;
   $("finMiss").innerHTML = "";
   if (mistakes.length) {
     const h3 = document.createElement("h3"); h3.textContent = "Let's look at the ones to practise:"; $("finMiss").appendChild(h3);
@@ -1825,9 +1936,38 @@ function finishDeck(final = score, timeUp = false) {
   }
   $("finish").hidden = false; sfx("win"); confetti(160);
 }
-$("finAgain").onclick = () => { $("finish").hidden = true; finishing = false; mistakes = []; if (subject === "sats") { start(deckName); return; } deck.length && (shuffle(deck), i = 0, score = 0, streak = 0, show()); };
+$("finAgain").onclick = () => { $("finish").hidden = true; finishing = false; mistakes = []; results = []; if (subject === "sats") { start(deckName); return; } deck.length && (shuffle(deck), i = 0, score = 0, streak = 0, show()); };
 $("finDecks").onclick = () => { $("finish").hidden = true; finishing = false; year ? showTopics(subject, year) : showDecks(subject); };
 
+let results = [];
+const PRAISE2 = ["Correct!", "Brilliant!", "Super star!", "Fantastic!", "Amazing!", "You got it!", "Spot on!"];
+function renderTrack() {
+  const t = $("track"); if (!t) return;
+  const n = deck.length;
+  if (!n || !deck[0] || deck[0].kind === "story" || deck[0].kind === "book") { t.innerHTML = ""; return; }
+  if (n <= 40) t.innerHTML = Array.from({length: n}, (_, k) => `<i class="${results[k] === 1 ? "ok" : results[k] === 0 ? "no" : k === i ? "now" : ""}"></i>`).join("");
+  else { const done = results.filter(x => x !== undefined).length; t.innerHTML = `<b style="width:${done / n * 100}%"></b>`; }
+  const right = results.filter(x => x === 1).length, wrong = results.filter(x => x === 0).length;
+  $("count").innerHTML = `<span class="pill">${i + 1} / ${n}</span> <span class="pill good">✔ ${right}</span> <span class="pill bad">✘ ${wrong}</span>`;
+}
+function showFeedback(right, yours) {
+  const c = deck[i];
+  $("fb").className = "fb " + (right ? "good" : "bad"); $("fb").hidden = false;
+  $("fbIcon").textContent = right ? "✅" : "❌";
+  $("fbTitle").textContent = right ? PRAISE2[r(0, PRAISE2.length - 1)] + (streak >= 3 ? ` 🔥 ${streak} in a row` : "") : "Not quite";
+  $("fbYou").textContent = !right && yours !== undefined && yours !== "—" ? `You said: ${yours}` : !right && yours === "—" ? "⏱️ Out of time" : "";
+  $("fbYou").hidden = !$("fbYou").textContent;
+  $("fbAns").innerHTML = ""; if (!right) { $("fbAns").append("Answer: "); const b = document.createElement("b"); b.textContent = c.answer; $("fbAns").appendChild(b); }
+  $("fbAns").hidden = right;
+  $("nextBtn").textContent = i + 1 < deck.length ? "Next ➜" : "See my score 🏆";
+  $("tries").textContent = "";
+  $("hint").textContent = "";
+  setTimeout(() => { if (!$("fb").hidden) $("nextBtn").focus({preventScroll: true}); }, 50);
+}
+$("nextBtn").onclick = e => { e.stopPropagation(); if (finishing) { finishDeck(score); return; } next(); };
+$("markYes").onclick = e => { e.stopPropagation(); selfMark(true); };
+$("markNo").onclick = e => { e.stopPropagation(); selfMark(false); };
+function selfMark(ok) { if (results[i] !== undefined) return; if (ok) score++; $("selfMark").hidden = true; scored(ok); if (!finishing) next(); }
 function pickOption(btn, choice) {
   const c = deck[i];
   if (revealed) return;
@@ -1836,14 +1976,11 @@ function pickOption(btn, choice) {
   if (right) score++;
   for (const b of $("opts").children) { b.disabled = true; if (b.textContent === c.answer) b.classList.add("right"); }
   if (!right) btn.classList.add("wrong");
-  $("tries").textContent = right ? "✅ Correct! Well done!" : "❌ Not quite. The right answer is shown in green.";
-  $("tries").className = "tries " + (right ? "good" : "bad");
   scored(right);
-  $("count").textContent = `Card ${i + 1} of ${deck.length} · ⭐ ${score}`;
-  $("hint").textContent = i + 1 < deck.length ? "Tap the card for the next question" : `Finished! You got ${score} out of ${deck.length}. Tap to play again`;
+  showFeedback(right, choice);
 }
 function next() {
-  if (finishing) return; i++; if (i >= deck.length) { shuffle(deck); i = 0; score = 0; } show(); }
+  if (finishing) return; i++; if (i >= deck.length) { shuffle(deck); i = 0; score = 0; results = []; } show(); }
 const norm = s => s.trim().toLowerCase().replace(/[’']/g, "'");
 $("spellForm").onclick = e => e.stopPropagation();
 $("spellForm").onsubmit = e => {
@@ -1854,12 +1991,10 @@ $("spellForm").onsubmit = e => {
     revealed = true; $("spellIn").disabled = true; $("spellGo").disabled = true;
     if (c.kind === "spell") { $("name").textContent = c.answer; $("name").className = "name spell"; }
     else { $("big").hidden = true; $("name").textContent = c.worded ? `${c.question}\n${c.answer}` : `${c.question} = ${c.answer}`; }
-    $("count").textContent = `Card ${i + 1} of ${deck.length} · ⭐ ${score}`;
-    $("hint").textContent = i + 1 < deck.length ? `Tap the card for the next ${c.kind === "spell" ? "word" : "question"}` : `Finished! You got ${score} out of ${deck.length}. Tap to play again`;
     if (!right && c.kind === "spell") say(c.answer);
   };
   if (isRight(c, guess)) {
-    score++; $("tries").textContent = "✅ Correct! Well done!"; $("tries").className = "tries good"; done(true); scored(true);
+    score++; done(true); scored(true); showFeedback(true, guess);
   } else {
     triesLeft--;
     const f = $("spellForm"); f.classList.remove("shake"); void f.offsetWidth; f.classList.add("shake");
@@ -1869,7 +2004,7 @@ $("spellForm").onsubmit = e => {
       $("tries").textContent = `❌ Not quite. ${triesLeft} ${triesLeft === 1 ? "try" : "tries"} left`;
       $("spellIn").select(); if (c.kind === "spell") say(c.answer);
     } else {
-      $("tries").textContent = c.kind === "spell" ? "❌ Out of tries. Here's how to spell it:" : "❌ Out of tries. Here's the answer:"; done(false); scored(false);
+      $("tries").textContent = c.kind === "spell" ? "❌ Out of tries. Here's how to spell it:" : "❌ Out of tries. Here's the answer:"; done(false); scored(false); showFeedback(false, guess.trim());
     }
   }
 };
@@ -2365,8 +2500,9 @@ $("card").onclick = () => {
   if (!ready) { show(); return; }
   if (swallowClick) { swallowClick = false; return; }
   if (deck[i].kind === "story") { if (page < 0) showPage(0); else if (page >= deck[i].pages.length) next(); return; }
-  if (deck[i].kind === "quiz") { if (revealed) next(); return; }
-  if (typed(deck[i])) { if (revealed) next(); else $("spellIn").focus(); return; }
+  if (!$("selfMark").hidden) return;
+  if (deck[i].kind === "quiz") { if (revealed) $("nextBtn").click(); return; }
+  if (typed(deck[i])) { if (revealed) $("nextBtn").click(); else $("spellIn").focus(); return; }
   if (!revealed) {
     revealed = true;
     const c = deck[i];
@@ -2379,7 +2515,8 @@ $("card").onclick = () => {
       $("big").textContent = "📖"; $("big").hidden = false;
       $("clue").textContent = `by ${c.author}\n\n${c.about}`; $("clue").hidden = false;
     }
-    $("hint").textContent = i + 1 < deck.length ? "Tap again for the next card" : "Last card! Tap to shuffle and play again";
+    if (c.kind === "photo" || c.kind === "flag") { $("selfMark").hidden = false; $("hint").textContent = ""; }
+    else $("hint").textContent = i + 1 < deck.length ? "Tap again for the next card" : "Last card! Tap to shuffle and play again";
   } else next();
 };
 // "What does this mean?" answers for words taught in UK primary schools: "word/other ways to say it|answer"
