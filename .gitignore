@@ -5,3 +5,4 @@ node_modules/
 .wix/
 jsconfig.json
 .gcloud-key.json
+dist/
