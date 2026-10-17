@@ -54,6 +54,17 @@
   .pager .btn:disabled { opacity:.4; cursor:default; }
   .card.reading { touch-action:pan-y; }
   @media (prefers-reduced-motion: reduce) { .actor, .spark { animation:none !important; } }
+  .chat { width:100%; max-width:560px; background:var(--card); border:4px solid var(--accent); border-radius:16px; box-shadow:0 4px 0 #0003; display:flex; flex-direction:column; height:min(70vh,620px); }
+  .msgs { flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:10px; }
+  .msg { max-width:85%; padding:10px 14px; border-radius:16px; line-height:1.45; font-size:1.05rem; white-space:pre-line; }
+  .msg.me { align-self:flex-end; background:#1f6f43; color:#fff; border-bottom-right-radius:4px; }
+  .msg.bot { align-self:flex-start; background:#fff3c4; border-bottom-left-radius:4px; }
+  .msg.bot b { display:block; margin-bottom:2px; }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; padding:0 14px 8px; }
+  .chip { background:#eef6f0; border:2px solid #cfe5d6; border-radius:999px; padding:5px 10px; font:inherit; font-size:.9rem; cursor:pointer; color:var(--ink); }
+  .chatForm { display:flex; gap:8px; padding:10px; border-top:2px solid #eee; }
+  .chatForm input { flex:1; min-width:0; font:inherit; font-size:1.1rem; padding:8px 10px; border:3px solid #ccc; border-radius:10px; }
+  .chatForm input:focus { outline:none; border-color:var(--accent); }
   .topbar { width:100%; max-width:760px; margin-bottom:12px; }
   .btn { background:var(--accent); border:none; border-radius:10px; padding:8px 14px; font-weight:bold; cursor:pointer; font-family:inherit; font-size:1rem; }
   #game { flex-direction:column; align-items:center; width:100%; }
@@ -104,6 +115,16 @@
   <textarea id="edText" rows="10" spellcheck="false"></textarea>
   <p class="err" id="edErr"></p>
   <div class="edBtns"><button class="btn" id="edPlay">Play my cards</button><button class="btn ghost" id="edBack">← Decks</button></div>
+</div>
+
+<div class="chat" id="chat" hidden>
+  <div class="msgs" id="msgs" aria-live="polite"></div>
+  <div class="chips" id="chips"></div>
+  <form class="chatForm" id="chatForm" autocomplete="off">
+    <label for="chatIn" class="sr">Ask a question</label>
+    <input id="chatIn" type="text" placeholder="e.g. What is an adverb?" maxlength="200">
+    <button class="btn" id="chatGo">Ask</button>
+  </form>
 </div>
 
 <div id="game" style="display:flex" hidden>
@@ -685,16 +706,17 @@ function button(icon, label, small, onclick) {
 
 function showSubjects() {
   subject = null; stopReading();
-  $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = true; $("rules").hidden = false; $("editor").hidden = true;
+  $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = true; $("rules").hidden = false; $("editor").hidden = true; $("chat").hidden = true;
   $("sub").textContent = "Pick a subject";
   for (const [k, S] of Object.entries(SUBJECTS)) {
     const n = k === "maths" ? "Endless questions" : Object.values(S.decks).reduce((t, d) => t + d.length, 0) + " " + (S.unit || "cards");
     button(S.icon, S.title, n, () => showDecks(k));
   }
+  button("💬", "What Does This Mean?", "Ask about school words", openChat);
 }
 
 function showDecks(s) {
-  subject = s; const S = SUBJECTS[s]; $("rules").hidden = true; $("editor").hidden = true;
+  subject = s; const S = SUBJECTS[s]; $("rules").hidden = true; $("editor").hidden = true; $("chat").hidden = true;
   stopReading();
   $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = false;
   $("sub").textContent = `${S.title}: pick a deck`;
@@ -996,6 +1018,357 @@ $("card").onclick = () => {
     $("hint").textContent = i + 1 < deck.length ? "Tap again for the next card" : "Last card! Tap to shuffle and play again";
   } else next();
 };
+// "What does this mean?" answers for words taught in UK primary schools: "word/other ways to say it|answer"
+const GLOSSARY = `
+noun/nouns|A noun is a naming word. It names a person, place, animal or thing. Examples: teacher, London, dog, chair.
+proper noun/proper nouns|A proper noun is the special name of one person, place or thing. It always starts with a capital letter. Examples: Emma, Manchester, Monday.
+verb/verbs|A verb is a doing or being word. It tells you what someone or something does. Examples: run, jump, eat, is. "The cat sleeps."
+adjective/adjectives|An adjective is a describing word. It tells you more about a noun. Examples: big, red, fluffy. "The fluffy cat."
+adverb/adverbs|An adverb tells you more about a verb: how, when, where or how often something happens. Lots of adverbs end in -ly. Examples: quickly, slowly, yesterday. "She ran quickly."
+pronoun/pronouns|A pronoun is a word you use instead of a noun, so you don't repeat it. Examples: he, she, it, they, we. "Sam is tired, so he went to bed."
+possessive pronoun|A possessive pronoun shows who something belongs to. Examples: mine, yours, his, hers, ours, theirs. "That book is mine."
+preposition/prepositions|A preposition tells you where something is or when something happens. Examples: under, on, behind, before, after. "The cat is under the table."
+conjunction/conjunctions/connective/connectives|A conjunction is a joining word. It joins words or parts of a sentence together. Examples: and, but, so, because, when. "I was hungry, so I ate a sandwich."
+coordinating conjunction|A coordinating conjunction joins two equal parts of a sentence. Remember FANBOYS: for, and, nor, but, or, yet, so.
+subordinating conjunction|A subordinating conjunction starts a part of a sentence that needs the main part to make sense. Examples: because, when, if, although, while. "I stayed in because it was raining."
+determiner/determiners|A determiner comes before a noun and tells you which one or how many. Examples: a, an, the, this, some, my. "The dog", "some apples".
+article/articles|Articles are the little words a, an and the. Use "an" before a vowel sound, like "an apple".
+clause/clauses|A clause is a group of words with a verb in it. "The dog barked" is a clause.
+main clause|A main clause makes sense on its own as a sentence. "I ate my lunch" is a main clause.
+subordinate clause|A subordinate clause doesn't make sense on its own. It needs a main clause. "Because I was hungry" is a subordinate clause.
+relative clause|A relative clause tells you more about a noun. It often starts with who, which, that, where or whose. "My dog, who is very old, sleeps a lot."
+phrase/phrases|A phrase is a small group of words without a main verb. Example: "in the morning", "the big red bus".
+noun phrase/expanded noun phrase|A noun phrase is a group of words built around a noun. An expanded noun phrase adds describing words. Example: "the tall, spooky castle on the hill".
+sentence/sentences|A sentence is a group of words that makes complete sense. It starts with a capital letter and ends with a full stop, question mark or exclamation mark.
+simple sentence|A simple sentence has one main clause. "The cat sat on the mat."
+compound sentence|A compound sentence joins two main clauses with a word like and, but or so. "I like pizza and my sister likes pasta."
+complex sentence|A complex sentence has a main clause and a subordinate clause. "When the bell rang, we went outside."
+statement|A statement is a sentence that tells you something. It ends with a full stop. "It is sunny today."
+question|A question is a sentence that asks something. It ends with a question mark. "Where are you going?"
+command/imperative|A command tells someone to do something. It often starts with a bossy verb. "Close the door."
+exclamation|An exclamation shows strong feelings like surprise or excitement. In school, it often starts with "What" or "How" and ends with an exclamation mark. "What a huge cake!"
+fronted adverbial/fronted adverbials|A fronted adverbial is a word or phrase at the start of a sentence that tells you how, when or where. It is followed by a comma. "After lunch, we played football."
+adverbial/adverbials|An adverbial is a word or phrase that works like an adverb. It tells you how, when, where or how often. "We played football after lunch."
+modal verb/modal verbs|A modal verb shows how likely something is, or if you must or can do it. Examples: can, could, should, will, might, must. "It might rain."
+tense/tenses|Tense tells you when something happens: in the past, the present or the future.
+past tense|The past tense is for things that have already happened. "Yesterday I walked to school."
+present tense|The present tense is for things happening now. "I walk to school."
+future tense|The future tense is for things that will happen. "Tomorrow I will walk to school."
+present perfect|The present perfect uses "has" or "have" to talk about something that happened in the past but matters now. "I have finished my homework."
+active voice|In the active voice, the person or thing doing the action comes first. "The dog chased the ball."
+passive voice/passive|In the passive voice, the thing the action happens to comes first. "The ball was chased by the dog."
+subject|The subject is who or what is doing the verb in a sentence. In "Mia kicked the ball", Mia is the subject.
+object|The object is who or what the verb is done to. In "Mia kicked the ball", the ball is the object.
+subjunctive|The subjunctive is a very formal way of writing wishes or suggestions. "If I were a bird, I would fly."
+simile/similes|A simile compares two things using "like" or "as". "As brave as a lion." "She ran like the wind."
+metaphor/metaphors|A metaphor says something IS something else, to describe it. "The classroom was a zoo." (It wasn't really a zoo, it was just noisy!)
+personification|Personification is giving human feelings or actions to things that aren't human. "The wind whispered through the trees."
+alliteration|Alliteration is when words close together start with the same sound. "Sally sells sea shells."
+onomatopoeia|Onomatopoeia is a word that sounds like the noise it describes. Examples: bang, splash, buzz, pop.
+hyperbole|Hyperbole is a big exaggeration to make a point. "I've told you a million times!"
+synonym/synonyms|Synonyms are words that mean the same or nearly the same. Examples: big and large, happy and glad.
+antonym/antonyms|Antonyms are words with opposite meanings. Examples: hot and cold, up and down.
+homophone/homophones|Homophones are words that sound the same but are spelt differently and mean different things. Examples: there, their and they're; to, too and two.
+homonym/homonyms|Homonyms are words spelt the same that have different meanings. "Bat" can be an animal or something you hit a ball with.
+prefix/prefixes|A prefix is a group of letters added to the start of a word to change its meaning. Examples: un + happy = unhappy, re + play = replay.
+suffix/suffixes|A suffix is a group of letters added to the end of a word. Examples: help + ful = helpful, quick + ly = quickly.
+root word/root words|A root word is a word you can add a prefix or suffix to. In "unhelpful", the root word is "help".
+compound word/compound words|A compound word is two words joined together to make a new word. Examples: football, sunflower, toothbrush.
+contraction/contractions|A contraction is two words squashed together with an apostrophe where letters are missing. Examples: do not = don't, I am = I'm.
+plural/plurals|Plural means more than one. Usually you add -s or -es. Examples: cat → cats, box → boxes.
+singular|Singular means just one. Examples: cat, box, child.
+apostrophe/apostrophes|An apostrophe ( ' ) is used to show missing letters (can't) or to show something belongs to someone (Sam's bike).
+comma/commas|A comma ( , ) shows a small pause. We use commas in lists, after fronted adverbials and to separate clauses. "I bought apples, pears and grapes."
+full stop/full stops|A full stop ( . ) goes at the end of a sentence that is a statement or command.
+capital letter/capital letters|A capital letter is a big letter like A, B, C. Use one at the start of a sentence, for names and for the word "I".
+inverted commas/speech marks/quotation marks|Inverted commas (" ") go around the words someone actually says. "Let's go to the park," said Mum.
+exclamation mark|An exclamation mark ( ! ) shows strong feelings like surprise, excitement or anger. "Watch out!"
+question mark|A question mark ( ? ) goes at the end of a question. "What time is it?"
+colon|A colon ( : ) introduces a list or an explanation. "You will need: a pencil, a ruler and a rubber."
+semicolon/semi-colon|A semicolon ( ; ) joins two closely linked sentences. "It was raining; we stayed inside."
+dash|A dash ( – ) shows a pause or adds extra information. "There was only one thing to do – run!"
+hyphen|A hyphen ( - ) joins words or parts of words together. Examples: well-known, ice-cold.
+brackets/parenthesis|Brackets ( ) add extra information to a sentence. It still makes sense without it. "My cat (who is ginger) loves fish."
+ellipsis|An ellipsis ( ... ) is three dots. It shows something is missing or builds suspense. "Slowly, the door opened..."
+bullet points|Bullet points are dots used to split a list into separate lines, to make it easy to read.
+paragraph/paragraphs|A paragraph is a group of sentences about the same idea. Start a new paragraph for a new time, place, topic or person speaking.
+phoneme/phonemes|A phoneme is the smallest sound in a word. "Cat" has three phonemes: c-a-t.
+grapheme/graphemes|A grapheme is how we write a sound. It can be one letter, like "s", or more, like "sh" or "igh".
+digraph/digraphs|A digraph is two letters that make one sound. Examples: sh, ch, th, ee, oa.
+trigraph/trigraphs|A trigraph is three letters that make one sound. Examples: igh (night), air (chair), ear (hear).
+split digraph/split digraphs|A split digraph is two vowel letters that make one sound but are split by another letter. In "cake", the a_e makes one sound.
+syllable/syllables|A syllable is a beat in a word. Clap it out! "Ba-na-na" has three syllables.
+vowel/vowels|The vowels are a, e, i, o and u. Every word has at least one vowel sound.
+consonant/consonants|Consonants are all the letters that aren't vowels, like b, c, d, f and g.
+blending|Blending is saying the sounds in a word and pushing them together to read it. c-a-t... cat!
+segmenting|Segmenting is breaking a word into its sounds so you can spell it. "Dog" is d-o-g.
+fiction|Fiction is a made-up story. Examples: fairy tales, adventure stories.
+non-fiction/nonfiction|Non-fiction is writing that gives true facts and information. Examples: a book about sharks, a newspaper.
+narrative|A narrative is a story. It usually has characters, a setting, a problem and an ending.
+character/characters|A character is a person or animal in a story.
+setting|The setting is where and when a story happens.
+plot|The plot is what happens in a story, from the beginning to the end.
+author|An author is the person who writes a book.
+illustrator|An illustrator is the person who draws the pictures in a book.
+blurb|The blurb is the short bit of writing on the back of a book that tells you what it's about.
+glossary|A glossary is a list of tricky words and what they mean, usually at the back of a non-fiction book.
+index|An index is an alphabetical list at the back of a book that tells you which page to find things on.
+contents|The contents page is at the front of a book. It lists the chapters and their page numbers.
+poem/poetry|A poem is writing that is set out in lines. Poems often use rhythm, rhyme and interesting words.
+rhyme/rhyming|Words rhyme when they end with the same sound. Examples: cat and hat, tree and bee.
+stanza/verse|A stanza (or verse) is a group of lines in a poem, like a paragraph in a story.
+haiku|A haiku is a short poem from Japan with three lines: 5 syllables, then 7, then 5.
+limerick|A limerick is a funny five-line poem with a bouncy rhythm. Lines 1, 2 and 5 rhyme.
+kenning|A kenning is a two-word description of something, like "tail-wagger" for a dog.
+acrostic|An acrostic poem uses the letters of a word to start each line.
+myth/myths|A myth is a very old story, often about gods and heroes, that people told to explain the world.
+legend/legends|A legend is an old story about a hero that might be partly true, like King Arthur or Robin Hood.
+fable/fables|A fable is a short story, often with animals, that teaches a lesson called a moral. Example: The Tortoise and the Hare.
+moral|The moral is the lesson a story teaches, like "slow and steady wins the race".
+persuasive writing/persuade|Persuasive writing tries to make the reader agree with you or do something, like an advert.
+instructions|Instructions tell you how to do something, step by step. They use bossy verbs: "Mix the flour."
+recount|A recount retells something that happened, in time order. A diary is a recount.
+report/non-chronological report|A non-chronological report gives facts about a topic, sorted into sections with subheadings, not in time order.
+biography|A biography is the true story of someone's life, written by someone else.
+autobiography|An autobiography is the true story of someone's life, written by that person.
+formal|Formal language is polite and serious, used for letters or reports. "Could you please help me?"
+informal|Informal language is chatty and relaxed, used with friends. "Can you help me out?"
+inference/infer|Inference means working something out from clues in the text, even when it isn't said. If a character is shivering, you can infer they are cold.
+add/addition/plus|Adding means putting numbers together to find the total. 3 + 4 = 7.
+subtract/subtraction/minus/take away|Subtracting means taking one number away from another. 9 − 4 = 5.
+multiply/multiplication/times|Multiplying is adding the same number lots of times. 3 × 4 means 3 lots of 4, which is 12.
+divide/division|Dividing means sharing or grouping equally. 12 ÷ 3 = 4, so 12 sweets shared between 3 people is 4 each.
+sum/total|The sum or total is the answer when you add numbers. The sum of 2 and 5 is 7.
+difference|The difference is how much bigger one number is than another. The difference between 10 and 7 is 3.
+product|The product is the answer when you multiply. The product of 4 and 5 is 20.
+quotient|The quotient is the answer when you divide. 20 ÷ 4 = 5, so the quotient is 5.
+remainder|A remainder is what is left over when a number can't be shared equally. 13 ÷ 4 = 3 remainder 1.
+times tables/times table|Times tables are the answers to multiplying numbers up to 12. By the end of Year 4 you should know them all up to 12 × 12.
+number bonds/number bond|Number bonds are pairs of numbers that add up to a total. Number bonds to 10: 1 + 9, 2 + 8, 3 + 7, 4 + 6, 5 + 5.
+place value|Place value is what a digit is worth because of where it is in a number. In 352, the 3 is worth 300, the 5 is worth 50 and the 2 is worth 2.
+digit/digits|A digit is one of the symbols 0 to 9 that we use to write numbers. 47 has two digits.
+odd/odd numbers|Odd numbers can't be split into two equal groups. They end in 1, 3, 5, 7 or 9.
+even/even numbers|Even numbers can be split into two equal groups. They end in 0, 2, 4, 6 or 8.
+fraction/fractions|A fraction is a part of a whole. If you cut a pizza into 4 equal pieces, each piece is ¼ (one quarter).
+numerator|The numerator is the top number in a fraction. It tells you how many parts you have. In ¾, it's 3.
+denominator|The denominator is the bottom number in a fraction. It tells you how many equal parts the whole is split into. In ¾, it's 4.
+equivalent fractions/equivalent fraction|Equivalent fractions look different but are worth the same. ½ = 2/4 = 4/8.
+improper fraction|An improper fraction has a numerator bigger than its denominator, like 5/4.
+mixed number|A mixed number has a whole number and a fraction, like 1¼.
+decimal/decimals|A decimal uses a decimal point to show parts of a whole. 0.5 is the same as a half.
+percentage/percent|A percentage means "out of 100". 50% means 50 out of 100, which is half.
+prime number/prime numbers/prime|A prime number has exactly two factors: 1 and itself. Examples: 2, 3, 5, 7, 11.
+factor/factors|Factors are numbers that divide into another number exactly. The factors of 6 are 1, 2, 3 and 6.
+multiple/multiples|Multiples are the numbers in a times table. Multiples of 5 are 5, 10, 15, 20...
+square number/square numbers/squared|A square number is a number multiplied by itself. 4 × 4 = 16, so 16 is a square number. We write it as 4².
+cube number/cube numbers/cubed|A cube number is a number multiplied by itself three times. 2 × 2 × 2 = 8. We write it as 2³.
+negative number/negative numbers|A negative number is less than zero. It has a minus sign, like −5. You see them on thermometers when it's freezing.
+round/rounding|Rounding means changing a number to a nearby simpler number. 47 rounded to the nearest 10 is 50.
+estimate/estimating|An estimate is a sensible guess that is close to the real answer.
+inverse|An inverse is the opposite operation that undoes another. Adding and subtracting are inverses. So are multiplying and dividing.
+roman numerals|Roman numerals are numbers the Romans used, written with letters: I = 1, V = 5, X = 10, L = 50, C = 100, D = 500, M = 1000.
+area|Area is how much flat space a shape covers. For a rectangle, multiply length × width. It is measured in squares, like cm².
+perimeter|Perimeter is the distance all the way around the outside of a shape. Add up all the sides.
+volume|Volume is how much space a 3D shape takes up. For a cuboid, multiply length × width × height.
+capacity|Capacity is how much a container can hold, like a jug holding 1 litre of water.
+angle/angles|An angle is the amount of turn between two lines that meet. It is measured in degrees (°).
+right angle|A right angle is a quarter turn, exactly 90°. It looks like the corner of a book.
+acute angle/acute|An acute angle is smaller than a right angle (less than 90°).
+obtuse angle/obtuse|An obtuse angle is bigger than a right angle but smaller than a straight line (between 90° and 180°).
+reflex angle/reflex|A reflex angle is bigger than a straight line (more than 180°).
+parallel|Parallel lines always stay the same distance apart and never meet, like railway tracks.
+perpendicular|Perpendicular lines meet at a right angle, like the corner of a square.
+polygon/polygons|A polygon is a flat shape with straight sides. Triangles, squares and hexagons are polygons.
+quadrilateral/quadrilaterals|A quadrilateral is any flat shape with 4 straight sides, like a square, rectangle or kite.
+pentagon|A pentagon is a flat shape with 5 sides.
+hexagon|A hexagon is a flat shape with 6 sides. Bees make hexagons in their honeycomb.
+octagon|An octagon is a flat shape with 8 sides.
+equilateral triangle|An equilateral triangle has 3 equal sides and 3 equal angles.
+isosceles triangle|An isosceles triangle has 2 equal sides and 2 equal angles.
+scalene triangle|A scalene triangle has no equal sides and no equal angles.
+symmetry/line of symmetry/symmetrical|A shape has symmetry if you can fold it in half and both sides match exactly. The fold line is the line of symmetry.
+2d shape/2d shapes|A 2D shape is flat, like a drawing. Examples: circle, square, triangle.
+3d shape/3d shapes|A 3D shape is solid, and you can hold it. Examples: cube, sphere, cylinder.
+face/faces|A face is a flat surface on a 3D shape. A cube has 6 faces.
+edge/edges|An edge is where two faces of a 3D shape meet. A cube has 12 edges.
+vertex/vertices|A vertex is a corner where edges meet. A cube has 8 vertices.
+mean/average|The mean is a type of average. Add all the numbers, then divide by how many numbers there are. The mean of 2, 4 and 6 is 12 ÷ 3 = 4.
+median|The median is the middle number when you put a list in order. The median of 1, 3, 7 is 3.
+mode|The mode is the number that appears most often in a list.
+range|The range is the difference between the biggest and smallest numbers in a list.
+ratio|A ratio compares amounts. If there are 2 boys for every 3 girls, the ratio is 2 : 3.
+coordinates|Coordinates are pairs of numbers that show a position on a grid, like (3, 5). Go along the corridor first, then up the stairs!
+bar chart|A bar chart uses bars of different heights to show information.
+pictogram|A pictogram uses pictures to show information. Each picture stands for an amount.
+tally|A tally is a quick way to count using lines. Every fifth line crosses the other four.
+column method|The column method is a way of adding or subtracting big numbers by lining up the digits in columns: ones, tens, hundreds.
+algebra|Algebra uses letters to stand for numbers we don't know yet. If a + 3 = 5, then a = 2.
+photosynthesis|Photosynthesis is how plants make their own food. They use sunlight, water and air (carbon dioxide) and give out oxygen for us to breathe.
+habitat/habitats|A habitat is the natural home of a plant or animal. A pond is a habitat for frogs.
+food chain/food chains|A food chain shows what eats what. grass → rabbit → fox. It always starts with a plant.
+producer|A producer is a living thing that makes its own food, like a plant. It's the start of every food chain.
+predator/predators|A predator is an animal that hunts other animals for food. Lions and owls are predators.
+prey|Prey is an animal that is hunted and eaten by other animals. Mice are prey for owls.
+herbivore/herbivores|A herbivore is an animal that only eats plants. Cows and rabbits are herbivores.
+carnivore/carnivores|A carnivore is an animal that eats meat. Lions and sharks are carnivores.
+omnivore/omnivores|An omnivore eats both plants and meat. Humans and bears are omnivores.
+mammal/mammals|Mammals are animals with hair or fur that feed their babies milk. Dogs, whales and humans are mammals.
+reptile/reptiles|Reptiles have dry, scaly skin and most lay eggs. Snakes, lizards and crocodiles are reptiles.
+amphibian/amphibians|Amphibians start life in water and can live on land when grown up. Frogs and newts are amphibians.
+insect/insects|Insects have 6 legs and 3 body parts: head, thorax and abdomen. Bees and ants are insects.
+vertebrate/vertebrates|A vertebrate is an animal with a backbone, like fish, birds and mammals.
+invertebrate/invertebrates|An invertebrate is an animal without a backbone, like worms, snails and spiders.
+life cycle|A life cycle is the stages of a living thing's life. A frog: egg → tadpole → froglet → frog.
+metamorphosis|Metamorphosis is when an animal changes its body shape completely as it grows, like a caterpillar turning into a butterfly.
+germination|Germination is when a seed starts to grow into a plant.
+pollination|Pollination is when pollen moves from one flower to another, often carried by bees, so the plant can make seeds.
+evaporation/evaporate|Evaporation is when a liquid turns into a gas because it is warmed up. Puddles dry up because the water evaporates.
+condensation/condense|Condensation is when a gas cools down and turns back into a liquid. That's why a cold window gets wet drops on it.
+water cycle|The water cycle is how water moves around the Earth: it evaporates from the sea, forms clouds, falls as rain and flows back to the sea.
+solid/solids|A solid keeps its own shape, like ice or a brick.
+liquid/liquids|A liquid flows and takes the shape of its container, like water or juice.
+gas/gases|A gas spreads out to fill any space, like the air around us or steam.
+melting/melt|Melting is when a solid turns into a liquid because it is heated, like ice cream on a sunny day.
+freezing/freeze|Freezing is when a liquid turns into a solid because it is cooled, like water turning into ice.
+magnet/magnets/magnetic|A magnet pulls some metals, like iron, towards it. Every magnet has a north and a south pole.
+gravity|Gravity is a force that pulls things towards each other. It's why things fall to the ground when you drop them.
+friction|Friction is a force that slows things down when two surfaces rub together. Rough surfaces make more friction.
+air resistance|Air resistance is a force that slows things down as they move through air. Parachutes use it.
+force/forces|A force is a push or a pull. Forces can make things move, stop, or change shape.
+electricity|Electricity is a type of energy that makes things work, like lights and TVs.
+circuit/circuits|A circuit is a complete loop that electricity flows around. If there is a gap, it won't work.
+conductor/conductors|A conductor lets electricity or heat pass through it easily. Metals are good conductors.
+insulator/insulators|An insulator does not let electricity or heat pass through easily. Plastic and wood are insulators.
+light|Light is what lets us see. It travels in straight lines. Light comes from sources like the Sun and lamps.
+shadow/shadows|A shadow is made when something blocks light. It's a dark shape the same outline as the object.
+reflection/reflect|Reflection is when light bounces off a surface, like a mirror.
+sound|Sound is made when something vibrates. The vibrations travel through the air to your ears.
+vibration/vibrate/vibrations|A vibration is a quick back-and-forth movement. Sounds are made by vibrations.
+solar system|The solar system is the Sun and everything that goes around it, including 8 planets.
+planet/planets|A planet is a big round object that travels around a star. Earth is a planet.
+orbit|An orbit is the path one object takes around another in space. The Earth orbits the Sun.
+moon|The Moon is a big rock that orbits the Earth. It looks like it changes shape because we see different amounts of its sunny side.
+fossil/fossils|A fossil is the remains or print of a plant or animal from long ago, preserved in rock.
+rock/rocks|There are three types of rock: igneous (from volcanoes), sedimentary (made in layers) and metamorphic (changed by heat and pressure).
+soil|Soil is made from tiny bits of rock, dead plants and animals, air and water. Plants grow in it.
+skeleton|Your skeleton is all the bones in your body. It holds you up, protects you and helps you move.
+muscle/muscles|Muscles pull on your bones to make your body move.
+heart|Your heart is a muscle that pumps blood around your body.
+teeth|You have incisors for cutting, canines for tearing and molars for grinding food.
+digestion/digestive system|Digestion is how your body breaks down food so it can use it. Food goes from your mouth to your stomach and intestines.
+nutrition|Nutrition is getting the right food to stay healthy and grow.
+evolution|Evolution is how living things slowly change over a very long time, over many generations.
+adaptation/adapted|An adaptation is a special feature that helps a living thing survive in its habitat. A polar bear's thick fur keeps it warm.
+inheritance/inherit|Inheritance is when children get features from their parents, like eye colour.
+microorganism/microorganisms/germ/germs|Microorganisms are living things so tiny you need a microscope to see them, like bacteria.
+fair test|A fair test is a science experiment where you only change one thing, so you know what caused the result.
+prediction/predict|A prediction is a sensible guess about what will happen in an experiment.
+hypothesis|A hypothesis is an idea you test in an experiment.
+continent/continents|A continent is a very large area of land. There are 7: Africa, Antarctica, Asia, Australia (Oceania), Europe, North America and South America.
+ocean/oceans|An ocean is a huge area of salt water. There are 5: Pacific, Atlantic, Indian, Southern and Arctic.
+country/countries|A country is an area of land with its own government and borders. The United Kingdom is a country.
+united kingdom/uk|The United Kingdom is made of four countries: England, Scotland, Wales and Northern Ireland.
+capital city/capital|A capital city is the most important city in a country, where the government is. London is the capital of the UK.
+equator|The equator is an imaginary line around the middle of the Earth. Places near it are hot.
+climate|Climate is the usual weather in a place over a long time.
+weather|Weather is what the air is like outside each day: sunny, rainy, windy or snowy.
+map/maps|A map is a drawing of a place from above, showing where things are.
+compass|A compass shows directions: north, south, east and west. Remember: Never Eat Shredded Wheat!
+grid reference|A grid reference uses letters and numbers to find a square on a map.
+key|On a map, a key explains what the symbols mean.
+river/rivers|A river is water flowing across land towards the sea. It starts at the source and ends at the mouth.
+mountain/mountains|A mountain is a very high hill, usually over 600 metres. The highest in the UK is Ben Nevis.
+volcano/volcanoes|A volcano is an opening in the Earth's crust where hot melted rock called lava can erupt.
+earthquake/earthquakes|An earthquake is when the ground shakes because huge pieces of the Earth's crust move.
+erosion|Erosion is when rock and soil are worn away by wind, water or ice.
+settlement|A settlement is a place where people live, like a village, town or city.
+rainforest|A rainforest is a thick, warm forest where it rains a lot. Lots of animals and plants live there.
+desert|A desert is a very dry place with very little rain. Not all deserts are hot. Antarctica is a cold desert!
+stone age|The Stone Age was a very long time ago when people made tools from stone. It ended in Britain about 4,500 years ago.
+bronze age|The Bronze Age came after the Stone Age, when people learned to make tools from bronze, a mix of copper and tin.
+iron age|The Iron Age came after the Bronze Age, when people made tools and weapons from iron.
+romans/roman/roman empire|The Romans came from Rome in Italy and ruled Britain for nearly 400 years. They built roads, towns and Hadrian's Wall.
+anglo-saxons/anglo saxons/saxons|The Anglo-Saxons came to Britain from Germany and Denmark after the Romans left, around 1,600 years ago.
+vikings/viking|The Vikings came from Scandinavia (Norway, Sweden and Denmark). They raided and later settled in Britain over 1,000 years ago.
+normans/norman|The Normans came from France and conquered England in 1066 at the Battle of Hastings.
+tudors/tudor|The Tudors were a family of kings and queens who ruled England from 1485 to 1603. Henry VIII and Elizabeth I were Tudors.
+victorians/victorian|The Victorian era was when Queen Victoria ruled, from 1837 to 1901. There were lots of new inventions, like trains.
+ancient egypt/egyptians|Ancient Egypt was a great civilisation along the River Nile, about 5,000 years ago. They built pyramids and wrote with hieroglyphs.
+ancient greece/greeks|Ancient Greece was a civilisation around 2,500 years ago. They gave us the Olympic Games and democracy.
+mayans/maya|The Maya were a civilisation in Central America who built huge stone pyramids and were brilliant at maths and astronomy.
+world war two/second world war/ww2|World War Two was a big war from 1939 to 1945. Britain and its allies fought against Germany and its allies.
+world war one/first world war/ww1|World War One was a big war from 1914 to 1918, fought mostly in Europe.
+evacuee/evacuation|An evacuee was a child sent away from a city to the countryside in World War Two, to keep them safe from bombs.
+democracy|Democracy is when people choose their leaders by voting.
+parliament|Parliament is where people chosen by voters meet to make the laws for the UK.
+monarch/monarchy|A monarch is a king or queen.
+prime minister|The Prime Minister is the leader of the UK government.
+timeline|A timeline shows events in the order they happened.
+bc/ad/bce/ce|BC means "before Christ" and AD means after. Some people say BCE and CE instead. The year 1 AD is roughly when Jesus was born.
+century|A century is 100 years.
+decade|A decade is 10 years.
+millennium|A millennium is 1,000 years.
+archaeologist/archaeology|An archaeologist digs up and studies old objects to find out how people lived long ago.
+artefact/artefacts|An artefact is an object made by people long ago, like a pot or coin.
+primary source|A primary source is something from the time you are studying, like a diary or photo.
+secondary source|A secondary source is something made later about the past, like a textbook.
+civilisation|A civilisation is a large group of people with their own towns, laws and way of life.
+algorithm|An algorithm is a set of step-by-step instructions to do a job, like a recipe.
+debug|Debugging means finding and fixing mistakes in a computer program.
+`.trim().split("\n").map(l => { const [w, a] = l.split("|"); return {names: w.split("/").map(s => s.toLowerCase()), answer: a}; });
+
+// Optional: the web address of the Speedy Learning helper (see cloudflare/speedy-helper-worker.js).
+// When it's set, questions the word list can't answer are sent there. Leave it empty to use the word list only.
+const HELPER_URL = "";
+
+const FILLER = /\b(what|whats|what's|is|are|does|do|mean|means|meaning|a|an|the|of|word|tell|me|about|explain|please|define|definition|can|you|i|in|maths|math|english|science|history|geography|by|it|this|called|whats)\b/g;
+function lookUp(question) {
+  const q = question.toLowerCase().replace(/[?!.,"“”]/g, " ").replace(/\s+/g, " ").trim();
+  const sum = solve(q.replace(/^what\s*(is|'s)\s*/, "").replace(/=\s*$/, "").trim());
+  if (sum !== null) return `The answer is ${sum}.`;
+  const bare = q.replace(FILLER, " ").replace(/\s+/g, " ").trim();
+  if (!bare) return null;
+  const strip = s => s.replace(/(ies)$/, "y").replace(/(es|s)$/, "");
+  for (const g of GLOSSARY) if (g.names.includes(bare) || g.names.some(n => strip(n) === strip(bare))) return g.answer;
+  // Otherwise look for any known word inside the question, longest first
+  let best = null, len = 0;
+  for (const g of GLOSSARY) for (const n of g.names) if (n.length > len && new RegExp(`\\b${n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`).test(q)) { best = g; len = n.length; }
+  return best && len > 2 ? best.answer : null;
+}
+function addMsg(text, who) {
+  const d = document.createElement("div"); d.className = "msg " + who;
+  if (who === "bot") { const b = document.createElement("b"); b.textContent = "🦉 Ollie the Owl"; d.appendChild(b); }
+  d.append(text); $("msgs").appendChild(d); $("msgs").scrollTop = $("msgs").scrollHeight;
+  return d;
+}
+const NOT_SURE = "Hmm, I'm not sure about that one. I can help with words you learn at school, like adverb, fraction, habitat or Vikings. Try asking me one of those!";
+async function ask(question) {
+  question = question.trim(); if (!question) return;
+  addMsg(question, "me"); $("chatIn").value = "";
+  const known = lookUp(question);
+  if (known) { addMsg(known, "bot"); return; }
+  if (!HELPER_URL) { addMsg(NOT_SURE, "bot"); return; }
+  const wait = addMsg("Thinking…", "bot");
+  try {
+    const res = await fetch(HELPER_URL, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({question})});
+    const data = await res.json();
+    wait.lastChild.textContent = data.answer || NOT_SURE;
+  } catch (e) { wait.lastChild.textContent = "I couldn't reach my helper just now. Check the internet connection and try again."; }
+}
+function openChat() {
+  stopReading();
+  $("menu").hidden = true; $("rules").hidden = true; $("topbar").hidden = false; $("chat").hidden = false;
+  $("sub").textContent = "What does this mean? Ask about any school word";
+  if (!$("msgs").children.length) {
+    addMsg("Hello! I'm Ollie the Owl. Ask me what a school word means, like \"What is an adverb?\"", "bot");
+    $("chips").innerHTML = "";
+    for (const s of ["What is an adverb?", "What is a fraction?", "What does habitat mean?", "Who were the Vikings?", "What is a simile?", "What is perimeter?"]) {
+      const c = document.createElement("button"); c.className = "chip"; c.type = "button"; c.textContent = s; c.onclick = () => ask(s); $("chips").appendChild(c);
+    }
+  }
+  setTimeout(() => $("chatIn").focus(), 50);
+}
+$("chatForm").onsubmit = e => { e.preventDefault(); ask($("chatIn").value); };
 $("back").onclick = () => showDecks(subject);
 $("home").onclick = showSubjects;
 showSubjects();
