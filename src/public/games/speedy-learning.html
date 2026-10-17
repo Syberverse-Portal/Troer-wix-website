@@ -150,7 +150,7 @@
 <h1>⚡ Speedy Learning ⚡</h1>
 <p class="sub" id="sub">Pick a subject</p>
 
-<div class="topbar" id="topbar" hidden><button class="btn" id="home">← Subjects</button></div>
+<div class="topbar" id="topbar" hidden><button class="btn" id="home">← Subjects</button> <button class="btn" id="years" hidden>← Year groups</button></div>
 <div class="rules" id="rules">
   <h2>How to play</h2>
   <ol>
@@ -356,7 +356,10 @@ const MATHS_MORE = {
     () => { const h = r(13, 23); return [`${h}:00 on a 24-hour clock is what time pm?\n(type the number)`, h - 12]; },
     () => { const n = r(2, 12); return [`What is ${n} × 0?`, 0]; },
     () => { const x = r(1, 9), y = r(1, 9); return [`Point (${x}, ${y}) moves 2 squares right. What is the new x coordinate?`, x + 2]; },
-    () => { const n = r(1001, 9999); return [`What is the value of the thousands digit in ${n}?`, Math.floor(n / 1000) * 1000]; }],
+    () => { const n = r(1001, 9999); return [`What is the value of the thousands digit in ${n}?`, Math.floor(n / 1000) * 1000]; },
+    () => { const a = r(2, 9), p = [25, 50, 75][r(0, 2)]; return [`A book costs £${a}.${p}. How many pence is that?`, a * 100 + p]; },
+    () => { const p = r(11, 49) * 10; return [`I pay £5 for something costing ${p}p. How much change? (p)`, 500 - p]; },
+    () => { const [s, n] = SIDES[r(3, 5)]; return [`How many sides does a ${s} have?`, n]; }],
   "Year 5": [
     () => { const n = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29][r(0, 9)], m = [4, 6, 8, 9, 10, 12, 15, 21][r(0, 7)], p = Math.random() < .5; return [`Is ${p ? n : m} a prime number? (yes or no)`, p ? "yes" : "no"]; },
     () => { const t = -r(1, 10), u = r(2, 12); return [`It is ${t}°C and gets ${u}°C warmer. What is the temperature?`, t + u]; },
@@ -367,7 +370,10 @@ const MATHS_MORE = {
     () => { const l = r(2, 6), w = r(2, 5), h = r(2, 5); return [`Volume of a cuboid ${l} cm × ${w} cm × ${h} cm? (cm³)`, l * w * h]; },
     () => { const n = r(1000, 2100); return [`Write ${ROMAN(n)} as a number.`, n]; },
     () => { const n = r(2, 12) * 6; return [`List a factor pair: ${n} = 6 × ?`, n / 6]; },
-    () => { const l = r(2, 9); return [`A litre is 1000 ml. How many ml in ${l} litres?`, l * 1000]; }],
+    () => { const l = r(2, 9); return [`A litre is 1000 ml. How many ml in ${l} litres?`, l * 1000]; },
+    () => { const h = r(2, 5); return [`How many seconds are in ${h} minutes?`, h * 60]; },
+    () => { const d = r(2, 6); return [`How many hours are in ${d} days?`, d * 24]; },
+    () => { const a = r(30, 80); return [`An angle is ${a}°. Is it acute, obtuse or reflex?`, "acute"]; }],
   "Year 6": [
     () => { const n = r(2, 9), k = r(5, 20); return [`n + ${k} = ${n + k + 10}. What is n?`, n + 10]; },
     () => { const n = r(2, 9), k = r(2, 6); return [`${k}n = ${k * n}. What is n?`, n]; },
@@ -1005,7 +1011,7 @@ function button(icon, label, small, onclick) {
 }
 
 function showSubjects() {
-  subject = null; stopReading();
+  subject = null; year = ""; stopReading();
   $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = true; $("rules").hidden = false; $("editor").hidden = true; $("chat").hidden = true;
   $("sub").textContent = "Pick a subject";
   for (const [k, S] of Object.entries(SUBJECTS)) {
@@ -1016,7 +1022,7 @@ function showSubjects() {
 }
 
 function showDecks(s) {
-  subject = s; const S = SUBJECTS[s]; $("rules").hidden = true; $("editor").hidden = true; $("chat").hidden = true;
+  subject = s; year = ""; $("years").hidden = true; const S = SUBJECTS[s]; $("rules").hidden = true; $("editor").hidden = true; $("chat").hidden = true;
   stopReading();
   $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = false;
   $("sub").textContent = `${S.title}: pick a deck`;
@@ -1024,12 +1030,154 @@ function showDecks(s) {
     const size = s === "maths" ? "30 questions" : (name === "Mixed" ? Object.values(S.decks).reduce((t, d) => t + d.length, 0) : S.decks[name].length) + " " + (S.unit || "cards");
     const mixedSums = Object.keys(MATHS).length * 8 + " questions";
     const small = s === "maths" && name === "Mixed" ? mixedSums : (AGES[name] ? `${AGES[name]} · ${size}` : size);
-    button(name === "Mixed" ? "🎲" : (S.icons && S.icons[name]) || S.icon, name === "Mixed" ? "Mix of Everything" : name, small, () => start(name));
+    button(name === "Mixed" ? "🎲" : (S.icons && S.icons[name]) || S.icon, name === "Mixed" ? "Mix of Everything" : name, small, () => TOPICS[s] && name !== "Mixed" ? showTopics(s, name) : start(name));
     const best = store.get(`speedy-best|${s}|${name}`);
     if (best) { const t = document.createElement("span"); t.className = "best"; t.textContent = `Best: ⭐ ${best}`; $("menu").lastChild.appendChild(t); }
   }
   if (CUSTOM[s]) button("✏️", s === "maths" ? "My Own Sums" : "My Own Words", "Type your own", () => openEditor(s));
 }
+
+
+// Topics inside each year group: [name, icon, words that belong to it]. The first match wins.
+const TOPICS = {
+  maths: [
+    ["Shape & Space", "🔺", /side|face|angle|triangle|circle|radius|perimeter|area|volume|reflect|coordinate|cube|right angle|turn/i],
+    ["Time", "⏰", /time|minute|hour|o'clock|clock|days|week|leap|half past|quarter (past|to)|pm\b/i],
+    ["Money", "💷", /\dp\b|\(p\)|£|change from|costs|spend/i],
+    ["Measures", "📏", /kg|cm|km|ml|litre|metre|°C|mile|ruler/i],
+    ["Fractions, Decimals & %", "🍕", /\d\/\d|½|¼|⅓|%|decimal|fraction|simplify|half of|quarter of/i],
+    ["Statistics & Ratio", "📊", /mean|tally|ratio|chart/i],
+    ["Algebra", "🔤", /\bn\b|\d+n\b/],
+    ["Roman Numerals", "🏛️", /\b[IVXLCDM]{2,}\b|Write [IVXLCDM]+ as/],
+    ["Number & Place Value", "🔢", /more than|less than|round|digit|tens|prime|factor|next|count|bigger|²|³|negative|-\d/i],
+    ["Adding & Taking Away", "➕", /\+|−|-/],
+    ["Times & Dividing", "✖️", /×|÷|double|half|share/i],
+  ],
+  grammar: [
+    ["Tenses", "⏳", /tense|past|present|future|perfect|progressive|subjunctive|ran\b|walked/i],
+    ["Punctuation", "❗", /punctuation|comma|full stop|question mark|capital|inverted|apostrophe|colon|semicolon|dash|hyphen|bracket|ellipsis|bullet|exclamation mark|possess|goes at the end|goes at the start|where do/i],
+    ["Spelling & Word Building", "🧩", /prefix|suffix|plural|spelt|silent|homophone|synonym|antonym|word family|compound|contraction|i before e|ending|-able|-ible|-ous|-cious|-tial|'ough'|'ou'|'ch'|-ly|-ed|-ful|-ment/i],
+    ["Sentences & Clauses", "📝", /sentence|clause|statement|command|exclamation|phrase|subject|object|passive|active|paragraph|cohesion|formal|standard english|space|list/i],
+    ["Word Classes", "🏷️", /noun|verb|adjective|adverb|pronoun|preposition|conjunction|determiner|article|modal|word/i],
+  ],
+  science: [
+    ["Electricity", "⚡", /circuit|conductor|insulator|electric|bulb|cell|battery|switch|buzzer|series/i],
+    ["Plants", "🌱", /plant|seed|flower|leaf|leaves|root|stem|pollin|tree|deciduous|evergreen|asexual/i],
+    ["Animals & Living Things", "🐾", /animal|mammal|reptile|amphibian|bird|fish|insect|habitat|food chain|herbivore|carnivore|omnivore|life cycle|metamorph|vertebrate|invertebrate|classif|adapt|camel|evolution|variation|fossil|darwin|linnaeus|kitten|lamb|tadpole|caterpillar|micro-organism|bacteria|living thing|young|baby|nest|woodlouse/i],
+    ["Human Body & Health", "🫀", /body|teeth|heart|blood|muscle|skull|rib|digest|intestine|organ|healthy|exercise|smok|ear|nose|hear\b|clean|food group|carbohydrate|penicillin|grow old|humans/i],
+    ["Forces & Magnets", "🧲", /force|magnet|gravity|friction|air resistance|upthrust|lever|pulley|gear|poles|repel|attract/i],
+    ["Light & Sound", "💡", /light|shadow|reflect|sun\b.*eyes|sound|vibrat|pitch|fainter|see objects/i],
+    ["Earth & Space", "🪐", /planet|sun\b|moon|earth|orbit|day and night|season|weather|winter|summer|spring|autumn|sphere/i],
+    ["Materials & States of Matter", "🧪", /material|glass|rubber|plastic|wood|waterproof|transparent|solid|liquid|gas|melt|freez|boil|evaporat|condens|dissolv|solution|filter|reversible|steam|clay|pipe cleaner|soil|rock|salt|sand|°C/i],
+  ],
+  history: [
+    ["Stone, Bronze & Iron Age", "🪨", /stone age|stonehenge|skara|bronze|iron age|hill fort|hunting/i],
+    ["Romans", "🛡️", /roman|caesar|claudius|hadrian|boudicca|londinium|ad 43/i],
+    ["Anglo-Saxons & Vikings", "⛵", /saxon|viking|jorvik|danelaw|lindisfarne|alfred|longship|sutton hoo|edward the confessor/i],
+    ["Ancient Civilisations", "🏺", /egypt|pharaoh|pyramid|nile|hieroglyph|tutankhamun|carter|rosetta|indus|shang|greek|greece|athens|sparta|homer|alexander|olympic|democracy|maya|baghdad|benin|glyph|maize/i],
+    ["The World Wars", "🎖️", /war|blitz|evacuee|churchill|rationing|d-day|anne frank|windrush|battle of britain|remembrance|poppy/i],
+    ["Britain from 1066", "👑", /1066|hastings|domesday|magna carta|tudor|henry|armada|black death|victorian|industrial|1870|workhouse|factor|suffrag|pankhurst|great fire|pudding lane|pepys|5 november|gunpowder/i],
+    ["Famous People & Changes", "🌟", /./],
+  ],
+  geography: [
+    ["Maps & Skills", "🧭", /map|compass|grid|key|aerial|latitude|longitude|meridian|equator|tropic|hemisphere|arctic circle|contour|scale|symbol|fieldwork|time zone|direction/i],
+    ["Physical Geography", "🌋", /volcano|earthquake|tsunami|river|mountain|meander|erosion|water cycle|weather|climate|biome|rainforest|desert|coast|beach|tectonic|magma|lava|ring of fire|forest|vegetation|cold|hot|pole|seaside|arctic|sahara|amazon/i],
+    ["Human Geography", "🏙️", /settlement|village|city|farm|port|land use|trade|fair trade|resource|economic|migration|deforestation|sustainab|renewable|rural|urban|population/i],
+    ["The UK", "🇬🇧", /uk|england|scotland|wales|northern ireland|london|cardiff|edinburgh|belfast|manchester|county|region|north sea|local/i],
+    ["The World", "🌍", /./],
+  ],
+  computing: [
+    ["Staying Safe Online", "🛡️", /safe|stranger|password|personal|upsetting|worr|private|cyber|phishing|footprint|virus|fake|age|kind|copyright|photos of others|screen time|money from|pop-up|trust|someone else/i],
+    ["Coding & Algorithms", "🧩", /algorithm|program|code|bug|debug|loop|repeat|selection|condition|sequence|variable|sprite|scratch|robot|instruction|function|procedure|\bif\b|efficient|predict|decomposition|abstraction|steps|forward/i],
+    ["Computers & the Internet", "🌐", /./],
+  ],
+  art: [
+    ["Famous Artists & Movements", "🖼️", /van gogh|da vinci|picasso|monet|matisse|kahlo|lowry|warhol|munch|seurat|gormley|goldsworthy|banksy|michelangelo|morris|cubism|impressionism|pop art|renaissance|abstract|street art|cave art|egyptian|pointillism|guernica|mona lisa|scream|starry/i],
+    ["Colour", "🎨", /colour|primary|secondary|warm|cool|tint|shade\b|tone|mix/i],
+    ["Techniques & Materials", "✂️", /./],
+  ],
+  dt: [
+    ["Cooking & Nutrition", "🍎", /food|cook|fruit|vegetable|recipe|hygiene|healthy|snack|diet|milk|cheese|potato|season|grating|chopping|apron|drink|savoury|reared|caught|grown|sandwich|kebab|hands/i],
+    ["Mechanisms", "⚙️", /lever|slider|wheel|axle|mechanism|cam\b|crank|gear|pulley|motor|pneumatic|hydraulic|linkage|pivot|pop-up|move|vehicle|puppet/i],
+    ["Structures", "🌉", /structure|bridge|frame|strut|shell|stronger|reinforce|arch|monocoque|freestanding|triangle|net/i],
+    ["Electrical Systems & Control", "🔌", /circuit|switch|electrical|torch|programmable|computer-controlled|cad\b/i],
+    ["Textiles", "🧵", /fabric|textile|stitch|seam|sew/i],
+    ["Designing & Inventors", "📐", /./],
+  ],
+  music: [
+    ["Composers & Styles", "🎼", /composer|composed|beethoven|mozart|vivaldi|holst|elgar|bach|beatles|abba|jazz|blues|reggae|samba|baroque|opera|symphony|march|lullaby|nursery|round|chorus|choir|solo|perform|improvis|soundscape|call and response|graphic score|conductor/i],
+    ["Reading Music", "🎶", /stave|crotchet|minim|semibreve|quaver|rest\b|notation|sharp|flat|time signature|bar in|note|treble|scale|pentatonic|chord|key\b/i],
+    ["Instruments", "🥁", /instrument|drum|recorder|violin|trumpet|clarinet|tambourine|xylophone|shaker|piano\b|guitar|sitar|orchestra|family|percussion|tuba|maraca/i],
+    ["Pulse, Pitch & Dynamics", "🔊", /./],
+  ],
+  pe: [
+    ["Swimming & Water Safety", "🏊", /swim|water|stroke|crawl|float|tread|self-rescue|lifeguard/i],
+    ["Athletics", "🏃", /athletic|sprint|relay|long jump|triple|shot put|speed|personal best|race/i],
+    ["Outdoor & Adventure", "🏕️", /orienteer|compass|outdoor|adventure|climb|canoe/i],
+    ["Gymnastics & Dance", "🤸", /gymnast|balance|roll|shape|sequence|dance|dynamics|performance|gallop|hop|travel/i],
+    ["Fitness & Health", "💪", /warm|cool down|heart|pulse|breath|stamina|flexib|strength|endurance|muscle|agility|co-ordination|healthy|sleep|protein|mental|lung|minutes|exercise|control|olympic/i],
+    ["Games & Teamwork", "⚽", /./],
+  ],
+  re: [
+    ["Christianity", "✝️", /christian|bible|church|jesus|christmas|easter|lent|pentecost|baptism|vicar|cross a|lord's prayer|trinity|eucharist|gospel|nativity|noah|parable|lourdes/i],
+    ["Islam", "☪️", /muslim|islam|qur'an|mosque|ramadan|eid|allah|muhammad|imam|makkah|hajj|pillars|wudu|prayer mat|zakah|sawm|shahadah|crescent/i],
+    ["Judaism", "✡️", /jew|torah|synagogue|hanukkah|shabbat|passover|moses|rabbi|star of david|mezuzah|rosh|yom kippur|mitzvah|ten commandments/i],
+    ["Hinduism", "🕉️", /hindu|mandir|diwali|rama|ganesha|holi|'om'|ganges|karma|reincarnation|samsara/i],
+    ["Sikhism", "🪯", /sikh|gurdwara|guru|langar|vaisakhi|five ks|khanda|turban|amrit|khalsa/i],
+    ["Buddhism & Other Beliefs", "☸️", /buddh|nirvana|eightfold|noble truths|dharma|humanist|atheist|golden rule/i],
+    ["Festivals, Worship & Belonging", "🕯️", /./],
+  ],
+  pshe: [
+    ["Keeping Safe", "🚸", /safe|emergency|999|stranger|lost|fire|first aid|road|online|grooming|trusted adult|drug|alcohol|medicine|message|secret/i],
+    ["Health & Growing Up", "🌱", /health|sleep|teeth|hands|hygiene|diet|puberty|hormones|periods|growing up|transition|body image|images online/i],
+    ["Feelings & Mental Health", "💭", /feel|sad|worr|angry|cross|calm|mental|self-esteem|resilience|growth mindset|empathy|unique|brave|special/i],
+    ["Money & Community", "🏘️", /money|need|want|budget|saving|interest|debt|payslip|gambling|charity|volunteer|community|british values|equality|diversity|discrimination|stereotype|racism|rules|responsib|commissioner|misinformation|equality act/i],
+    ["Friends & Family", "🤝", /./],
+  ],
+  languages: [
+    ["Colours", "🌈", /rouge|bleu|vert|jaune|noir|blanc|rojo|verde|azul|amarillo|negro|blanco/i],
+    ["Numbers", "🔢", /1, 2|4, 5|'dix'|'diez'|un, deux|uno, dos|years old/i],
+    ["Days & Weather", "☀️", /lundi|mardi|mercredi|lunes|martes|domingo|chaud|pleut|calor|llueve/i],
+    ["Greetings", "👋", /hello|goodbye|thank|please|'oui'|'non'|'sí'|how are you|night|morning|name/i],
+    ["Food, Family & Places", "🍞", /./],
+  ],
+};
+const topicOf = (s, text) => { for (const [name, , re] of TOPICS[s]) if (re.test(text)) return name; return TOPICS[s][TOPICS[s].length - 1][0]; };
+const cardText = c => c.kind === "quiz" ? `${c.question}|${c.answer}` : c.question;
+let year = "";
+function topicCards(s, name, topic) {
+  if (s !== "maths") return SUBJECTS[s].decks[name].filter(c => topicOf(s, cardText(c)) === topic);
+  const out = [], seen = new Set();
+  for (let k = 0; out.length < 20 && k < 6000; k++) {
+    const [q, a] = MATHS[name]();
+    if (topicOf("maths", q) !== topic || seen.has(q)) continue;
+    seen.add(q);
+    out.push({kind: "sum", question: q, answer: String(a), worded: q.includes("?") || /[A-Za-z]/.test(q.replace(" of ", "")), tag: `Maths · ${name} · ${topic}`});
+  }
+  return out;
+}
+const mathsTopics = {};
+function topicsFor(s, name) {
+  if (s === "maths") {
+    if (!mathsTopics[name]) { const n = {}; for (let k = 0; k < 1500; k++) { const t = topicOf("maths", MATHS[name]()[0]); n[t] = (n[t] || 0) + 1; } mathsTopics[name] = n; }
+    return TOPICS.maths.filter(([t]) => mathsTopics[name][t] >= 15).map(([t, icon]) => [t, icon, "20 questions"]);
+  }
+  return TOPICS[s].map(([t, icon]) => [t, icon, topicCards(s, name, t).length]).filter(x => x[2] >= 4).map(([t, icon, n]) => [t, icon, `${n} questions`]);
+}
+function showTopics(s, name) {
+  year = name; subject = s; const S = SUBJECTS[s];
+  stopReading();
+  $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = false; $("years").hidden = false;
+  $("rules").hidden = true; $("editor").hidden = true; $("chat").hidden = true;
+  $("sub").textContent = `${S.title} · ${name}: pick a topic`;
+  button("🎲", `All of ${name}`, AGES[name] || "Every topic mixed", () => start(name));
+  for (const [t, icon, n] of topicsFor(s, name)) {
+    button(icon, t, n, () => { deckName = `${name} · ${t}`; begin(topicCards(s, name, t)); });
+    const best = store.get(`speedy-best|${s}|${name} · ${t}`);
+    if (best) { const b = document.createElement("span"); b.className = "best"; b.textContent = `Best: ⭐ ${best}`; $("menu").lastChild.appendChild(b); }
+  }
+}
+$("years").onclick = () => showDecks(subject);
 
 // Look up animal photos on Wikipedia, up to 50 per request
 async function loadImages(from) {
@@ -1210,7 +1358,7 @@ function finishDeck() {
   $("finish").hidden = false; sfx("win"); confetti(160);
 }
 $("finAgain").onclick = () => { $("finish").hidden = true; deck.length && (shuffle(deck), i = 0, score = 0, streak = 0, show()); };
-$("finDecks").onclick = () => { $("finish").hidden = true; showDecks(subject); };
+$("finDecks").onclick = () => { $("finish").hidden = true; year ? showTopics(subject, year) : showDecks(subject); };
 
 function pickOption(btn, choice) {
   const c = deck[i];
@@ -2634,7 +2782,7 @@ function openChat() {
   setTimeout(() => $("chatIn").focus(), 50);
 }
 $("chatForm").onsubmit = e => { e.preventDefault(); ask($("chatIn").value); };
-$("back").onclick = () => showDecks(subject);
+$("back").onclick = () => year ? showTopics(subject, year) : showDecks(subject);
 $("home").onclick = showSubjects;
 showSubjects();
 </script>
