@@ -3,44 +3,58 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Guess the Animal</title>
+<title>Speedy Learning</title>
 <style>
-  :root { --bg:#1f6f43; --card:#fffdf5; --ink:#222; --accent:#f4b400; }
+  :root { --bg:#1f6f43; --card:#fffdf5; --ink:#222; --accent:#f4b400; --muted:#777; }
   * { box-sizing:border-box; }
   body { margin:0; min-height:100vh; background:radial-gradient(circle at top,#2e9b5e,var(--bg)); font-family:"Trebuchet MS",system-ui,sans-serif; color:var(--ink); display:flex; flex-direction:column; align-items:center; padding:16px; user-select:none; }
-  h1 { color:#fff; text-shadow:2px 2px 0 #0004; margin:8px 0 16px; text-align:center; }
+  h1 { color:#fff; text-shadow:2px 2px 0 #0004; margin:8px 0 4px; text-align:center; font-size:2.4rem; }
+  .sub { color:#fff; opacity:.9; margin:0 0 16px; text-align:center; }
   .cats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; width:100%; max-width:760px; }
-  .cat { background:var(--card); border:4px solid var(--accent); border-radius:16px; padding:16px 8px; font-size:1.1rem; font-weight:bold; cursor:pointer; text-align:center; box-shadow:0 4px 0 #0003; }
+  .cat { background:var(--card); border:4px solid var(--accent); border-radius:16px; padding:16px 8px; font-size:1.1rem; font-weight:bold; cursor:pointer; text-align:center; box-shadow:0 4px 0 #0003; font-family:inherit; color:var(--ink); }
   .cat span { display:block; font-size:2.6rem; }
+  .cat small { display:block; font-weight:normal; color:var(--muted); font-size:.8rem; margin-top:4px; }
   .cat:hover { transform:translateY(-3px); }
-  #game { display:none; flex-direction:column; align-items:center; width:100%; }
+  .topbar { width:100%; max-width:760px; margin-bottom:12px; }
+  .btn { background:var(--accent); border:none; border-radius:10px; padding:8px 14px; font-weight:bold; cursor:pointer; font-family:inherit; font-size:1rem; }
+  #game { flex-direction:column; align-items:center; width:100%; }
   .bar { display:flex; justify-content:space-between; align-items:center; width:100%; max-width:420px; color:#fff; margin-bottom:10px; font-weight:bold; }
-  .bar button { background:var(--accent); border:none; border-radius:10px; padding:8px 14px; font-weight:bold; cursor:pointer; }
-  .card { width:min(92vw,380px); aspect-ratio:2/3; background:var(--card); border:10px solid var(--accent); border-radius:24px; box-shadow:0 10px 0 #0004; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; position:relative; }
-  .card .tag { position:absolute; top:12px; left:0; right:0; text-align:center; font-size:.9rem; letter-spacing:2px; text-transform:uppercase; color:#777; }
-  .pic { width:88%; height:68%; object-fit:cover; border-radius:14px; background:#eee; margin-top:20px; }
-  .cat small { display:block; font-weight:normal; color:#777; font-size:.8rem; margin-top:4px; }
-  .credit { color:#fff; opacity:.7; font-size:.75rem; margin-top:10px; }
-  .name { margin-top:18px; font-size:2rem; font-weight:bold; min-height:2.6rem; text-align:center; padding:0 10px; }
+  .card { width:min(92vw,380px); aspect-ratio:2/3; background:var(--card); border:10px solid var(--accent); border-radius:24px; box-shadow:0 10px 0 #0004; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; position:relative; padding:12px; }
+  .card .tag { position:absolute; top:12px; left:0; right:0; text-align:center; font-size:.9rem; letter-spacing:2px; text-transform:uppercase; color:var(--muted); }
+  .pic { width:92%; height:66%; object-fit:cover; border-radius:14px; background:#eee; margin-top:20px; }
+  .pic.flag { object-fit:contain; background:none; height:50%; filter:drop-shadow(0 3px 4px #0004); }
+  .big { font-size:3.4rem; font-weight:bold; text-align:center; line-height:1.2; }
+  .speak { font-size:4.5rem; background:none; border:none; cursor:pointer; }
+  .clue { color:var(--muted); text-align:center; font-size:1.1rem; padding:0 8px; }
+  .name { margin-top:18px; font-size:2rem; font-weight:bold; min-height:2.6rem; text-align:center; padding:0 10px; overflow-wrap:anywhere; }
+  .name.spell { letter-spacing:4px; color:#1f6f43; }
   .hint { color:#fff; margin-top:16px; opacity:.85; text-align:center; }
+  .credit { color:#fff; opacity:.7; font-size:.75rem; margin-top:10px; }
   .pop { animation:pop .3s ease; }
   @keyframes pop { from { transform:scale(.85); opacity:0; } to { transform:scale(1); opacity:1; } }
+  @media (prefers-reduced-motion: reduce) { .pop { animation:none; } }
+  [hidden] { display:none !important; }
 </style>
 </head>
 <body>
-<h1>🦁 Guess the Animal 🐸</h1>
+<h1>⚡ Speedy Learning ⚡</h1>
+<p class="sub" id="sub">Pick a subject</p>
 
+<div class="topbar" id="topbar" hidden><button class="btn" id="home">← Subjects</button></div>
 <div id="menu" class="cats"></div>
 
-<div id="game">
-  <div class="bar"><button id="back">← Decks</button><span id="count"></span></div>
+<div id="game" style="display:flex" hidden>
+  <div class="bar"><button class="btn" id="back">← Decks</button><span id="count"></span></div>
   <div class="card" id="card">
     <div class="tag" id="tag"></div>
-    <img class="pic" id="pic">
+    <img class="pic" id="pic" alt="" hidden>
+    <div class="big" id="big" hidden></div>
+    <button class="speak" id="speak" hidden aria-label="Hear the word">🔊</button>
+    <div class="clue" id="clue" hidden></div>
     <div class="name" id="name"></div>
   </div>
-  <div class="hint" id="hint">Tap the card to reveal the name</div>
-  <div class="credit">Photos from Wikipedia</div>
+  <div class="hint" id="hint"></div>
+  <div class="credit" id="credit"></div>
 </div>
 
 <script>
@@ -57,80 +71,183 @@ const DECKS = {
   "Fish": ["Great White Shark|Great white shark","Hammerhead Shark|Great hammerhead","Whale Shark|Whale shark","Tiger Shark|Tiger shark","Bull Shark|Bull shark","Basking Shark|Basking shark","Mako Shark|Shortfin mako shark","Manta Ray|Giant oceanic manta ray","Stingray|Southern stingray","Clownfish|Ocellaris clownfish","Blue Tang|Paracanthurus","Yellow Tang|Yellow tang","Mandarinfish","Lionfish|Red lionfish","Pufferfish|Tetraodontidae","Porcupinefish","Moorish Idol|Moorish idol","Parrotfish","Angelfish|Pomacanthus imperator","Butterflyfish|Copperband butterflyfish","Seahorse","Leafy Seadragon|Leafy seadragon","Moray Eel|Green moray","Ocean Sunfish|Ocean sunfish","Swordfish","Sailfish|Atlantic sailfish","Bluefin Tuna|Atlantic bluefin tuna","Barracuda|Great barracuda","Atlantic Salmon|Atlantic salmon","Rainbow Trout|Rainbow trout","Atlantic Cod|Atlantic cod","Atlantic Herring|Atlantic herring","Mackerel|Atlantic mackerel","Flounder|European flounder","Halibut|Atlantic halibut","Anglerfish","Koi","Common Carp|Common carp","Catfish|Wels catfish","Pike|Northern pike","Perch|European perch","Piranha|Red-bellied piranha","Arowana|Silver arowana","Arapaima","Electric Eel|Electric eel","Sturgeon|Beluga (sturgeon)","Coelacanth|West Indian Ocean coelacanth","Flying Fish|Flying fish","Archerfish","Mudskipper","Discus|Symphysodon","Neon Tetra|Neon tetra","Oscar|Oscar (fish)","Zebrafish","Goby|Round goby","Wrasse|Humphead wrasse","Grouper|Atlantic goliath grouper","Hagfish","Sea Lamprey|Sea lamprey","Oarfish|Giant oarfish"],
   "Dinosaurs": ["Tyrannosaurus Rex|Tyrannosaurus","Triceratops","Stegosaurus","Velociraptor","Brachiosaurus","Diplodocus","Apatosaurus","Brontosaurus","Spinosaurus","Allosaurus","Ankylosaurus","Parasaurolophus","Iguanodon","Pachycephalosaurus","Carnotaurus","Giganotosaurus","Argentinosaurus","Deinonychus","Dilophosaurus","Gallimimus","Compsognathus","Microraptor","Archaeopteryx","Utahraptor","Therizinosaurus","Oviraptor","Protoceratops","Styracosaurus","Edmontosaurus","Maiasaura","Baryonyx","Suchomimus","Carcharodontosaurus","Albertosaurus","Megalosaurus","Ceratosaurus","Coelophysis","Herrerasaurus","Plateosaurus","Kentrosaurus","Amargasaurus","Nodosaurus","Euoplocephalus","Corythosaurus","Lambeosaurus","Psittacosaurus","Sinosauropteryx","Troodon","Mamenchisaurus","Dreadnoughtus","Pteranodon","Quetzalcoatlus","Mosasaurus","Plesiosaurus","Ichthyosaurus","Dimetrodon"]
 };
-const ICONS = {Jungle:"🌴",Pets:"🐶",Bugs:"🐞",African:"🦁",Birds:"🦜",Exotic:"🦘",Reptiles:"🦎",Amphibians:"🐸",Fish:"🐠",Dinosaurs:"🦖"};
+
+// Flags: "code:Country" (codes used for flagcdn.com images)
+const FLAGS = {
+  "Europe": "gb:United Kingdom,ie:Ireland,fr:France,de:Germany,es:Spain,pt:Portugal,it:Italy,nl:Netherlands,be:Belgium,lu:Luxembourg,ch:Switzerland,at:Austria,dk:Denmark,no:Norway,se:Sweden,fi:Finland,is:Iceland,pl:Poland,cz:Czechia,sk:Slovakia,hu:Hungary,ro:Romania,bg:Bulgaria,gr:Greece,hr:Croatia,si:Slovenia,rs:Serbia,ba:Bosnia and Herzegovina,me:Montenegro,mk:North Macedonia,al:Albania,ee:Estonia,lv:Latvia,lt:Lithuania,ua:Ukraine,by:Belarus,md:Moldova,ru:Russia,mt:Malta,cy:Cyprus,ad:Andorra,mc:Monaco,sm:San Marino,va:Vatican City,li:Liechtenstein,gb-sct:Scotland,gb-wls:Wales,gb-eng:England",
+  "Africa": "eg:Egypt,ma:Morocco,dz:Algeria,tn:Tunisia,ly:Libya,sd:Sudan,ss:South Sudan,et:Ethiopia,er:Eritrea,dj:Djibouti,so:Somalia,ke:Kenya,ug:Uganda,tz:Tanzania,rw:Rwanda,bi:Burundi,cd:DR Congo,cg:Republic of the Congo,ga:Gabon,cm:Cameroon,ng:Nigeria,gh:Ghana,ci:Ivory Coast,sn:Senegal,ml:Mali,ne:Niger,td:Chad,bf:Burkina Faso,gn:Guinea,sl:Sierra Leone,lr:Liberia,tg:Togo,bj:Benin,gm:Gambia,gw:Guinea-Bissau,cv:Cape Verde,mr:Mauritania,cf:Central African Republic,gq:Equatorial Guinea,ao:Angola,zm:Zambia,zw:Zimbabwe,mw:Malawi,mz:Mozambique,mg:Madagascar,bw:Botswana,na:Namibia,za:South Africa,ls:Lesotho,sz:Eswatini,mu:Mauritius,sc:Seychelles,km:Comoros,st:São Tomé and Príncipe",
+  "Asia": "cn:China,jp:Japan,kr:South Korea,kp:North Korea,mn:Mongolia,in:India,pk:Pakistan,bd:Bangladesh,lk:Sri Lanka,np:Nepal,bt:Bhutan,mv:Maldives,af:Afghanistan,ir:Iran,iq:Iraq,sa:Saudi Arabia,ae:United Arab Emirates,qa:Qatar,kw:Kuwait,bh:Bahrain,om:Oman,ye:Yemen,jo:Jordan,lb:Lebanon,sy:Syria,il:Israel,ps:Palestine,tr:Turkey,ge:Georgia,am:Armenia,az:Azerbaijan,kz:Kazakhstan,uz:Uzbekistan,tm:Turkmenistan,kg:Kyrgyzstan,tj:Tajikistan,th:Thailand,vn:Vietnam,la:Laos,kh:Cambodia,mm:Myanmar,my:Malaysia,sg:Singapore,id:Indonesia,ph:Philippines,bn:Brunei,tl:Timor-Leste,tw:Taiwan",
+  "Americas": "us:United States,ca:Canada,mx:Mexico,gt:Guatemala,bz:Belize,hn:Honduras,sv:El Salvador,ni:Nicaragua,cr:Costa Rica,pa:Panama,cu:Cuba,jm:Jamaica,ht:Haiti,do:Dominican Republic,bs:Bahamas,bb:Barbados,tt:Trinidad and Tobago,gd:Grenada,lc:Saint Lucia,vc:Saint Vincent and the Grenadines,ag:Antigua and Barbuda,dm:Dominica,kn:Saint Kitts and Nevis,co:Colombia,ve:Venezuela,gy:Guyana,sr:Suriname,ec:Ecuador,pe:Peru,br:Brazil,bo:Bolivia,py:Paraguay,cl:Chile,ar:Argentina,uy:Uruguay",
+  "Oceania": "au:Australia,nz:New Zealand,pg:Papua New Guinea,fj:Fiji,sb:Solomon Islands,vu:Vanuatu,ws:Samoa,to:Tonga,ki:Kiribati,tv:Tuvalu,nr:Nauru,pw:Palau,fm:Micronesia,mh:Marshall Islands"
+};
+
+const MATHS = {
+  "Adding": () => { const a = r(1, 20), b = r(1, 20); return [`${a} + ${b}`, a + b]; },
+  "Taking Away": () => { const a = r(5, 30), b = r(1, a); return [`${a} − ${b}`, a - b]; },
+  "Times Tables": () => { const a = r(2, 12), b = r(1, 12); return [`${a} × ${b}`, a * b]; },
+  "Dividing": () => { const b = r(2, 12), c = r(1, 12); return [`${b * c} ÷ ${b}`, c]; },
+  "Doubles & Halves": () => { const n = r(2, 50); return Math.random() < .5 ? [`Double ${n}`, n * 2] : [`Half of ${n * 2}`, n]; },
+  "Tricky Mix": () => { const a = r(10, 99), b = r(10, 99); return [[`${a} + ${b}`, a + b], [`${Math.max(a, b)} − ${Math.min(a, b)}`, Math.abs(a - b)], [`${r(2, 12)} × ${r(11, 15)}`, null]][r(0, 2)]; }
+};
+
+// Spelling: "word:clue"
+const SPELLING = {
+  "Easy": "cat:A furry pet that purrs,dog:A pet that barks,sun:It shines in the sky,hat:You wear it on your head,fish:It swims in water,frog:A green animal that hops,tree:It has leaves and branches,book:You read it,ball:You kick or throw it,milk:A white drink from cows,cake:A sweet treat for birthdays,duck:A bird that quacks,jump:To leap up high,red:The colour of a strawberry,blue:The colour of the sky,ship:A big boat,star:It twinkles at night,rain:Water falling from clouds,bed:You sleep in it,door:You open it to go in,shop:A place where you buy things,moon:You see it at night,house:A place people live,happy:Feeling glad,apple:A crunchy fruit,school:Where you go to learn,green:The colour of grass,water:You drink it,horse:An animal you can ride,chair:You sit on it",
+  "Medium": "because:For the reason that,friend:Someone you like to play with,people:More than one person,beautiful:Very pretty,said:Past of say,could:Was able to,would:A word for wishes and offers,should:Ought to,children:More than one child,different:Not the same,animal:A living creature,elephant:A huge grey animal with a trunk,dinosaur:A giant reptile from long ago,February:The second month,Wednesday:The middle of the school week,little:Small,another:One more,through:In one side and out the other,thought:Past of think,caught:Past of catch,laugh:What you do when something is funny,enough:As much as you need,island:Land with water all around,believe:To think something is true,knight:A soldier in armour,castle:A big stone building with towers,rhythm:A beat in music,science:The study of how things work,library:A place to borrow books,surprise:Something you did not expect",
+  "Hard": "necessary:Needed,separate:Apart,definitely:For certain,accommodate:To make room for,embarrass:To make someone feel awkward,occasion:A special event,rhinoceros:A big animal with a horn on its nose,conscience:Your sense of right and wrong,environment:The world around us,government:The people who run a country,queue:A line of people waiting,mischievous:Naughty in a playful way,parliament:Where laws are made,temperature:How hot or cold something is,vegetable:A plant you eat like a carrot,restaurant:A place to buy a meal,silhouette:A dark shape against light,millennium:A thousand years,pronunciation:How a word is said,questionnaire:A list of questions,chrysanthemum:A big colourful flower,onomatopoeia:A word that sounds like its meaning,Mediterranean:A sea between Europe and Africa,exaggerate:To make something seem bigger,hippopotamus:A huge animal that lives in rivers,archaeologist:Someone who digs up old things,miniature:Very small,privilege:A special right,guarantee:A promise,yacht:A fancy sailing boat"
+};
+
+const SUBJECTS = {
+  animals: { title: "Guess the Animal", icon: "🦁", note: "Look at the photo and guess the animal",
+    icons: {Jungle:"🌴",Pets:"🐶",Bugs:"🐞",African:"🦁",Birds:"🦜",Exotic:"🦘",Reptiles:"🦎",Amphibians:"🐸",Fish:"🐠",Dinosaurs:"🦖"},
+    decks: Object.fromEntries(Object.entries(DECKS).map(([c, l]) => [c, l.map(s => { const [name, title] = s.split("|"); return {kind: "photo", title: title || name, answer: name, tag: c}; })])) },
+  flags: { title: "Flags of the World", icon: "🌍", note: "Which country does this flag belong to?",
+    icons: {Europe:"🏰",Africa:"🦒",Asia:"🏯",Americas:"🗽",Oceania:"🦘"},
+    decks: Object.fromEntries(Object.entries(FLAGS).map(([c, l]) => [c, l.split(",").map(s => { const [code, name] = s.split(":"); return {kind: "flag", src: `https://flagcdn.com/w640/${code}.png`, answer: name, tag: c}; })])) },
+  maths: { title: "Maths", icon: "➗", note: "Work out the answer, then tap to check",
+    icons: {"Adding":"➕","Taking Away":"➖","Times Tables":"✖️","Dividing":"➗","Doubles & Halves":"🎯","Tricky Mix":"🧠"},
+    decks: Object.fromEntries(Object.keys(MATHS).map(k => [k, null])) },
+  spelling: { title: "Spelling Bee", icon: "🐝", note: "Listen to the word, spell it out loud, then tap to check",
+    icons: {Easy:"🐣",Medium:"🐝",Hard:"🏆"},
+    decks: Object.fromEntries(Object.entries(SPELLING).map(([c, l]) => [c, l.split(",").map(s => { const [w, clue] = s.split(":"); return {kind: "spell", answer: w, clue, tag: "Spelling · " + c}; })])) }
+};
 
 const $ = id => document.getElementById(id);
-let deck = [], i = 0, revealed = false;
-const images = {}; // wiki title -> image url, or null if none
-
-const menu = $("menu");
-for (const n of [...Object.keys(DECKS), "Mixed"]) {
-  const b = document.createElement("button");
-  b.className = "cat";
-  const size = n === "Mixed" ? Object.values(DECKS).reduce((s, l) => s + l.length, 0) : DECKS[n].length;
-  b.innerHTML = `<span>${ICONS[n] || "🎲"}</span>${n === "Mixed" ? "Mix of Everything" : n}<small>${size} cards</small>`;
-  b.onclick = () => start(n);
-  menu.appendChild(b);
-}
-
-function cards(list, cat) { return list.map(s => { const [name, title] = s.split("|"); return {name, title: title || name, cat}; }); }
+const r = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
 function shuffle(a) { for (let k = a.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [a[k], a[j]] = [a[j], a[k]]; } return a; }
 
-// Look up photos on Wikipedia, up to 50 animals per request
+let subject = null, deck = [], i = 0, revealed = false, ready = false;
+const images = {}; // wiki title -> image url, or null if none
+
+function mathsDeck(name) {
+  const out = [];
+  while (out.length < 30) {
+    let [q, a] = MATHS[name]();
+    if (a === null) { const [x, y] = q.split(" × ").map(Number); a = x * y; }
+    out.push({kind: "sum", question: q, answer: String(a), tag: "Maths · " + name});
+  }
+  return out;
+}
+function deckFor(s, name) {
+  const S = SUBJECTS[s];
+  if (s === "maths") return name === "Mixed" ? Object.keys(MATHS).flatMap(k => mathsDeck(k).slice(0, 8)) : mathsDeck(name);
+  return name === "Mixed" ? Object.values(S.decks).flat() : [...S.decks[name]];
+}
+
+function button(icon, label, small, onclick) {
+  const b = document.createElement("button");
+  b.className = "cat";
+  b.innerHTML = `<span>${icon}</span>${label}${small ? `<small>${small}</small>` : ""}`;
+  b.onclick = onclick;
+  $("menu").appendChild(b);
+}
+
+function showSubjects() {
+  subject = null; window.speechSynthesis && speechSynthesis.cancel();
+  $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = true;
+  $("sub").textContent = "Pick a subject";
+  for (const [k, S] of Object.entries(SUBJECTS)) {
+    const n = k === "maths" ? "Endless questions" : Object.values(S.decks).reduce((t, d) => t + d.length, 0) + " cards";
+    button(S.icon, S.title, n, () => showDecks(k));
+  }
+}
+
+function showDecks(s) {
+  subject = s; const S = SUBJECTS[s];
+  window.speechSynthesis && speechSynthesis.cancel();
+  $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = false;
+  $("sub").textContent = `${S.title}: pick a deck`;
+  for (const name of [...Object.keys(S.decks), "Mixed"]) {
+    const size = s === "maths" ? "30 questions" : (name === "Mixed" ? Object.values(S.decks).reduce((t, d) => t + d.length, 0) : S.decks[name].length) + " cards";
+    button(name === "Mixed" ? "🎲" : S.icons[name], name === "Mixed" ? "Mix of Everything" : name, s === "maths" && name === "Mixed" ? "48 questions" : size, () => start(name));
+  }
+}
+
+// Look up animal photos on Wikipedia, up to 50 per request
 async function loadImages(from) {
   const todo = [];
   for (let k = from; k < deck.length && todo.length < 50; k++)
-    if (!(deck[k].title in images) && !todo.includes(deck[k].title)) todo.push(deck[k].title);
+    if (deck[k].kind === "photo" && !(deck[k].title in images) && !todo.includes(deck[k].title)) todo.push(deck[k].title);
   if (!todo.length) return;
   const url = "https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&redirects=1&prop=pageimages&piprop=thumbnail&pithumbsize=640&titles=" + encodeURIComponent(todo.join("|"));
   try {
     const data = await (await fetch(url)).json();
     const q = data.query || {}, alias = {};
-    for (const r of [...(q.normalized || []), ...(q.redirects || [])]) alias[r.to] = r.from;
+    for (const x of [...(q.normalized || []), ...(q.redirects || [])]) alias[x.to] = x.from;
     const orig = t => { while (alias[t]) t = alias[t]; return t; };
     for (const pg of Object.values(q.pages || {})) images[orig(pg.title)] = pg.thumbnail ? pg.thumbnail.source : null;
   } catch (e) { return; }
   for (const t of todo) if (!(t in images)) images[t] = null;
 }
 
-async function start(n) {
-  deck = shuffle(n === "Mixed" ? Object.entries(DECKS).flatMap(([c, l]) => cards(l, c)) : cards(DECKS[n], n));
-  i = 0;
-  menu.style.display = "none"; $("game").style.display = "flex";
+async function start(name) {
+  deck = shuffle(deckFor(subject, name)); i = 0;
+  $("menu").hidden = true; $("topbar").hidden = true; $("game").hidden = false;
+  $("sub").textContent = SUBJECTS[subject].note;
+  $("credit").textContent = subject === "animals" ? "Photos from Wikipedia" : subject === "flags" ? "Flags from flagcdn.com" : "";
   await show();
 }
 
-async function show() {
-  revealed = false;
-  $("name").textContent = ""; $("pic").removeAttribute("src"); $("hint").textContent = "Loading…";
-  for (let tries = 0; tries < deck.length; tries++) {
-    if (!(deck[i].title in images)) await loadImages(i);
-    if (images[deck[i].title]) break;
-    if (!(deck[i].title in images)) { $("hint").textContent = "Couldn't load pictures – check your internet connection and tap to retry"; return; }
-    deck.splice(i, 1); // no photo for this one, skip it
-    if (i >= deck.length) i = 0;
-  }
-  const c = deck[i];
-  $("pic").src = images[c.title]; $("pic").alt = "Mystery animal";
-  $("tag").textContent = c.cat;
-  $("count").textContent = `Card ${i + 1} of ${deck.length}`;
-  $("hint").textContent = "Tap the card to reveal the name";
-  const card = $("card"); card.classList.remove("pop"); void card.offsetWidth; card.classList.add("pop");
-  const next = deck[i + 1]; if (next && images[next.title]) new Image().src = images[next.title];
-  if (deck[i + 10] && !(deck[i + 10].title in images)) loadImages(i + 10);
+function say(word) {
+  if (!window.speechSynthesis) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(word); u.lang = "en-GB"; u.rate = .8;
+  speechSynthesis.speak(u);
 }
 
+async function show() {
+  revealed = false; ready = false;
+  for (const id of ["pic", "big", "speak", "clue"]) $(id).hidden = true;
+  $("name").textContent = ""; $("name").className = "name"; $("hint").textContent = "Loading…";
+  if (deck[i].kind === "photo") {
+    for (let tries = 0; tries < deck.length; tries++) {
+      if (!(deck[i].title in images)) await loadImages(i);
+      if (images[deck[i].title]) break;
+      if (!(deck[i].title in images)) { $("hint").textContent = "Couldn't load pictures. Check your internet connection and tap to try again"; return; }
+      deck.splice(i, 1); // no photo for this one, skip it
+      if (i >= deck.length) i = 0;
+    }
+  }
+  const c = deck[i];
+  $("tag").textContent = c.tag;
+  if (c.kind === "photo" || c.kind === "flag") {
+    $("pic").src = c.kind === "photo" ? images[c.title] : c.src;
+    $("pic").className = c.kind === "flag" ? "pic flag" : "pic";
+    $("pic").hidden = false;
+  } else if (c.kind === "sum") {
+    $("big").textContent = c.question + " = ?"; $("big").hidden = false;
+  } else {
+    $("speak").hidden = false; $("clue").textContent = "Clue: " + c.clue; $("clue").hidden = false;
+    say(c.answer);
+  }
+  $("count").textContent = `Card ${i + 1} of ${deck.length}`;
+  $("hint").textContent = c.kind === "spell" ? "Tap 🔊 to hear it again. Tap the card to see the spelling" : "Tap the card to reveal the answer";
+  const card = $("card"); card.classList.remove("pop"); void card.offsetWidth; card.classList.add("pop");
+  ready = true;
+  const next = deck[i + 1];
+  if (next && next.kind === "photo" && images[next.title]) new Image().src = images[next.title];
+  if (next && next.kind === "flag") new Image().src = next.src;
+  if (deck[i + 10] && deck[i + 10].kind === "photo" && !(deck[i + 10].title in images)) loadImages(i + 10);
+}
+
+$("speak").onclick = e => { e.stopPropagation(); say(deck[i].answer); };
 $("card").onclick = () => {
-  if (!$("pic").getAttribute("src")) { show(); return; }
+  if (!ready) { show(); return; }
   if (!revealed) {
-    revealed = true; $("name").textContent = deck[i].name;
-    $("hint").textContent = i + 1 < deck.length ? "Tap again for the next animal" : "Last card! Tap to shuffle and play again";
+    revealed = true;
+    const c = deck[i];
+    $("name").textContent = c.kind === "sum" ? `${c.question} = ${c.answer}` : c.answer;
+    if (c.kind === "spell") $("name").className = "name spell";
+    if (c.kind === "sum") $("big").hidden = true;
+    $("hint").textContent = i + 1 < deck.length ? "Tap again for the next card" : "Last card! Tap to shuffle and play again";
   } else {
     i++; if (i >= deck.length) { shuffle(deck); i = 0; }
     show();
   }
 };
-$("back").onclick = () => { $("game").style.display = "none"; menu.style.display = "grid"; };
+$("back").onclick = () => showDecks(subject);
+$("home").onclick = showSubjects;
+showSubjects();
 </script>
 </body>
 </html>
