@@ -33,7 +33,27 @@
   .tries.good { color:#1f6f43; } .tries.bad { color:#b3261e; }
   .cover { width:70%; height:62%; margin-top:20px; border-radius:6px 14px 14px 6px; background:linear-gradient(135deg,var(--accent),#e0762b); color:#fff; display:flex; align-items:center; justify-content:center; text-align:center; padding:16px; font-size:1.5rem; font-weight:bold; box-shadow:inset 8px 0 0 #0002, 0 4px 8px #0003; overflow-wrap:anywhere; }
   .pic.book { object-fit:contain; background:none; width:70%; height:62%; }
-  .story { font-size:1.3rem; line-height:1.5; text-align:center; padding:0 6px; overflow-y:auto; max-height:45%; }
+  .story { font-size:1.25rem; line-height:1.55; text-align:center; padding:10px 6px 0; overflow-y:auto; flex:1; order:2; }
+  .scene { position:relative; width:100%; height:42%; margin-top:22px; border-radius:16px; overflow:hidden; display:flex; align-items:flex-end; justify-content:center; gap:4%; padding-bottom:14px; flex-shrink:0; }
+  .scene::after { content:""; position:absolute; left:0; right:0; bottom:0; height:22%; background:#0001; }
+  .actor { position:relative; z-index:1; font-size:clamp(2.6rem,14vw,5rem); line-height:1; animation:enter .9s cubic-bezier(.3,1.4,.6,1) both, bob 1.8s ease-in-out .9s infinite; }
+  .actor:nth-child(2n) { animation:drop .9s .25s cubic-bezier(.3,1.4,.6,1) both, wiggle 2.2s ease-in-out 1.1s infinite; }
+  .actor:nth-child(3n) { animation:enterR .9s .45s cubic-bezier(.3,1.4,.6,1) both, bob 2.1s ease-in-out 1.3s infinite; }
+  .spark { position:absolute; font-size:1.1rem; opacity:.8; animation:drift 6s linear infinite; }
+  .scene.still .actor, .scene.still .spark { animation-play-state:paused; }
+  @keyframes enter { from { transform:translateX(-160%) rotate(-20deg); opacity:0; } to { transform:none; opacity:1; } }
+  @keyframes enterR { from { transform:translateX(160%) rotate(20deg); opacity:0; } to { transform:none; opacity:1; } }
+  @keyframes drop { from { transform:translateY(-200%); opacity:0; } to { transform:none; opacity:1; } }
+  @keyframes bob { 50% { transform:translateY(-12%); } }
+  @keyframes wiggle { 25% { transform:rotate(-8deg); } 75% { transform:rotate(8deg); } }
+  @keyframes drift { from { transform:translate(0,0); } to { transform:translate(40px,-120px); opacity:0; } }
+  .story .w { transition:color .2s, background .2s; border-radius:4px; color:#aaa; }
+  .story .w.read { color:var(--ink); }
+  .story .w.now { color:var(--ink); background:#ffe68a; }
+  .pager { order:5; display:flex; gap:8px; justify-content:center; margin-top:10px; }
+  .pager .btn:disabled { opacity:.4; cursor:default; }
+  .card.reading { touch-action:pan-y; }
+  @media (prefers-reduced-motion: reduce) { .actor, .spark { animation:none !important; } }
   .topbar { width:100%; max-width:760px; margin-bottom:12px; }
   .btn { background:var(--accent); border:none; border-radius:10px; padding:8px 14px; font-weight:bold; cursor:pointer; font-family:inherit; font-size:1rem; }
   #game { flex-direction:column; align-items:center; width:100%; }
@@ -72,7 +92,7 @@
     <li>Tap again for the next card.</li>
   </ol>
   <p>In Spelling Bee, listen to the word and type it in, then press Check. You get 3 tries for each word. Tap 🔊 to hear it again.</p>
-  <p>In Story Time, tap the card to turn the pages. Book Ideas shows great books to look out for at the library.</p>
+  <p>In Story Time, watch the picture and read along as the words light up. Swipe or press ▶ for the next page, or press 🔊 Read to me to hear it. Book Ideas shows great books to look out for at the library.</p>
   <p>In Maths, type your answer and press Check. You get 3 tries for each question.</p>
 </div>
 <div id="menu" class="cats"></div>
@@ -93,7 +113,13 @@
     <img class="pic" id="pic" alt="" hidden>
     <div class="cover" id="cover" hidden></div>
     <div class="big" id="big" hidden></div>
+    <div class="scene" id="scene" hidden></div>
     <div class="story" id="story" hidden></div>
+    <div class="pager" id="pager" hidden>
+      <button class="btn" id="prevPg" aria-label="Previous page">◀</button>
+      <button class="btn" id="readPg" aria-label="Read this page to me">🔊 Read to me</button>
+      <button class="btn" id="nextPg" aria-label="Next page">▶</button>
+    </div>
     <button class="speak" id="speak" hidden aria-label="Hear the word">🔊</button>
     <div class="clue" id="clue" hidden></div>
     <div class="name" id="name"></div>
@@ -566,9 +592,9 @@ const SUBJECTS = {
   books: { title: "Book Ideas", icon: "📚", unit: "books", note: "Look at the cover, then tap to find out about the book",
     icons: {"Reception":"🧸","Year 1":"1️⃣","Year 2":"2️⃣","Year 3":"3️⃣","Year 4":"4️⃣","Year 5":"5️⃣","Year 6":"6️⃣"},
     decks: Object.fromEntries(Object.entries(BOOKS).map(([c, l]) => [c, l.map(s => { const [title, author, about] = s.split("|"); return {kind: "book", answer: title, author, about, tag: `Book Ideas · ${c} · ${AGES[c]}`}; })])) },
-  stories: { title: "Story Time", icon: "📖", unit: "stories", note: "Tap the card to turn the page. Tap 🔊 to hear it read aloud",
+  stories: { title: "Story Time", icon: "📖", unit: "stories", note: "Read along as the words light up. Swipe for the next page",
     icons: {"Reception":"🧸","Year 1":"1️⃣","Year 2":"2️⃣","Year 3":"3️⃣","Year 4":"4️⃣","Year 5":"5️⃣","Year 6":"6️⃣"},
-    decks: Object.fromEntries(Object.entries(STORIES).map(([c, l]) => [c, l.map(([emoji, title, pages]) => ({kind: "story", emoji, answer: title, pages, tag: `Story Time · ${c} · ${AGES[c]}`}))])) },
+    decks: Object.fromEntries(Object.entries(STORIES).map(([c, l]) => [c, l.map(([emoji, title, pages]) => ({kind: "story", emoji, answer: title, pages, year: c, tag: `Story Time · ${c} · ${AGES[c]}`}))])) },
   spelling: { title: "Spelling Bee", icon: "🐝", note: "Listen to the word, spell it out loud, then tap to check",
     icons: {"Reception":"🧸","Year 1":"1️⃣","Year 2":"2️⃣","Years 3–4":"🐝","Years 5–6":"🏆"},
     decks: Object.fromEntries(Object.entries(SPELLING).map(([c, l]) => [c, l.split(",").map(s => { const [w, clue] = s.split(":"); return {kind: "spell", answer: w, clue, tag: `Spelling · ${c} · ${AGES[c]}`}; })])) }
@@ -658,7 +684,7 @@ function button(icon, label, small, onclick) {
 }
 
 function showSubjects() {
-  subject = null; window.speechSynthesis && speechSynthesis.cancel();
+  subject = null; stopReading();
   $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = true; $("rules").hidden = false; $("editor").hidden = true;
   $("sub").textContent = "Pick a subject";
   for (const [k, S] of Object.entries(SUBJECTS)) {
@@ -669,7 +695,7 @@ function showSubjects() {
 
 function showDecks(s) {
   subject = s; const S = SUBJECTS[s]; $("rules").hidden = true; $("editor").hidden = true;
-  window.speechSynthesis && speechSynthesis.cancel();
+  stopReading();
   $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = false;
   $("sub").textContent = `${S.title}: pick a deck`;
   for (const name of [...Object.keys(S.decks), "Mixed"]) {
@@ -738,7 +764,8 @@ function say(word) {
 
 async function show() {
   revealed = false; ready = false;
-  for (const id of ["pic", "big", "speak", "clue", "spellForm", "cover", "story"]) $(id).hidden = true;
+  for (const id of ["pic", "big", "speak", "clue", "spellForm", "cover", "story", "scene", "pager"]) $(id).hidden = true;
+  stopReading(); $("card").classList.remove("reading");
   page = -1;
   $("tries").textContent = ""; $("tries").className = "tries";
   $("name").textContent = ""; $("name").className = "name"; $("hint").textContent = "Loading…";
@@ -771,7 +798,7 @@ async function show() {
     say(c.answer);
   }
   $("count").textContent = `Card ${i + 1} of ${deck.length}` + (typed(c) ? ` · ⭐ ${score}` : "");
-  $("hint").textContent = c.kind === "spell" ? "Type the word and press Check. Tap 🔊 to hear it again" : c.kind === "sum" ? "Type your answer and press Check. You have 3 tries" : c.kind === "story" ? "Tap the card to start reading" : "Tap the card to reveal the answer";
+  $("hint").textContent = c.kind === "spell" ? "Type the word and press Check. Tap 🔊 to hear it again" : c.kind === "sum" ? "Type your answer and press Check. You have 3 tries" : c.kind === "story" ? "Tap the card to open the story" : "Tap the card to reveal the answer";
   const card = $("card"); card.classList.remove("pop"); void card.offsetWidth; card.classList.add("pop");
   ready = true;
   const next = deck[i + 1];
@@ -780,7 +807,7 @@ async function show() {
   if (deck[i + 10] && deck[i + 10].kind === "photo" && !(deck[i + 10].title in images)) loadImages(i + 10);
 }
 
-$("speak").onclick = e => { e.stopPropagation(); const c = deck[i]; say(c.kind === "story" ? c.pages[page][1] : c.answer); };
+$("speak").onclick = e => { e.stopPropagation(); say(deck[i].answer); };
 const typed = c => c.kind === "spell" || c.kind === "sum";
 function openForm(placeholder, mode) {
   triesLeft = 3; const inp = $("spellIn");
@@ -844,25 +871,116 @@ async function showCover(c) {
   img.className = "pic book"; img.src = url;
   const n = deck[i + 1]; if (n && n.kind === "book") findCover(n);
 }
-function turnPage() {
-  const c = deck[i]; page++;
+// Story Time: an animated scene for each page, with the words lighting up as they're read
+const PACE = {"Reception":1300,"Year 1":950,"Year 2":750,"Year 3":600,"Year 4":520,"Year 5":460,"Year 6":420}; // ms per word
+const SKIES = ["linear-gradient(#bfe6ff,#eaf7ff)","linear-gradient(#ffd9a8,#fff1dc)","linear-gradient(#c9f2c7,#effbee)","linear-gradient(#e2d4ff,#f6f0ff)","linear-gradient(#ffd0de,#fff0f4)","linear-gradient(#b8f1ec,#eafffd)"];
+let readTimer = null, wordAt = 0, speaking = false;
+const graphemes = s => window.Intl && Intl.Segmenter ? [...new Intl.Segmenter().segment(s)].map(x => x.segment) : Array.from(s);
+function stopReading() {
+  clearInterval(readTimer); readTimer = null; speaking = false;
+  if (window.speechSynthesis) speechSynthesis.cancel();
+}
+function words() { return [...$("story").querySelectorAll(".w")]; }
+function lightTo(n) {
+  words().forEach((w, k) => { w.className = "w" + (k < n ? " read" : k === n ? " now" : ""); });
+}
+function pageDone() {
+  stopReading(); lightTo(1e9);
+  $("scene").classList.add("still");
+  const c = deck[i];
+  $("hint").textContent = page + 1 < c.pages.length ? "Swipe or press ▶ for the next page" : "Swipe or press ▶ to finish the story";
+}
+function runWords(ms) {
+  clearInterval(readTimer);
+  const ws = words();
+  lightTo(wordAt);
+  readTimer = setInterval(() => { wordAt++; if (wordAt >= ws.length) pageDone(); else lightTo(wordAt); }, ms);
+}
+function showPage(n) {
+  const c = deck[i];
+  stopReading(); page = n;
   $("big").hidden = true; $("name").textContent = "";
-  if (page < c.pages.length) {
-    const [pic, words] = c.pages[page];
-    $("big").textContent = pic; $("big").hidden = false;
-    $("story").textContent = words; $("story").hidden = false; $("speak").hidden = false;
-    $("count").textContent = `Page ${page + 1} of ${c.pages.length}`;
-    $("hint").textContent = page + 1 < c.pages.length ? "Tap the card to turn the page" : "Tap the card to finish the story";
-  } else if (page === c.pages.length) {
-    $("story").hidden = true; $("speak").hidden = true;
+  if (page >= c.pages.length) {
+    $("scene").hidden = true; $("story").hidden = true; $("pager").hidden = true; $("card").classList.remove("reading");
     $("big").textContent = "⭐"; $("big").hidden = false; $("name").textContent = "The End";
     $("count").textContent = `Story ${i + 1} of ${deck.length}`;
     $("hint").textContent = i + 1 < deck.length ? "Tap for the next story" : "That was the last story! Tap to start again";
-  } else next();
+    return;
+  }
+  const [pic, text] = c.pages[page];
+  const scene = $("scene");
+  scene.className = "scene"; scene.style.background = SKIES[page % SKIES.length]; scene.innerHTML = "";
+  for (const g of graphemes(pic)) { const s = document.createElement("span"); s.className = "actor"; s.textContent = g; scene.appendChild(s); }
+  for (let k = 0; k < 5; k++) {
+    const s = document.createElement("span"); s.className = "spark"; s.textContent = "✨";
+    s.style.left = r(5, 90) + "%"; s.style.top = r(20, 80) + "%"; s.style.animationDelay = (-Math.random() * 6) + "s";
+    scene.appendChild(s);
+  }
+  $("story").innerHTML = "";
+  text.split(" ").forEach((w, k) => { if (k) $("story").append(" "); const s = document.createElement("span"); s.className = "w"; s.textContent = w; $("story").appendChild(s); });
+  scene.hidden = false; $("story").hidden = false; $("pager").hidden = false; $("card").classList.add("reading");
+  $("prevPg").disabled = page === 0;
+  $("count").textContent = `Page ${page + 1} of ${c.pages.length}`;
+  $("hint").textContent = "Read along as the words light up";
+  wordAt = 0;
+  setTimeout(() => { if (page === n && deck[i] === c && !readTimer && !speaking) runWords(PACE[c.year] || 600); }, 900);
 }
+function readAloud() {
+  const c = deck[i];
+  if (!c || c.kind !== "story" || page < 0 || page >= c.pages.length) return;
+  if (!window.speechSynthesis) { $("hint").textContent = "This browser can't read aloud. Try Chrome, Safari or Edge."; return; }
+  stopReading();
+  $("scene").classList.remove("still");
+  const text = c.pages[page][1], starts = [];
+  let pos = 0; for (const w of text.split(" ")) { starts.push(pos); pos += w.length + 1; }
+  if (!voice) pickVoice();
+  const u = new SpeechSynthesisUtterance(text);
+  if (voice) u.voice = voice;
+  u.lang = voice ? voice.lang : "en-GB"; u.rate = .85;
+  let gotBoundary = false;
+  wordAt = 0; lightTo(0); speaking = true;
+  u.onboundary = e => {
+    if (e.name && e.name !== "word") return;
+    gotBoundary = true; clearInterval(readTimer); readTimer = null;
+    let k = 0; while (k + 1 < starts.length && starts[k + 1] <= e.charIndex) k++;
+    wordAt = k; lightTo(k);
+  };
+  u.onend = () => { if (speaking) pageDone(); };
+  speechSynthesis.speak(u);
+  // Some devices don't report each word, so keep the highlight moving at speaking pace
+  setTimeout(() => { if (speaking && !gotBoundary) runWords(380); }, 700);
+}
+function turnPage(dir) {
+  const c = deck[i];
+  if (page >= c.pages.length) { if (dir > 0) next(); return; }
+  const n = page + dir;
+  if (n < 0) return;
+  showPage(n);
+}
+$("pager").onclick = e => e.stopPropagation();
+$("prevPg").onclick = () => turnPage(-1);
+$("nextPg").onclick = () => turnPage(1);
+$("readPg").onclick = readAloud;
+// Swipe left for the next page, right to go back
+let swipeX = null, swipeY = null;
+$("card").addEventListener("pointerdown", e => { swipeX = e.clientX; swipeY = e.clientY; });
+$("card").addEventListener("pointerup", e => {
+  if (swipeX === null) return;
+  const dx = e.clientX - swipeX, dy = e.clientY - swipeY; swipeX = null;
+  const c = deck[i];
+  if (c && c.kind === "story" && page >= 0 && Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) { swallowClick = true; turnPage(dx < 0 ? 1 : -1); }
+});
+let swallowClick = false;
+document.addEventListener("keydown", e => {
+  const c = deck[i];
+  if ($("game").hidden || !c || c.kind !== "story" || page < 0) return;
+  if (e.key === "ArrowRight") turnPage(1);
+  if (e.key === "ArrowLeft") turnPage(-1);
+});
 $("card").onclick = () => {
   if (!ready) { show(); return; }
-  if (deck[i].kind === "story") { turnPage(); return; }
+  if (swallowClick) { swallowClick = false; return; }
+  if (deck[i].kind === "story") { if (page < 0) showPage(0); else if (page >= deck[i].pages.length) next(); return; }
   if (typed(deck[i])) { if (revealed) next(); else $("spellIn").focus(); return; }
   if (!revealed) {
     revealed = true;
