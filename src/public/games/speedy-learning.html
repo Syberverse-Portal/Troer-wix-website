@@ -81,6 +81,54 @@
   .grow { animation:pop 1.2s ease-out both; }
   .bubble { animation:smoke 4s ease-out infinite; }
   .flag { animation:flap .6s ease-in-out infinite alternate; }
+  .scene .act, .scene .cam, .scene .bubble-in, .scene .zzz, .scene .floatUp, .scene .raincloud, .scene .drip, .scene .popIn, .scene .crumb, .scene .speed, .scene .splash, .scene .dust, .scene .tear { transform-box:fill-box; transform-origin:center bottom; }
+  .scene .cam { transform-box:view-box; transform-origin:50% 60%; animation:kb1 14s ease-in-out both; }
+  .scene .cam.kb2 { animation-name:kb2; } .scene .cam.kb3 { animation-name:kb3; } .scene .cam.kb4 { animation-name:kb4; }
+  @keyframes kb1 { from { transform:scale(1.02); } to { transform:scale(1.14) translate(-8px,-4px); } }
+  @keyframes kb2 { from { transform:scale(1.14) translate(8px,-4px); } to { transform:scale(1.02); } }
+  @keyframes kb3 { from { transform:scale(1.06) translate(-12px,0); } to { transform:scale(1.06) translate(12px,-2px); } }
+  @keyframes kb4 { from { transform:scale(1.06) translate(12px,-2px); } to { transform:scale(1.12) translate(-6px,-6px); } }
+  .do-walk { animation:strollX 6s ease-in-out infinite alternate; }
+  @keyframes strollX { from { transform:translateX(-40px); } to { transform:translateX(40px); } }
+  .do-run { animation:runX 2.2s ease-in-out infinite alternate; } .do-run .legL, .do-run .legR { animation-duration:.25s !important; }
+  @keyframes runX { from { transform:translateX(-70px); } to { transform:translateX(70px) rotate(4deg); } }
+  .do-jump { animation:jumpY .9s cubic-bezier(.3,.6,.4,1) infinite; }
+  @keyframes jumpY { 0%, 100% { transform:translateY(0) scaleY(1); } 10% { transform:translateY(0) scale(1.1,.85); } 45% { transform:translateY(-55px) scale(.95,1.08); } 80% { transform:translateY(0) scale(1.08,.9); } }
+  .do-fly { animation:flyUp 4s ease-in-out infinite; }
+  @keyframes flyUp { 0% { transform:translate(0,0); } 50% { transform:translate(30px,-70px) rotate(-6deg); } 100% { transform:translate(0,0); } }
+  .do-swim { animation:swimX 3s ease-in-out infinite alternate; }
+  @keyframes swimX { 0% { transform:translate(-50px,0) rotate(-4deg); } 50% { transform:translate(0,-10px) rotate(4deg); } 100% { transform:translate(50px,0) rotate(-4deg); } }
+  .do-fall { animation:tumble 2.6s ease-in infinite; }
+  @keyframes tumble { 0% { transform:none; } 40% { transform:rotate(-20deg) translateY(-10px); } 70%, 100% { transform:rotate(80deg) translate(10px,10px); } }
+  .do-sleep { animation:snooze 3s ease-in-out infinite; transform:rotate(-10deg); }
+  @keyframes snooze { 0%, 100% { transform:rotate(-10deg) scaleY(1); } 50% { transform:rotate(-10deg) scaleY(.96); } }
+  .do-sad { animation:droop 3s ease-in-out infinite; }
+  @keyframes droop { 0%, 100% { transform:translateY(0) scaleY(1); } 50% { transform:translateY(3px) scaleY(.94); } }
+  .do-scared { animation:shiver .15s linear infinite; }
+  @keyframes shiver { 0%, 100% { transform:translateX(-2px); } 50% { transform:translateX(2px); } }
+  .do-celebrate { animation:cheerJump 1s ease-in-out infinite; }
+  @keyframes cheerJump { 0%, 100% { transform:translateY(0) rotate(0); } 30% { transform:translateY(-30px) rotate(-8deg); } 60% { transform:translateY(-30px) rotate(8deg); } }
+  .do-hug { animation:hugIn 3s ease-in-out infinite alternate; }
+  @keyframes hugIn { from { transform:translateX(0); } to { transform:translateX(var(--hx, 0)); } }
+  .do-eat { animation:chomp .5s ease-in-out infinite; }
+  @keyframes chomp { 50% { transform:scale(1.05,.95); } }
+  .do-surprised { animation:startle 1.6s ease-out infinite; }
+  @keyframes startle { 0%, 60%, 100% { transform:none; } 10% { transform:translateY(-22px) scale(1.06); } 25% { transform:none; } }
+  .do-think { animation:ponder 3s ease-in-out infinite; }
+  @keyframes ponder { 50% { transform:rotate(-5deg); } }
+  .do-talk { animation:chatter .4s ease-in-out infinite; }
+  @keyframes chatter { 50% { transform:translateY(-3px); } }
+  .bubble-in { animation:pop .5s 1.4s cubic-bezier(.3,1.5,.6,1) both; }
+  .zzz { animation:zzz 2.4s ease-out infinite; } @keyframes zzz { from { transform:translate(0,0); opacity:1; } to { transform:translate(24px,-40px); opacity:0; } }
+  .floatUp { animation:floatUp 2.4s ease-out infinite; } @keyframes floatUp { from { transform:translateY(20px) scale(.5); opacity:0; } 30% { opacity:1; } to { transform:translateY(-50px) scale(1.2); opacity:0; } }
+  .raincloud { animation:creep 4s ease-in-out infinite; }
+  .drip { animation:drip 1.2s ease-in infinite; } @keyframes drip { from { transform:translateY(0); opacity:1; } to { transform:translateY(18px); opacity:0; } }
+  .tear { animation:drip 1.6s ease-in infinite; }
+  .popIn { animation:popBang 1.6s ease-out infinite; } @keyframes popBang { 0% { transform:scale(0); } 20% { transform:scale(1.4); } 40%, 100% { transform:scale(1); } }
+  .crumb { animation:crumb 1.2s ease-in infinite; } @keyframes crumb { from { transform:translate(0,0); opacity:1; } to { transform:translate(-14px,60px); opacity:0; } }
+  .speed { animation:speed .6s linear infinite; } @keyframes speed { from { transform:translateX(30px); opacity:0; } 50% { opacity:.9; } to { transform:translateX(-30px); opacity:0; } }
+  .splash { animation:splashUp 1.4s ease-out infinite; } @keyframes splashUp { from { transform:translateY(0); opacity:1; } to { transform:translateY(-30px); opacity:0; } }
+  .dust { animation:dust 1s ease-out infinite; } @keyframes dust { from { transform:scale(.4); opacity:.8; } to { transform:scale(1.6) translateX(-10px); opacity:0; } }
   @media (prefers-reduced-motion: reduce) { .scene * { animation:none !important; } }
   .story .w { transition:color .2s, background .2s; border-radius:4px; color:#aaa; }
   .story .w.read { color:var(--ink); }
@@ -1450,7 +1498,7 @@ const DRAW = {
       <circle cx="0" cy="-102" r="22" fill="${skin}"/>
       <path d="M-22 -104 Q-20 -128 0 -127 Q20 -128 22 -104 Q12 -116 -22 -104Z" fill="${hair}"/>
       ${girl ? `<circle cx="-24" cy="-100" r="7" fill="${hair}"/><circle cx="24" cy="-100" r="7" fill="${hair}"/>` : ""}
-      ${eyes(-8, 8, -102)}<path d="M-7 -92 Q0 -86 7 -92" stroke="#222" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      ${eyes(-8, 8, -102)}${o.mood === "sad" ? `<path d="M-7 -88 Q0 -94 7 -88" stroke="#222" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M-9 -98 q-2 6 0 9 q2 -3 0 -9Z" fill="#5dade2" class="tear"/>` : o.mood === "scared" || o.mood === "surprised" ? `<ellipse cx="0" cy="-90" rx="4" ry="5" fill="#222"/>` : o.mood === "happy" ? `<path d="M-8 -93 Q0 -83 8 -93Z" fill="#b03a2e"/>` : `<path d="M-7 -92 Q0 -86 7 -92" stroke="#222" stroke-width="2.5" fill="none" stroke-linecap="round"/>`}<circle cx="-14" cy="-94" r="4" fill="#ff8a8a" opacity=".45"/><circle cx="14" cy="-94" r="4" fill="#ff8a8a" opacity=".45"/>
       ${o.crown ? `<path d="M-16 -122 L-16 -136 L-8 -128 L0 -140 L8 -128 L16 -136 L16 -122Z" fill="#f4c20d"/>` : ""}
       ${o.helmet ? `<path d="M-24 -100 Q-24 -130 0 -130 Q24 -130 24 -100 L24 -96 L-24 -96Z" fill="#b8c2cc"/><rect x="-14" y="-106" width="28" height="5" fill="#57606a"/>` : ""}
       ${o.space ? `<circle cx="0" cy="-102" r="29" fill="#bfe6ff" opacity=".45" stroke="#fff" stroke-width="3"/>` : ""}
@@ -1661,6 +1709,49 @@ function storyHero(story) {
   const c = castFor(all, {hero: [{kind: "kid", opts: {name: story.answer}}]});
   return c.slice(0, 1);
 }
+// What the main character is doing, worked out from the words on the page
+const ACTIONS = [
+  ["sleep", /\b(sleep|slept|asleep|nap|snor|bed\b|bedtime|tired)/i],
+  ["sad", /\b(sad|cried|cry|crying|tears|sob|upset|lonely|miss(ed)?)\b/i],
+  ["scared", /\b(scared|afraid|frightened|wobbl|shak(e|ing)|nervous|terrif|knees|danger)/i],
+  ["fall", /\b(fell|fall|tipped|crash|slipp|tumbl|toppl|swept)/i],
+  ["fly", /\b(fly|flew|flying|zoom|blast off|soar|float|rocket|took off|lift ?off)/i],
+  ["swim", /\b(swim|swam|swimming|dive|diving|dived|splash)/i],
+  ["jump", /\b(jump|hop|hops|hopped|leap|bounce)/i],
+  ["run", /\b(ran|run|runs|running|race|raced|dash|chase|chased|hurr|rush)/i],
+  ["eat", /\b(eat|ate|eats|gobbl|munch|biscuit|lunch|breakfast|tea time|apples?|cake|sandwich|tastiest)/i],
+  ["hug", /\b(hug|hugged|friends?|love|kind|together|thank)/i],
+  ["celebrate", /\b(won|win|wins|winner|cheer|hooray|yay|well done|medal|prize|party|celebrat|laugh|fun|best|ovation|clap)/i],
+  ["surprised", /\b(surprise|shock|gasp|wow|amaz|suddenly|all at once|!)/i],
+  ["think", /\b(think|thought|idea|wonder|plan|curious|puzzl|realis|decided)/i],
+  ["talk", /\b(said|says|say|shout|asked|whisper|called|replied|told|explain)/i],
+  ["walk", /\b(walk|went|go|goes|set off|climb|journey|travel|explor|follow|row)/i],
+];
+function bubble(x, y, words, think) {
+  const lines = []; let line = "";
+  for (const w of words.split(" ")) { if ((line + " " + w).trim().length > 20) { lines.push(line.trim()); line = w; } else line += " " + w; }
+  if (line.trim()) lines.push(line.trim());
+  const shown = lines.slice(0, 3), w = Math.min(170, Math.max(...shown.map(l => l.length)) * 7 + 22), hgt = shown.length * 15 + 14;
+  const bx = Math.max(6, Math.min(394 - w, x - w / 2)), by = Math.max(4, y - 150 - hgt);
+  const tail = think ? `<circle cx="${x - 6}" cy="${by + hgt + 8}" r="5" fill="#fff" stroke="#333" stroke-width="2"/><circle cx="${x - 10}" cy="${by + hgt + 18}" r="3" fill="#fff" stroke="#333" stroke-width="2"/>` : `<path d="M${x - 8} ${by + hgt - 2} L${x} ${by + hgt + 16} L${x + 8} ${by + hgt - 2}Z" fill="#fff" stroke="#333" stroke-width="2"/>`;
+  return `<g class="bubble-in">${tail}<rect x="${bx}" y="${by}" width="${w}" height="${hgt}" rx="${think ? 18 : 10}" fill="#fff" stroke="#333" stroke-width="2"/><path d="M${x - 7} ${by + hgt - 1} h14" stroke="#fff" stroke-width="4"/>${shown.map((l, k) => `<text x="${bx + w / 2}" y="${by + 20 + k * 15}" font-size="12" text-anchor="middle" font-family="Trebuchet MS, sans-serif" fill="#222">${l.replace(/&/g, "&amp;").replace(/</g, "&lt;")}</text>`).join("")}</g>`;
+}
+function effectsFor(act, x, y, text, kind) {
+  const quote = (text.match(/(?:^|\s)['‘“"]((?:[^'’”"]|\b['’]\b){2,70}?)['’”"](?=\s|$|[.,!?;:])/) || [])[1];
+  let fx = "";
+  if (quote) fx += bubble(x, y, quote, false);
+  else if (act === "think") fx += bubble(x, y, /idea|plan|realis/i.test(text) ? "💡 I've got an idea!" : "Hmm… 🤔", true);
+  if (act === "sleep") fx += [0, 1, 2].map(k => `<text x="${x + 20}" y="${y - 120}" font-size="${14 + k * 5}" font-weight="bold" fill="#5b6ee1" class="zzz" style="animation-delay:${k * .8}s">Z</text>`).join("");
+  if (act === "celebrate" || act === "hug") fx += Array.from({length: 14}, (_, k) => { const sym = act === "hug" ? "❤" : ["★", "✦", "❤"][k % 3], col = act === "hug" ? "#e8473f" : ["#f4b400", "#eb5a9d", "#2f80ed", "#27ae60"][k % 4]; return `<text x="${x + r(-60, 60)}" y="${y - r(40, 130)}" font-size="${r(10, 18)}" fill="${col}" class="floatUp" style="animation-delay:${(Math.random() * 2).toFixed(1)}s">${sym}</text>`; }).join("");
+  if (act === "sad") fx += `<g class="raincloud"><ellipse cx="${x}" cy="${y - 165}" rx="30" ry="12" fill="#8a95a0"/><ellipse cx="${x + 14}" cy="${y - 172}" rx="18" ry="11" fill="#8a95a0"/>${[-16, -4, 8, 20].map((d, k) => `<line x1="${x + d}" y1="${y - 152}" x2="${x + d - 3}" y2="${y - 142}" stroke="#5dade2" stroke-width="2" class="rainDrop" style="animation-delay:${k * .2}s"/>`).join("")}</g>`;
+  if (act === "scared") fx += [-1, 1].map(s => `<path d="M${x + s * 26} ${y - 120} q${s * 4} 6 0 10 q${-s * 4} -4 0 -10Z" fill="#7fc8ff" class="drip"/>`).join("");
+  if (act === "surprised") fx += `<text x="${x + 18}" y="${y - 130}" font-size="30" font-weight="bold" fill="#e8473f" class="popIn">!</text>`;
+  if (act === "eat") fx += Array.from({length: 6}, (_, k) => `<circle cx="${x - 10 + r(-6, 6)}" cy="${y - 80}" r="2.5" fill="#c69c6d" class="crumb" style="animation-delay:${k * .3}s"/>`).join("");
+  if (act === "run" || act === "fly") fx += [0, 1, 2].map(k => `<line x1="${x - 50 - k * 8}" y1="${y - 40 - k * 18}" x2="${x - 80 - k * 8}" y2="${y - 40 - k * 18}" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8" class="speed" style="animation-delay:${k * .15}s"/>`).join("");
+  if (act === "swim" || act === "fall") fx += Array.from({length: 6}, (_, k) => `<circle cx="${x + r(-30, 30)}" cy="${y - r(0, 20)}" r="${r(2, 5)}" fill="#bfe6ff" class="splash" style="animation-delay:${k * .25}s"/>`).join("");
+  if (act === "walk" || act === "run") fx += [0, 1, 2].map(k => `<ellipse cx="${x - 30 - k * 18}" cy="${y + 2}" rx="7" ry="3" fill="#0002" class="dust" style="animation-delay:${k * .3}s"/>`).join("");
+  return fx;
+}
 function sceneSVG(story, n) {
   if (!story.hero) story.hero = storyHero(story);
   const text = story.pages[n][1], low = text.toLowerCase();
@@ -1679,12 +1770,18 @@ function sceneSVG(story, n) {
   // Characters walk or fly in, then keep moving until the page has been read
   const cast = castFor(text, story);
   const water = setting === "underwater";
+  const action = ACTIONS.find(([, re]) => re.test(text)), act = action ? action[0] : "";
+  const mood = act === "sad" ? "sad" : act === "scared" ? "scared" : act === "surprised" ? "surprised" : act === "celebrate" || act === "hug" ? "happy" : "";
+  for (const c of cast) if (["kid", "adult", "knight", "king", "astronaut"].includes(c.kind)) c.opts = {...c.opts, mood};
   const slots = cast.length === 1 ? [200] : cast.length === 2 ? [150, 260] : [110, 200, 300];
   cast.forEach((c, k) => {
     const big = c.kind === "whale" ? .9 : c.kind === "adult" || c.kind === "king" || c.kind === "dinosaur" || c.kind === "dragon" ? .78 : .85;
     const y = water ? 196 : 206, flip = slots[k] > 220 && c.kind !== "kid" && c.kind !== "adult" ? -1 : 1;
     const enter = ["walkL", "walkR", "pop"][k % 3];
-    svg += `<g transform="translate(${slots[k]},${y})"><g class="enter ${enter}" style="animation-delay:${(.15 + k * .35).toFixed(2)}s"><g class="idle ${c.kind}" style="animation-delay:${(k * .4).toFixed(1)}s"><g transform="scale(${(big * flip).toFixed(2)},${big})">${DRAW[c.kind](c.opts)}</g></g></g></g>`;
+    const doing = k === 0 || act === "hug" || act === "celebrate" || act === "scared" ? act : "";
+    const hugShift = act === "hug" && cast.length > 1 ? (k === 0 ? "--hx:40px" : "--hx:-40px") : "";
+    svg += `<g transform="translate(${slots[k]},${y})"><g class="enter ${enter}" style="animation-delay:${(.15 + k * .35).toFixed(2)}s"><g class="act ${doing ? "do-" + doing : ""}" style="animation-delay:${(1.3 + k * .35).toFixed(2)}s;${hugShift}"><g class="idle ${c.kind}" style="animation-delay:${(k * .4).toFixed(1)}s"><g transform="scale(${(big * flip).toFixed(2)},${big})">${DRAW[c.kind](c.opts)}</g></g></g></g></g>`;
+    if (k === 0) svg += effectsFor(act, slots[k], y, text, c.kind);
   });
   // Weather on top
   for (const [re, w] of WEATHER) if (re.test(text)) {
@@ -1694,7 +1791,10 @@ function sceneSVG(story, n) {
     if (w === "rainbow") svg += `<g opacity=".8" class="grow">${["#e74c3c", "#f39c12", "#f1c40f", "#2ecc71", "#3498db", "#9b59b6"].map((col, k) => `<path d="M${40 + k * 10} 200 A${160 - k * 10} ${140 - k * 10} 0 0 1 ${360 - k * 10} 200" stroke="${col}" stroke-width="10" fill="none"/>`).join("")}</g>`;
     if (w === "smoke") svg += Array.from({length: 6}, (_, k) => `<circle cx="${r(40, 360)}" cy="${r(60, 160)}" r="${r(14, 26)}" fill="#9e9e9e" opacity=".5" class="smoke" style="animation-delay:${k * .5}s"/>`).join("");
   }
-  return `<svg viewBox="0 0 400 240" preserveAspectRatio="xMidYMax slice" role="img" aria-label="Picture for this page">${svg}</svg>`;
+  if (/magic|glow|shimmer|sparkl|wish|silver|starlight|golden/i.test(text)) svg += Array.from({length: 18}, () => `<path d="M0 -6 L1.5 -1.5 L6 0 L1.5 1.5 L0 6 L-1.5 1.5 L-6 0 L-1.5 -1.5Z" fill="#fff6b0" transform="translate(${r(10, 390)},${r(10, 200)}) scale(${(Math.random() + .5).toFixed(2)})" class="twinkle" style="animation-delay:${(Math.random() * 2).toFixed(1)}s"/>`).join("");
+  const cam = ["kb1", "kb2", "kb3", "kb4"][n % 4];
+  const shade = night ? `<rect width="400" height="240" fill="url(#vig)"/>` : `<rect width="400" height="240" fill="url(#vig)" opacity=".35"/>`;
+  return `<svg viewBox="0 0 400 240" preserveAspectRatio="xMidYMax slice" role="img" aria-label="Picture for this page"><defs><radialGradient id="vig" cx=".5" cy=".5" r=".75"><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".45"/></radialGradient></defs><g class="cam ${cam}">${svg}</g>${shade}</svg>`;
 }
 
 // Story Time: an animated scene for each page, with the words lighting up as they're read
