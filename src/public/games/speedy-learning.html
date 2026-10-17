@@ -8,7 +8,7 @@
   :root { --bg:#1f6f43; --card:#fffdf5; --ink:#222; --accent:#f4b400; --muted:#777; }
   * { box-sizing:border-box; }
   body { margin:0; min-height:100vh; background:radial-gradient(circle at top,#2e9b5e,var(--bg)); font-family:"Trebuchet MS",system-ui,sans-serif; color:var(--ink); display:flex; flex-direction:column; align-items:center; padding:16px; user-select:none; }
-  h1 { color:#fff; text-shadow:2px 2px 0 #0004; margin:8px 0 4px; text-align:center; font-size:2.4rem; }
+  h1 { color:#fff; text-shadow:2px 2px 0 #0004; margin:8px 0 4px; text-align:center; font-size:clamp(1.6rem,7vw,2.4rem); padding:0 52px; }
   .sub { color:#fff; opacity:.9; margin:0 0 16px; text-align:center; }
   .cats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; width:100%; max-width:760px; }
   .cat { background:var(--card); border:4px solid var(--accent); border-radius:16px; padding:16px 8px; font-size:1.1rem; font-weight:bold; cursor:pointer; text-align:center; box-shadow:0 4px 0 #0003; font-family:inherit; color:var(--ink); }
@@ -107,6 +107,19 @@
   .opt.right { background:#d4f5dc; border-color:#1f6f43; }
   .opt.wrong { background:#fbd9d6; border-color:#b3261e; }
   .opt:disabled { cursor:default; }
+  .mute { position:fixed; top:calc(10px + env(safe-area-inset-top, 0px)); right:calc(10px + env(safe-area-inset-right, 0px)); z-index:20; font-size:1.4rem; background:var(--card); border:3px solid var(--accent); border-radius:50%; width:46px; height:46px; cursor:pointer; box-shadow:0 3px 0 #0003; }
+  #confetti { position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:30; }
+  .card.flip { animation:flip .45s ease; }
+  @keyframes flip { 0% { transform:rotateY(0); } 50% { transform:rotateY(90deg); } 100% { transform:rotateY(0); } }
+  .card.cheer { animation:cheer .5s ease; }
+  @keyframes cheer { 30% { transform:scale(1.04) rotate(-1deg); } 60% { transform:scale(1.02) rotate(1deg); } }
+  .cat .best { display:block; color:#b07d00; font-weight:bold; font-size:.8rem; margin-top:2px; }
+  .finish { position:fixed; inset:0; z-index:25; display:flex; align-items:center; justify-content:center; background:#0007; padding:16px; }
+  .finish .box { background:var(--card); border:6px solid var(--accent); border-radius:24px; padding:24px; text-align:center; max-width:360px; width:100%; box-shadow:0 10px 0 #0004; animation:pop .4s ease; }
+  .finish .stars { font-size:3rem; letter-spacing:6px; }
+  .finish h2 { margin:8px 0; font-size:1.8rem; }
+  .finish .btns { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:14px; }
+  @media (prefers-reduced-motion: reduce) { .card.flip, .card.cheer { animation:none; } }
   .topbar { width:100%; max-width:760px; margin-bottom:12px; }
   .btn { background:var(--accent); border:none; border-radius:10px; padding:8px 14px; font-weight:bold; cursor:pointer; font-family:inherit; font-size:1rem; }
   #game { flex-direction:column; align-items:center; width:100%; }
@@ -132,6 +145,8 @@
 </style>
 </head>
 <body>
+<button class="mute" id="mute" type="button" aria-label="Sound on or off">🔊</button>
+<canvas id="confetti" aria-hidden="true"></canvas>
 <h1>⚡ Speedy Learning ⚡</h1>
 <p class="sub" id="sub">Pick a subject</p>
 
@@ -168,6 +183,15 @@
     <input id="chatIn" type="text" placeholder="e.g. What is an adverb?" maxlength="200">
     <button class="btn" id="chatGo">Ask</button>
   </form>
+</div>
+
+<div class="finish" id="finish" hidden>
+  <div class="box">
+    <div class="stars" id="finStars"></div>
+    <h2 id="finTitle"></h2>
+    <p id="finText"></p>
+    <div class="btns"><button class="btn" id="finAgain" type="button">Play again</button><button class="btn ghost" id="finDecks" type="button">← Decks</button></div>
+  </div>
 </div>
 
 <div id="game" style="display:flex" hidden>
@@ -799,7 +823,7 @@ $("edPlay").onclick = () => {
   if (bad.length) { $("edErr").textContent = `I can't work out: ${bad.join(", ")}. Add = and the answer to those lines.`; return; }
   if (!cards.length) { $("edErr").textContent = subject === "maths" ? "Type at least one sum first." : "Type at least one word first."; return; }
   $("editor").hidden = true;
-  begin(cards);
+  deckName = "My Own"; begin(cards);
 };
 
 function deckFor(s, name) {
@@ -837,6 +861,8 @@ function showDecks(s) {
     const mixedSums = Object.keys(MATHS).length * 8 + " questions";
     const small = s === "maths" && name === "Mixed" ? mixedSums : (AGES[name] ? `${AGES[name]} · ${size}` : size);
     button(name === "Mixed" ? "🎲" : (S.icons && S.icons[name]) || S.icon, name === "Mixed" ? "Mix of Everything" : name, small, () => start(name));
+    const best = store.get(`speedy-best|${s}|${name}`);
+    if (best) { const t = document.createElement("span"); t.className = "best"; t.textContent = `Best: ⭐ ${best}`; $("menu").lastChild.appendChild(t); }
   }
   if (CUSTOM[s]) button("✏️", s === "maths" ? "My Own Sums" : "My Own Words", "Type your own", () => openEditor(s));
 }
@@ -858,9 +884,10 @@ async function loadImages(from) {
   for (const t of todo) if (!(t in images)) images[t] = null;
 }
 
-function start(name) { return begin(deckFor(subject, name)); }
+let deckName = "";
+function start(name) { deckName = name; return begin(deckFor(subject, name)); }
 async function begin(cards) {
-  deck = shuffle(cards); i = 0; score = 0;
+  deck = shuffle(cards); i = 0; score = 0; streak = 0;
   $("menu").hidden = true; $("topbar").hidden = true; $("game").hidden = false;
   $("sub").textContent = SUBJECTS[subject].note;
   $("credit").textContent = subject === "animals" ? "Photos from Wikipedia" : subject === "flags" ? "Flags from flagcdn.com" : subject === "books" ? "Covers from Open Library" : "";
@@ -965,6 +992,62 @@ function isRight(c, guess) {
   }
   return norm(guess) === norm(c.answer);
 }
+// ---------- Sounds, confetti, streaks and best scores ----------
+let muted = store.get("speedy-muted") === "1", actx = null, streak = 0;
+$("mute").textContent = muted ? "🔇" : "🔊";
+$("mute").onclick = () => { muted = !muted; store.set("speedy-muted", muted ? "1" : "0"); $("mute").textContent = muted ? "🔇" : "🔊"; if (!muted) sfx("flip"); };
+function tone(freq, start, dur, type = "sine", vol = .15) {
+  const o = actx.createOscillator(), g = actx.createGain();
+  o.type = type; o.frequency.setValueAtTime(freq, actx.currentTime + start);
+  g.gain.setValueAtTime(vol, actx.currentTime + start); g.gain.exponentialRampToValueAtTime(.001, actx.currentTime + start + dur);
+  o.connect(g).connect(actx.destination); o.start(actx.currentTime + start); o.stop(actx.currentTime + start + dur);
+}
+function sfx(kind) {
+  if (muted) return;
+  try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === "suspended") actx.resume(); } catch (e) { return; }
+  if (kind === "right") { tone(660, 0, .15); tone(880, .1, .25); }
+  else if (kind === "wrong") { tone(200, 0, .25, "square", .06); }
+  else if (kind === "flip") { tone(500, 0, .08, "triangle", .08); tone(750, .05, .08, "triangle", .08); }
+  else if (kind === "win") { [523, 659, 784, 1047].forEach((n, k) => tone(n, k * .13, .3, "triangle", .12)); }
+}
+const conf = $("confetti"), cctx = conf.getContext("2d"); let bits = [], confRunning = false;
+function confetti(n = 60) {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  conf.width = innerWidth; conf.height = innerHeight;
+  const colours = ["#f4b400", "#e8473f", "#2f80ed", "#27ae60", "#eb5a9d", "#9b51e0"];
+  for (let k = 0; k < n; k++) bits.push({x: innerWidth / 2 + (Math.random() - .5) * 120, y: innerHeight * .45, vx: (Math.random() - .5) * 12, vy: -Math.random() * 12 - 4, s: Math.random() * 6 + 4, c: colours[k % 6], r: Math.random() * 6, life: 90 + Math.random() * 40});
+  if (!confRunning) { confRunning = true; requestAnimationFrame(drawConfetti); }
+}
+function drawConfetti() {
+  cctx.clearRect(0, 0, conf.width, conf.height);
+  bits = bits.filter(b => b.life-- > 0 && b.y < conf.height + 20);
+  for (const b of bits) { b.vy += .35; b.x += b.vx; b.y += b.vy; b.r += .2; cctx.save(); cctx.translate(b.x, b.y); cctx.rotate(b.r); cctx.fillStyle = b.c; cctx.fillRect(-b.s / 2, -b.s / 4, b.s, b.s / 2); cctx.restore(); }
+  if (bits.length) requestAnimationFrame(drawConfetti); else { confRunning = false; cctx.clearRect(0, 0, conf.width, conf.height); }
+}
+const PRAISE = ["Correct! Well done!", "Brilliant!", "Super star!", "Fantastic!", "Amazing!", "You got it!"];
+function scored(right) {
+  const card = $("card");
+  if (right) {
+    streak++; sfx("right"); confetti(streak >= 3 ? 70 : 35);
+    card.classList.remove("cheer"); void card.offsetWidth; card.classList.add("cheer");
+    $("tries").textContent = "✅ " + PRAISE[r(0, PRAISE.length - 1)] + (streak >= 3 ? ` 🔥 ${streak} in a row!` : "");
+  } else { streak = 0; sfx("wrong"); }
+  if (i + 1 >= deck.length) setTimeout(finishDeck, 1300);
+}
+function finishDeck() {
+  const pct = deck.length ? score / deck.length : 0, stars = pct >= .9 ? 3 : pct >= .6 ? 2 : pct > 0 ? 1 : 0;
+  if (deckName) {
+    const key = `speedy-best|${subject}|${deckName}`, old = parseInt(store.get(key) || "0", 10);
+    if (score > old) store.set(key, `${score}/${deck.length}`);
+  }
+  $("finStars").textContent = "⭐".repeat(stars) + "☆".repeat(3 - stars);
+  $("finTitle").textContent = stars === 3 ? "Superstar!" : stars === 2 ? "Great work!" : "Good try!";
+  $("finText").textContent = `You got ${score} out of ${deck.length}.` + (stars < 3 ? " Play again to get 3 stars!" : "");
+  $("finish").hidden = false; sfx("win"); confetti(160);
+}
+$("finAgain").onclick = () => { $("finish").hidden = true; deck.length && (shuffle(deck), i = 0, score = 0, streak = 0, show()); };
+$("finDecks").onclick = () => { $("finish").hidden = true; showDecks(subject); };
+
 function pickOption(btn, choice) {
   const c = deck[i];
   if (revealed) return;
@@ -975,6 +1058,7 @@ function pickOption(btn, choice) {
   if (!right) btn.classList.add("wrong");
   $("tries").textContent = right ? "✅ Correct! Well done!" : "❌ Not quite. The right answer is shown in green.";
   $("tries").className = "tries " + (right ? "good" : "bad");
+  scored(right);
   $("count").textContent = `Card ${i + 1} of ${deck.length} · ⭐ ${score}`;
   $("hint").textContent = i + 1 < deck.length ? "Tap the card for the next question" : `Finished! You got ${score} out of ${deck.length}. Tap to play again`;
 }
@@ -994,16 +1078,17 @@ $("spellForm").onsubmit = e => {
     if (!right && c.kind === "spell") say(c.answer);
   };
   if (isRight(c, guess)) {
-    score++; $("tries").textContent = "✅ Correct! Well done!"; $("tries").className = "tries good"; done(true);
+    score++; $("tries").textContent = "✅ Correct! Well done!"; $("tries").className = "tries good"; done(true); scored(true);
   } else {
     triesLeft--;
     const f = $("spellForm"); f.classList.remove("shake"); void f.offsetWidth; f.classList.add("shake");
     $("tries").className = "tries bad";
     if (triesLeft > 0) {
+      sfx("wrong");
       $("tries").textContent = `❌ Not quite. ${triesLeft} ${triesLeft === 1 ? "try" : "tries"} left`;
       $("spellIn").select(); if (c.kind === "spell") say(c.answer);
     } else {
-      $("tries").textContent = c.kind === "spell" ? "❌ Out of tries. Here's how to spell it:" : "❌ Out of tries. Here's the answer:"; done(false);
+      $("tries").textContent = c.kind === "spell" ? "❌ Out of tries. Here's how to spell it:" : "❌ Out of tries. Here's the answer:"; done(false); scored(false);
     }
   }
 };
@@ -1384,11 +1469,15 @@ $("card").addEventListener("pointerup", e => {
   const dx = e.clientX - swipeX, dy = e.clientY - swipeY; swipeX = null;
   const c = deck[i];
   if (c && c.kind === "story" && page >= 0 && Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) { swallowClick = true; turnPage(dx < 0 ? 1 : -1); }
+  else if (c && c.kind !== "story" && dx < -60 && Math.abs(dx) > Math.abs(dy) && revealed) { swallowClick = true; next(); }
 });
 let swallowClick = false;
 document.addEventListener("keydown", e => {
   const c = deck[i];
-  if ($("game").hidden || !c || c.kind !== "story" || page < 0) return;
+  if ($("game").hidden || !c || !$("finish").hidden) return;
+  if (c.kind === "quiz" && !revealed && /^[1-3]$/.test(e.key)) { const b = $("opts").children[+e.key - 1]; if (b) b.click(); return; }
+  if (c.kind !== "story" && document.activeElement.tagName !== "INPUT" && (e.key === "ArrowRight" || e.key === " " || e.key === "Enter")) { e.preventDefault(); $("card").click(); return; }
+  if (c.kind !== "story" || page < 0) return;
   if (e.key === "ArrowRight") turnPage(1);
   if (e.key === "ArrowLeft") turnPage(-1);
 });
@@ -1401,6 +1490,7 @@ $("card").onclick = () => {
   if (!revealed) {
     revealed = true;
     const c = deck[i];
+    const card = $("card"); card.classList.remove("flip"); void card.offsetWidth; card.classList.add("flip"); sfx("flip");
     $("name").textContent = c.kind === "sum" ? (c.worded ? `${c.question}\n${c.answer}` : `${c.question} = ${c.answer}`) : c.answer;
     if (c.kind === "spell") $("name").className = "name spell";
     if (c.kind === "sum") $("big").hidden = true;
