@@ -261,6 +261,10 @@
   .closeX { width:42px; height:42px; border-radius:50%; border:1px solid var(--line); background:var(--card); color:var(--ink); font-size:1.2rem; cursor:pointer; box-shadow:var(--shadow); }
   .drawer .chat { flex:1; height:auto; max-width:none; min-height:0; }
   @media (prefers-reduced-motion: reduce) { .drawer { transition:none; } }
+  .toast { position:fixed; left:50%; bottom:calc(20px + env(safe-area-inset-bottom, 0px)); transform:translate(-50%, 140%); background:#1f2540; color:#fff; padding:10px 18px; border-radius:999px; font-weight:800; z-index:50; transition:transform .3s; pointer-events:none; }
+  .toast.show { animation:toastIn 2.6s ease both; }
+  @keyframes toastIn { 0% { transform:translate(-50%, 140%); } 12%, 85% { transform:translate(-50%, 0); } 100% { transform:translate(-50%, 140%); } }
+  .panel.warn { background:#fff6db; border-color:#ffd54a; color:#5c4400; }
   /* ---------- Modern theme ---------- */
   /* Layout: a light, calm page; colour comes from each subject, not the background */
   :root { --bg:#f5f6fb; --card:#ffffff; --ink:#1f2540; --muted:#6b7185; --line:#e6e8f2; --accent:#6c5ce7; --accent-ink:#ffffff; --good:#16a34a; --good-bg:#e7f8ec; --bad:#dc2626; --bad-bg:#fdecec; --c:#6c5ce7; --soft:#f0eefe;
@@ -1329,7 +1333,14 @@ const CUSTOM = {
     help: "Type one word per line. You can add a clue after a colon, like: rhinoceros: a big animal with a horn",
     example: "because\nfriend: someone you like to play with\nnecessary\nWednesday: a day of the week" }
 };
-const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+// Saves to the browser; if the browser blocks storage (some previews and private windows), keeps it in memory for this visit
+const memStore = new Map();
+const canStore = (() => { try { localStorage.setItem("speedy-test", "1"); localStorage.removeItem("speedy-test"); return true; } catch (e) { return false; } })();
+const store = {
+  get(k) { if (canStore) { try { return localStorage.getItem(k); } catch (e) {} } return memStore.has(k) ? memStore.get(k) : null; },
+  set(k, v) { memStore.set(k, String(v)); if (canStore) { try { localStorage.setItem(k, v); } catch (e) {} } },
+  keys() { const out = new Set(memStore.keys()); if (canStore) { try { for (let n = 0; n < localStorage.length; n++) out.add(localStorage.key(n)); } catch (e) {} } return [...out]; }
+};
 
 function solve(q) {
   const m = q.replace(/\s+/g, "").match(/^(-?\d+(?:\.\d+)?)([+\-−x×*÷\/])(-?\d+(?:\.\d+)?)$/i);
@@ -1400,7 +1411,7 @@ function showSubjects() {
     SUBJECT_TINT[k] = TINTS[tileN % TINTS.length]; button(S.icon, S.title, n, () => showDecks(k));
   }
   button("💬", "What Does This Mean?", "Ask about school words", openChat);
-  button("📈", "My Progress", player === "Me" ? "Stars, scores and practice" : `${player}'s stars, scores and practice`, showProgress);
+  { const dn = loadJSON(doneKey(), []).length, an = loadJSON(logKey(), []).length; button("📈", "My Progress", an || dn ? `${an} answers · ${dn} finished` : "Stars, scores and practice", showProgress); }
 }
 
 function showDecks(s) {
@@ -1879,6 +1890,7 @@ function openWriting(band) {
     $("wFeedback").innerHTML = `<div class="stars">${"⭐".repeat(stars)}${"☆".repeat(3 - stars)}</div><p><b>${words} words, ${sentences(t).length} sentences.</b> You used ${got} of ${res.length} writing skills:</p><ul>${res.map(([l, ok]) => `<li>${ok ? "✅" : "➡️ Try adding:"} ${l}</li>`).join("")}</ul>`;
     sfx(stars === 3 ? "win" : "right"); if (stars === 3) confetti(120);
     if (subject !== "writing") subject = "writing";
+    recordDone(`Writing Workshop · ${band}`, `${got} of ${res.length} writing skills`, stars);
     record({kind: "writing", question: prompt, answer: `${got}/${res.length}`, tag: `Writing Workshop · ${band}`, subj: "writing"}, got / res.length >= .5);
   };
 }
@@ -1906,21 +1918,35 @@ function record(c, ok) {
   const ids = Object.keys(miss); if (ids.length > 300) delete miss[ids[0]];
   saveJSON(missKey(), miss);
 }
+const doneKey = () => `speedy-done|${player}`;
+function recordDone(what, detail, stars) {
+  const done = loadJSON(doneKey(), []);
+  done.push({t: Date.now(), s: subject, what, detail, stars});
+  while (done.length > 300) done.shift();
+  saveJSON(doneKey(), done);
+  const days = loadJSON(dayKey(), []); if (!days.includes(today())) { days.push(today()); saveJSON(dayKey(), days.slice(-400)); }
+  toast("✓ Saved to My Progress");
+}
+function toast(msg) {
+  let t = document.getElementById("toast");
+  if (!t) { t = document.createElement("div"); t.id = "toast"; t.className = "toast"; t.setAttribute("role", "status"); document.body.appendChild(t); }
+  t.textContent = msg; t.classList.remove("show"); void t.offsetWidth; t.classList.add("show");
+}
 function streakDays(days) { let n = 0; const d = new Date(); for (;;) { const k = d.toISOString().slice(0, 10); if (days.includes(k)) { n++; d.setDate(d.getDate() - 1); } else if (n === 0 && k === today()) { d.setDate(d.getDate() - 1); } else break; } return n; }
 function showProgress() {
   stopReading(); stopTimers();
   subject = null; year = "";
   $("menu").hidden = true; $("rules").hidden = true; $("game").hidden = true; $("editor").hidden = true; $("topbar").hidden = false; $("years").hidden = true; $("writing").hidden = true;
   $("sub").textContent = "My Progress";
-  const log = loadJSON(logKey(), []), days = loadJSON(dayKey(), []), miss = loadJSON(missKey(), {});
+  const log = loadJSON(logKey(), []), days = loadJSON(dayKey(), []), miss = loadJSON(missKey(), {}), done = loadJSON(doneKey(), []), booksSeen = loadJSON(`speedy-books|${player}`, []);
   const total = log.length, right = log.filter(x => x.ok).length, pct = total ? Math.round(right / total * 100) : 0;
   const bySubject = {}; for (const x of log) { const b = bySubject[x.s] ||= {n: 0, ok: 0}; b.n++; b.ok += x.ok; }
   const byTopic = {}; for (const x of log) { const key = `${(SUBJECTS[x.s] || {title: x.s}).title} · ${x.topic || x.d}`; const b = byTopic[key] ||= {n: 0, ok: 0}; b.n++; b.ok += x.ok; }
-  const weak = Object.entries(byTopic).filter(([, b]) => b.n >= 5).map(([k, b]) => [k, Math.round(b.ok / b.n * 100), b.n]).sort((a, b) => a[1] - b[1]).slice(0, 6);
+  const weak = Object.entries(byTopic).filter(([, b]) => b.n >= 5).map(([k, b]) => [k, Math.round(b.ok / b.n * 100), b.n]).filter(x => x[1] < 80).sort((a, b) => a[1] - b[1]).slice(0, 6);
   const strong = Object.entries(byTopic).filter(([, b]) => b.n >= 5).map(([k, b]) => [k, Math.round(b.ok / b.n * 100)]).sort((a, b) => b[1] - a[1]).slice(0, 3);
-  const bests = []; for (let k = 0; k < localStorage.length; k++) { const key = localStorage.key(k); if (key && key.startsWith("speedy-best|")) bests.push(key); }
+  const bests = store.keys().filter(key => key && key.startsWith("speedy-best|"));
   const streakN = streakDays(days), todayN = log.filter(x => new Date(x.t).toISOString().slice(0, 10) === today()).length;
-  const BADGES = [["🌱", "First answer", total >= 1], ["⭐", "50 answers", total >= 50], ["🌟", "500 answers", total >= 500], ["🏆", "2,000 answers", total >= 2000], ["🔥", "3-day streak", streakN >= 3], ["🚀", "7-day streak", streakN >= 7], ["🎯", "90% in a subject (20+ answers)", Object.values(bySubject).some(b => b.n >= 20 && b.ok / b.n >= .9)], ["🗺️", "Tried 8 subjects", Object.keys(bySubject).length >= 8], ["🎓", "Did a SATs test", !!bySubject.sats], ["🧹", "Cleared all mistakes", total >= 20 && !Object.keys(miss).length]];
+  const BADGES = [["🌱", "First answer", total >= 1], ["⭐", "50 answers", total >= 50], ["🌟", "500 answers", total >= 500], ["🏆", "2,000 answers", total >= 2000], ["🔥", "3-day streak", streakN >= 3], ["🚀", "7-day streak", streakN >= 7], ["🎯", "90% in a subject (20+ answers)", Object.values(bySubject).some(b => b.n >= 20 && b.ok / b.n >= .9)], ["🗺️", "Tried 8 subjects", Object.keys(bySubject).length >= 8], ["🎓", "Did a SATs test", !!bySubject.sats], ["🧹", "Cleared all mistakes", total >= 20 && !Object.keys(miss).length], ["📖", "Finished a story", done.some(x => /^Story Time/.test(x.what))], ["🖊️", "Did a writing task", done.some(x => /^Writing/.test(x.what))], ["🏁", "Finished 10 sections", done.length >= 10]];
   const week = Array.from({length: 7}, (_, k) => { const d = new Date(); d.setDate(d.getDate() - 6 + k); const key = d.toISOString().slice(0, 10); return [d.toLocaleDateString("en-GB", {weekday: "short"}), log.filter(x => new Date(x.t).toISOString().slice(0, 10) === key).length]; });
   const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
   const p = $("progress");
@@ -1929,11 +1955,13 @@ function showProgress() {
     <div class="panel"><h2>⭐ ${player === "Me" ? "My" : esc(player) + "'s"} scores</h2><div class="stats">
       <div class="stat"><b>${total}</b><span>questions answered</span></div><div class="stat"><b>${pct}%</b><span>right overall</span></div>
       <div class="stat"><b>${streakN}🔥</b><span>day streak</span></div><div class="stat"><b>${todayN}</b><span>answered today</span></div>
-      <div class="stat"><b>${Object.keys(miss).length}</b><span>to practise</span></div><div class="stat"><b>${bests.length}</b><span>decks with a best score</span></div></div></div>
+      <div class="stat"><b>${Object.keys(miss).length}</b><span>to practise</span></div><div class="stat"><b>${done.length}</b><span>sections finished</span></div><div class="stat"><b>${booksSeen.length}</b><span>books explored</span></div></div></div>
+    ${!canStore ? `<div class="panel warn"><b>⚠️ This browser isn't saving progress.</b> Progress is kept while this page is open, but will be lost when it's closed. Open the game in a normal browser window (not a private window or preview) to keep it.</div>` : ""}
+    <div class="panel"><h2>🏁 Finished sections</h2>${done.length ? `<ul class="recent">${done.slice(-12).reverse().map(x => `<li>${"⭐".repeat(x.stars || 0)}${"☆".repeat(3 - (x.stars || 0))} <b>${esc(x.what)}</b> · ${esc(x.detail)} <small>${new Date(x.t).toLocaleDateString("en-GB", {day: "numeric", month: "short"})}</small></li>`).join("")}</ul>` : "<p>When you finish a quiz, maths or spelling deck, a story, a writing task or a SATs paper, it appears here with your stars.</p>"}</div>
     <div class="panel"><h2>🔁 Practise my mistakes</h2><p>${Object.keys(miss).length ? `There are ${Object.keys(miss).length} questions to try again. Each one stays here until it's been answered right twice.` : "No mistakes to practise. Brilliant!"}</p>${Object.keys(miss).length ? `<button class="btn" id="practise" type="button">Practise now</button>` : ""}</div>
     <div class="panel"><h2>📅 This week</h2><div class="week">${week.map(([d, n]) => `<div class="day"><i class="${n ? "on" : ""}">${n || ""}</i>${d}</div>`).join("")}</div></div>
     <div class="panel"><h2>📚 Subjects</h2>${Object.keys(bySubject).length ? `<div class="bars">${Object.entries(bySubject).sort((a, b) => b[1].n - a[1].n).map(([s, b], k) => { const v = Math.round(b.ok / b.n * 100); return `<div class="barRow"><span>${esc((SUBJECTS[s] || {title: s}).title)}</span><div class="track" title="${b.ok} of ${b.n} right"><div class="fill" style="width:${v}%;background:${SUBJECT_COLOURS[k % 8]}"></div></div><span class="pct">${v}%</span></div>`; }).join("")}</div>` : "<p>Play any quiz, maths, spelling or SATs deck and your scores appear here.</p>"}</div>
-    <div class="panel"><h2>💪 Topics to work on</h2>${weak.length ? `<ol class="weak">${weak.map(([k, v, n]) => `<li>${esc(k)}: <b>${v}%</b> (${n} answers)</li>`).join("")}</ol>` : "<p>Answer at least 5 questions in a topic to see which ones need more practice.</p>"}${strong.length ? `<p>🌟 Best topics: ${strong.map(([k, v]) => `${esc(k)} (${v}%)`).join(", ")}</p>` : ""}</div>
+    <div class="panel"><h2>💪 Topics to work on</h2>${weak.length ? `<ol class="weak">${weak.map(([k, v, n]) => `<li>${esc(k)}: <b>${v}%</b> (${n} answers)</li>`).join("")}</ol>` : (Object.values(byTopic).some(b => b.n >= 5) ? "<p>Nothing to worry about: every topic you've tried is 80% or better. 🎉</p>" : "<p>Answer at least 5 questions in a topic to see which ones need more practice.</p>")}${strong.length ? `<p>🌟 Best topics: ${strong.map(([k, v]) => `${esc(k)} (${v}%)`).join(", ")}</p>` : ""}</div>
     <div class="panel"><h2>🏅 Badges</h2><div class="badges">${BADGES.map(([i, t, on]) => `<span class="badge ${on ? "" : "off"}" title="${esc(t)}">${i} ${esc(t)}</span>`).join("")}</div></div>
     <div class="panel"><h2>🕑 Recent answers</h2>${log.length ? `<ul class="recent">${log.slice(-10).reverse().map(x => `<li>${x.ok ? "✅" : "❌"} ${esc(x.q.replace(/\n/g, " "))} <small>(${esc((SUBJECTS[x.s] || {title: x.s}).title)})</small></li>`).join("")}</ul>` : "<p>Nothing yet. Let's play!</p>"}
       <p><button class="btn ghost" id="resetKid" type="button">Start ${esc(player)}'s progress again</button> <span id="resetMsg"></span></p></div>`;
@@ -1943,7 +1971,7 @@ function showProgress() {
   $("newKid").onkeydown = e => { if (e.key === "Enter") $("addKid").click(); };
   if ($("practise")) $("practise").onclick = () => { const m = loadJSON(missKey(), {}); const cards = Object.values(m).map(x => ({...x.card, subj: x.s, tag: "Practise my mistakes · " + ((SUBJECTS[x.s] || {}).title || "")})); subject = Object.values(m)[0].s; deckName = ""; $("progress").hidden = true; $("writing").hidden = true; begin(cards.slice(-30)); };
   let armed = false;
-  $("resetKid").onclick = () => { if (!armed) { armed = true; $("resetMsg").textContent = "Press again to confirm."; return; } store.set(logKey(), "[]"); store.set(missKey(), "{}"); store.set(dayKey(), "[]"); showProgress(); };
+  $("resetKid").onclick = () => { if (!armed) { armed = true; $("resetMsg").textContent = "Press again to confirm."; return; } store.set(logKey(), "[]"); store.set(missKey(), "{}"); store.set(dayKey(), "[]"); store.set(doneKey(), "[]"); store.set(`speedy-books|${player}`, "[]"); showProgress(); };
 }
 
 // ---------- Sounds, confetti, streaks and best scores ----------
@@ -2017,6 +2045,7 @@ function finishDeck(final = score, timeUp = false) {
     if (score > old) store.set(key, `${score}/${deck.length}`);
   }
   $("finStars").textContent = "⭐".repeat(stars) + "☆".repeat(3 - stars);
+  recordDone(`${(SUBJECTS[subject] || {title: "Practice"}).title}${deckName ? " · " + deckName : ""}`, `${score} / ${deck.length}`, stars);
   $("finRing").style.setProperty("--p", Math.round(pct * 100)); $("finPct").textContent = `${score}/${deck.length}`;
   $("finTitle").textContent = stars === 3 ? "Superstar!" : stars === 2 ? "Great work!" : "Good try!";
   $("finText").textContent = (timeUp ? "⏳ Time's up! " : "") + `You got ${score} out of ${deck.length}.` + (stars < 3 ? " Play again to get 3 stars!" : "");
@@ -2485,6 +2514,7 @@ function showPage(n) {
     $("story").hidden = true; $("pager").hidden = true; $("card").classList.remove("reading");
     $("scene").classList.add("still"); $("name").textContent = "The End";
     if (watching) { watching = false; $("card").classList.remove("watching"); music(false); sfx("win"); confetti(80); }
+    if (!c.doneSaved) { c.doneSaved = true; recordDone(`Story Time · ${c.answer}`, "Read the whole story", 3); }
     $("count").textContent = `Story ${i + 1} of ${deck.length}`;
     $("hint").textContent = i + 1 < deck.length ? "Tap for the next story" : "That was the last story! Tap to start again";
     return;
@@ -2603,6 +2633,7 @@ $("card").onclick = () => {
     if (c.kind === "spell") $("name").className = "name spell";
     if (c.kind === "sum") $("big").hidden = true;
     if (c.kind === "book") {
+      if (!c.seen) { c.seen = true; const b = loadJSON(`speedy-books|${player}`, []); if (!b.includes(c.answer)) { b.push(c.answer); saveJSON(`speedy-books|${player}`, b); } }
       $("pic").hidden = true; $("cover").hidden = true;
       $("big").textContent = "📖"; $("big").hidden = false;
       $("clue").textContent = `by ${c.author}\n\n${c.about}`; $("clue").hidden = false;
