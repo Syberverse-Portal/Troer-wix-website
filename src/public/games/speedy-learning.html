@@ -24,6 +24,13 @@
   .edBtns { display:flex; gap:10px; flex-wrap:wrap; }
   .btn.ghost { background:#e8e8e8; }
   .sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+  .spellForm { display:flex; gap:8px; width:100%; margin-top:14px; }
+  .spellForm input { flex:1; min-width:0; font:inherit; font-size:1.3rem; padding:8px 10px; border:3px solid #ccc; border-radius:10px; }
+  .spellForm input:focus { outline:none; border-color:var(--accent); }
+  .spellForm.shake { animation:shake .35s; }
+  @keyframes shake { 25% { transform:translateX(-8px); } 75% { transform:translateX(8px); } }
+  .tries { min-height:1.4em; margin-top:8px; font-weight:bold; text-align:center; }
+  .tries.good { color:#1f6f43; } .tries.bad { color:#b3261e; }
   .topbar { width:100%; max-width:760px; margin-bottom:12px; }
   .btn { background:var(--accent); border:none; border-radius:10px; padding:8px 14px; font-weight:bold; cursor:pointer; font-family:inherit; font-size:1rem; }
   #game { flex-direction:column; align-items:center; width:100%; }
@@ -59,7 +66,7 @@
     <li>Tap the card to see if you were right.</li>
     <li>Tap again for the next card.</li>
   </ol>
-  <p>In Spelling Bee, listen to the word and spell it out loud. Tap 🔊 to hear it again.</p>
+  <p>In Spelling Bee, listen to the word and type it in, then press Check. You get 3 tries for each word. Tap 🔊 to hear it again.</p>
 </div>
 <div id="menu" class="cats"></div>
 
@@ -81,6 +88,12 @@
     <button class="speak" id="speak" hidden aria-label="Hear the word">🔊</button>
     <div class="clue" id="clue" hidden></div>
     <div class="name" id="name"></div>
+    <form class="spellForm" id="spellForm" hidden autocomplete="off">
+      <label for="spellIn" class="sr">Type the word</label>
+      <input id="spellIn" type="text" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Type the word">
+      <button class="btn" id="spellGo">Check</button>
+    </form>
+    <div class="tries" id="tries"></div>
   </div>
   <div class="hint" id="hint"></div>
   <div class="credit" id="credit"></div>
@@ -199,6 +212,7 @@ const $ = id => document.getElementById(id);
 const r = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
 function shuffle(a) { for (let k = a.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [a[k], a[j]] = [a[j], a[k]]; } return a; }
 
+let score = 0, triesLeft = 3;
 let subject = null, deck = [], i = 0, revealed = false, ready = false;
 const images = {}; // wiki title -> image url, or null if none
 
@@ -320,7 +334,7 @@ async function loadImages(from) {
 
 function start(name) { return begin(deckFor(subject, name)); }
 async function begin(cards) {
-  deck = shuffle(cards); i = 0;
+  deck = shuffle(cards); i = 0; score = 0;
   $("menu").hidden = true; $("topbar").hidden = true; $("game").hidden = false;
   $("sub").textContent = SUBJECTS[subject].note;
   $("credit").textContent = subject === "animals" ? "Photos from Wikipedia" : subject === "flags" ? "Flags from flagcdn.com" : "";
@@ -358,7 +372,8 @@ function say(word) {
 
 async function show() {
   revealed = false; ready = false;
-  for (const id of ["pic", "big", "speak", "clue"]) $(id).hidden = true;
+  for (const id of ["pic", "big", "speak", "clue", "spellForm"]) $(id).hidden = true;
+  $("tries").textContent = ""; $("tries").className = "tries";
   $("name").textContent = ""; $("name").className = "name"; $("hint").textContent = "Loading…";
   if (deck[i].kind === "photo") {
     for (let tries = 0; tries < deck.length; tries++) {
@@ -378,11 +393,13 @@ async function show() {
   } else if (c.kind === "sum") {
     $("big").textContent = c.worded ? c.question : c.question + " = ?"; $("big").hidden = false;
   } else {
+    triesLeft = 3; $("spellIn").value = ""; $("spellIn").disabled = false; $("spellGo").disabled = false;
+    $("spellForm").hidden = false; setTimeout(() => $("spellIn").focus(), 50);
     $("speak").hidden = false; $("clue").textContent = c.clue ? "Clue: " + c.clue : "Listen carefully!"; $("clue").hidden = false;
     say(c.answer);
   }
-  $("count").textContent = `Card ${i + 1} of ${deck.length}`;
-  $("hint").textContent = c.kind === "spell" ? "Tap 🔊 to hear it again. Tap the card to see the spelling" : "Tap the card to reveal the answer";
+  $("count").textContent = `Card ${i + 1} of ${deck.length}` + (c.kind === "spell" ? ` · ⭐ ${score}` : "");
+  $("hint").textContent = c.kind === "spell" ? "Type the word and press Check. Tap 🔊 to hear it again" : "Tap the card to reveal the answer";
   const card = $("card"); card.classList.remove("pop"); void card.offsetWidth; card.classList.add("pop");
   ready = true;
   const next = deck[i + 1];
@@ -392,8 +409,37 @@ async function show() {
 }
 
 $("speak").onclick = e => { e.stopPropagation(); say(deck[i].answer); };
+function next() { i++; if (i >= deck.length) { shuffle(deck); i = 0; score = 0; } show(); }
+const norm = s => s.trim().toLowerCase().replace(/[’']/g, "'");
+$("spellForm").onclick = e => e.stopPropagation();
+$("spellForm").onsubmit = e => {
+  e.preventDefault();
+  const c = deck[i], guess = $("spellIn").value;
+  if (revealed || !guess.trim()) return;
+  const done = right => {
+    revealed = true; $("spellIn").disabled = true; $("spellGo").disabled = true;
+    $("name").textContent = c.answer; $("name").className = "name spell";
+    $("count").textContent = `Card ${i + 1} of ${deck.length} · ⭐ ${score}`;
+    $("hint").textContent = i + 1 < deck.length ? "Tap the card for the next word" : `Finished! You got ${score} out of ${deck.length}. Tap to play again`;
+    if (!right) say(c.answer);
+  };
+  if (norm(guess) === norm(c.answer)) {
+    score++; $("tries").textContent = "✅ Correct! Well done!"; $("tries").className = "tries good"; done(true);
+  } else {
+    triesLeft--;
+    const f = $("spellForm"); f.classList.remove("shake"); void f.offsetWidth; f.classList.add("shake");
+    $("tries").className = "tries bad";
+    if (triesLeft > 0) {
+      $("tries").textContent = `❌ Not quite. ${triesLeft} ${triesLeft === 1 ? "try" : "tries"} left`;
+      $("spellIn").select(); say(c.answer);
+    } else {
+      $("tries").textContent = "❌ Out of tries. Here's how to spell it:"; done(false);
+    }
+  }
+};
 $("card").onclick = () => {
   if (!ready) { show(); return; }
+  if (deck[i].kind === "spell") { if (revealed) next(); else $("spellIn").focus(); return; }
   if (!revealed) {
     revealed = true;
     const c = deck[i];
@@ -401,10 +447,7 @@ $("card").onclick = () => {
     if (c.kind === "spell") $("name").className = "name spell";
     if (c.kind === "sum") $("big").hidden = true;
     $("hint").textContent = i + 1 < deck.length ? "Tap again for the next card" : "Last card! Tap to shuffle and play again";
-  } else {
-    i++; if (i >= deck.length) { shuffle(deck); i = 0; }
-    show();
-  }
+  } else next();
 };
 $("back").onclick = () => showDecks(subject);
 $("home").onclick = showSubjects;
