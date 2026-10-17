@@ -19,6 +19,11 @@
   .rules h2 { margin:4px 0 8px; }
   .rules ol { margin:0 0 8px; padding-left:22px; line-height:1.6; }
   .rules p { margin:0 0 4px; }
+  .editor textarea { width:100%; font:inherit; font-size:1.1rem; padding:10px; border:2px solid #ccc; border-radius:10px; resize:vertical; }
+  .editor .err { color:#b3261e; font-weight:bold; min-height:1.2em; }
+  .edBtns { display:flex; gap:10px; flex-wrap:wrap; }
+  .btn.ghost { background:#e8e8e8; }
+  .sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
   .topbar { width:100%; max-width:760px; margin-bottom:12px; }
   .btn { background:var(--accent); border:none; border-radius:10px; padding:8px 14px; font-weight:bold; cursor:pointer; font-family:inherit; font-size:1rem; }
   #game { flex-direction:column; align-items:center; width:100%; }
@@ -31,6 +36,7 @@
   .speak { font-size:4.5rem; background:none; border:none; cursor:pointer; }
   .clue { color:var(--muted); text-align:center; font-size:1.1rem; padding:0 8px; }
   .name { margin-top:18px; font-size:2rem; font-weight:bold; min-height:2.6rem; text-align:center; padding:0 10px; overflow-wrap:anywhere; }
+  .name { white-space:pre-line; }
   .name.spell { letter-spacing:4px; color:#1f6f43; }
   .hint { color:#fff; margin-top:16px; opacity:.85; text-align:center; }
   .credit { color:#fff; opacity:.7; font-size:.75rem; margin-top:10px; }
@@ -56,6 +62,15 @@
   <p>In Spelling Bee, listen to the word and spell it out loud. Tap 🔊 to hear it again.</p>
 </div>
 <div id="menu" class="cats"></div>
+
+<div class="rules editor" id="editor" hidden>
+  <h2 id="edTitle"></h2>
+  <p id="edHelp"></p>
+  <label for="edText" class="sr">Your list</label>
+  <textarea id="edText" rows="10" spellcheck="false"></textarea>
+  <p class="err" id="edErr"></p>
+  <div class="edBtns"><button class="btn" id="edPlay">Play my cards</button><button class="btn ghost" id="edBack">← Decks</button></div>
+</div>
 
 <div id="game" style="display:flex" hidden>
   <div class="bar"><button class="btn" id="back">← Decks</button><span id="count"></span></div>
@@ -142,6 +157,59 @@ function mathsDeck(name) {
   }
   return out;
 }
+// "My Own" decks, saved in this browser so they're still there next time
+const CUSTOM = {
+  maths: { key: "speedy-my-sums", title: "My Own Sums",
+    help: "Type one sum per line, like 7 x 8 or 45 - 12. The answer is worked out for you. To set your own answer, add = and the answer, like: How many legs on a spider? = 8",
+    example: "7 x 8\n45 - 12\n36 ÷ 4\n120 + 35\nHow many sides on a hexagon? = 6" },
+  spelling: { key: "speedy-my-words", title: "My Own Words",
+    help: "Type one word per line. You can add a clue after a colon, like: rhinoceros: a big animal with a horn",
+    example: "because\nfriend: someone you like to play with\nnecessary\nWednesday: a day of the week" }
+};
+const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+
+function solve(q) {
+  const m = q.replace(/\s+/g, "").match(/^(-?\d+(?:\.\d+)?)([+\-−x×*÷\/])(-?\d+(?:\.\d+)?)$/i);
+  if (!m) return null;
+  const a = +m[1], b = +m[3], op = m[2].toLowerCase();
+  const v = op === "+" ? a + b : op === "-" || op === "−" ? a - b : op === "÷" || op === "/" ? (b ? a / b : null) : a * b;
+  return v === null ? null : String(Math.round(v * 1000) / 1000);
+}
+function customDeck(s, text) {
+  const lines = text.split("\n").map(l => l.trim()).filter(Boolean), cards = [], bad = [];
+  for (const l of lines) {
+    if (s === "spelling") {
+      const k = l.indexOf(":"), w = (k < 0 ? l : l.slice(0, k)).trim(), clue = k < 0 ? "" : l.slice(k + 1).trim();
+      if (w) cards.push({kind: "spell", answer: w, clue, tag: "Spelling · My Words"});
+    } else {
+      const k = l.lastIndexOf("=");
+      let q = (k < 0 ? l : l.slice(0, k)).trim(), a = k < 0 ? "" : l.slice(k + 1).trim();
+      if (!a) a = solve(q);
+      if (!a) { bad.push(l); continue; }
+      q = q.replace(/(\d)\s*[x*]\s*(\d)/gi, "$1 × $2").replace(/(\d)\s*\/\s*(\d)/g, "$1 ÷ $2");
+      cards.push({kind: "sum", question: q, answer: a, worded: !solve(q.replace(/×/g, "x").replace(/÷/g, "/")), tag: "Maths · My Sums"});
+    }
+  }
+  return {cards, bad};
+}
+function openEditor(s) {
+  const C = CUSTOM[s];
+  $("menu").hidden = true; $("topbar").hidden = true; $("editor").hidden = false;
+  $("sub").textContent = C.title;
+  $("edTitle").textContent = C.title; $("edHelp").textContent = C.help; $("edErr").textContent = "";
+  $("edText").value = store.get(C.key) ?? C.example;
+}
+$("edBack").onclick = () => showDecks(subject);
+$("edPlay").onclick = () => {
+  const C = CUSTOM[subject], text = $("edText").value;
+  store.set(C.key, text);
+  const {cards, bad} = customDeck(subject, text);
+  if (bad.length) { $("edErr").textContent = `I can't work out: ${bad.join(", ")}. Add = and the answer to those lines.`; return; }
+  if (!cards.length) { $("edErr").textContent = subject === "maths" ? "Type at least one sum first." : "Type at least one word first."; return; }
+  $("editor").hidden = true;
+  begin(cards);
+};
+
 function deckFor(s, name) {
   const S = SUBJECTS[s];
   if (s === "maths") return name === "Mixed" ? Object.keys(MATHS).flatMap(k => mathsDeck(k).slice(0, 8)) : mathsDeck(name);
@@ -158,7 +226,7 @@ function button(icon, label, small, onclick) {
 
 function showSubjects() {
   subject = null; window.speechSynthesis && speechSynthesis.cancel();
-  $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = true; $("rules").hidden = false;
+  $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = true; $("rules").hidden = false; $("editor").hidden = true;
   $("sub").textContent = "Pick a subject";
   for (const [k, S] of Object.entries(SUBJECTS)) {
     const n = k === "maths" ? "Endless questions" : Object.values(S.decks).reduce((t, d) => t + d.length, 0) + " cards";
@@ -167,7 +235,7 @@ function showSubjects() {
 }
 
 function showDecks(s) {
-  subject = s; const S = SUBJECTS[s]; $("rules").hidden = true;
+  subject = s; const S = SUBJECTS[s]; $("rules").hidden = true; $("editor").hidden = true;
   window.speechSynthesis && speechSynthesis.cancel();
   $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = false;
   $("sub").textContent = `${S.title}: pick a deck`;
@@ -175,6 +243,7 @@ function showDecks(s) {
     const size = s === "maths" ? "30 questions" : (name === "Mixed" ? Object.values(S.decks).reduce((t, d) => t + d.length, 0) : S.decks[name].length) + " cards";
     button(name === "Mixed" ? "🎲" : S.icons[name], name === "Mixed" ? "Mix of Everything" : name, s === "maths" && name === "Mixed" ? "48 questions" : size, () => start(name));
   }
+  if (CUSTOM[s]) button("✏️", s === "maths" ? "My Own Sums" : "My Own Words", "Type your own", () => openEditor(s));
 }
 
 // Look up animal photos on Wikipedia, up to 50 per request
@@ -194,8 +263,9 @@ async function loadImages(from) {
   for (const t of todo) if (!(t in images)) images[t] = null;
 }
 
-async function start(name) {
-  deck = shuffle(deckFor(subject, name)); i = 0;
+function start(name) { return begin(deckFor(subject, name)); }
+async function begin(cards) {
+  deck = shuffle(cards); i = 0;
   $("menu").hidden = true; $("topbar").hidden = true; $("game").hidden = false;
   $("sub").textContent = SUBJECTS[subject].note;
   $("credit").textContent = subject === "animals" ? "Photos from Wikipedia" : subject === "flags" ? "Flags from flagcdn.com" : "";
@@ -229,9 +299,9 @@ async function show() {
     $("pic").className = c.kind === "flag" ? "pic flag" : "pic";
     $("pic").hidden = false;
   } else if (c.kind === "sum") {
-    $("big").textContent = c.question + " = ?"; $("big").hidden = false;
+    $("big").textContent = c.worded ? c.question : c.question + " = ?"; $("big").hidden = false;
   } else {
-    $("speak").hidden = false; $("clue").textContent = "Clue: " + c.clue; $("clue").hidden = false;
+    $("speak").hidden = false; $("clue").textContent = c.clue ? "Clue: " + c.clue : "Listen carefully!"; $("clue").hidden = false;
     say(c.answer);
   }
   $("count").textContent = `Card ${i + 1} of ${deck.length}`;
@@ -250,7 +320,7 @@ $("card").onclick = () => {
   if (!revealed) {
     revealed = true;
     const c = deck[i];
-    $("name").textContent = c.kind === "sum" ? `${c.question} = ${c.answer}` : c.answer;
+    $("name").textContent = c.kind === "sum" ? (c.worded ? `${c.question}\n${c.answer}` : `${c.question} = ${c.answer}`) : c.answer;
     if (c.kind === "spell") $("name").className = "name spell";
     if (c.kind === "sum") $("big").hidden = true;
     $("hint").textContent = i + 1 < deck.length ? "Tap again for the next card" : "Last card! Tap to shuffle and play again";
