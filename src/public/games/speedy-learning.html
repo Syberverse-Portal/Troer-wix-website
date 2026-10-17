@@ -174,6 +174,13 @@
   @keyframes pulse { 50% { transform:scale(1.12); } }
   .mute.auto { right:calc(64px + env(safe-area-inset-right, 0px)); opacity:.55; }
   .mute.auto.on { opacity:1; background:#ffe68a; }
+  .clock { background:#fff3; padding:4px 10px; border-radius:999px; font-variant-numeric:tabular-nums; }
+  .story.passage { font-size:.95rem; text-align:left; line-height:1.45; white-space:pre-line; background:#f6f1e3; border-radius:10px; padding:10px; max-height:40%; flex:0 1 auto; margin-top:26px; order:0; }
+  .big.q.small { font-size:1.15rem; margin-top:8px; }
+  .big.phon { font-size:4rem; font-family:"Comic Sans MS","Trebuchet MS",sans-serif; margin-top:30px; }
+  .finMiss { text-align:left; max-height:30vh; overflow-y:auto; padding-left:18px; font-size:.9rem; }
+  .finMiss h3 { margin:6px 0; font-size:1rem; list-style:none; margin-left:-18px; }
+  .finMiss li { margin-bottom:4px; }
   .readQ { position:absolute; top:30px; right:10px; z-index:3; font-size:1.3rem; width:44px; height:44px; border-radius:50%; border:3px solid var(--accent); background:#fff; cursor:pointer; box-shadow:0 2px 0 #0002; }
   .readRules { border:none; background:none; cursor:pointer; font-size:1.2rem; }
   .readQ:active { transform:scale(.92); }
@@ -251,12 +258,13 @@
     <div class="stars" id="finStars"></div>
     <h2 id="finTitle"></h2>
     <p id="finText"></p>
+    <ul class="finMiss" id="finMiss"></ul>
     <div class="btns"><button class="btn" id="finAgain" type="button">Play again</button><button class="btn ghost" id="finDecks" type="button">← Decks</button></div>
   </div>
 </div>
 
 <div id="game" style="display:flex" hidden>
-  <div class="bar"><button class="btn" id="back">← Decks</button><span id="count"></span></div>
+  <div class="bar"><button class="btn" id="back">← Decks</button><span id="clock" class="clock" hidden></span><span id="count"></span></div>
   <div class="card" id="card">
     <div class="tag" id="tag"></div>
     <button class="readQ" id="readQ" type="button" aria-label="Read this out loud">🔊</button>
@@ -1060,6 +1068,7 @@ $("edPlay").onclick = () => {
 
 function deckFor(s, name) {
   const S = SUBJECTS[s];
+  if (s === "sats") return satsDeck(name);
   if (s === "maths") return name === "Mixed" ? Object.keys(MATHS).flatMap(k => mathsDeck(k).slice(0, 8)) : mathsDeck(name);
   return name === "Mixed" ? Object.values(S.decks).flat() : [...S.decks[name]];
 }
@@ -1077,17 +1086,29 @@ function showSubjects() {
   $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = true; $("rules").hidden = false; $("editor").hidden = true; $("chat").hidden = true;
   $("sub").textContent = "Pick a subject";
   for (const [k, S] of Object.entries(SUBJECTS)) {
-    const n = k === "maths" ? "Endless questions" : Object.values(S.decks).reduce((t, d) => t + d.length, 0) + " " + (S.unit || "cards");
+    const n = k === "maths" ? "Endless questions" : k === "sats" ? "Every Year 1, 2, 4 and 6 test" : Object.values(S.decks).reduce((t, d) => t + d.length, 0) + " " + (S.unit || "cards");
     button(S.icon, S.title, n, () => showDecks(k));
   }
   button("💬", "What Does This Mean?", "Ask about school words", openChat);
 }
 
 function showDecks(s) {
+  stopTimers();
   subject = s; year = ""; $("years").hidden = true; const S = SUBJECTS[s]; $("rules").hidden = true; $("editor").hidden = true; $("chat").hidden = true;
   stopReading();
   $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = false;
   $("sub").textContent = `${S.title}: pick a deck`;
+  if (s === "sats") {
+    $("sub").textContent = "SATs Practice: pick a test. One try per question, just like the real thing";
+    for (const [name, [icon, info]] of Object.entries(SATS_INFO)) {
+      button(icon, name, info, () => start(name));
+      const best = store.get(`speedy-best|sats|${name}`);
+      if (best) { const t = document.createElement("span"); t.className = "best"; t.textContent = `Best: ⭐ ${best}`; $("menu").lastChild.appendChild(t); }
+    }
+    const a = document.createElement("a"); a.className = "cat"; a.href = GOVUK_PAST_PAPERS; a.target = "_blank"; a.rel = "noopener";
+    a.innerHTML = "<span>📄</span>Real past papers<small>Official papers and mark schemes on GOV.UK</small>"; $("menu").appendChild(a);
+    return;
+  }
   for (const name of [...Object.keys(S.decks), "Mixed"]) {
     const size = s === "maths" ? "30 questions" : (name === "Mixed" ? Object.values(S.decks).reduce((t, d) => t + d.length, 0) : S.decks[name].length) + " " + (S.unit || "cards");
     const mixedSums = Object.keys(MATHS).length * 8 + " questions";
@@ -1099,6 +1120,116 @@ function showDecks(s) {
   if (CUSTOM[s]) button("✏️", s === "maths" ? "My Own Sums" : "My Own Words", "Type your own", () => openEditor(s));
 }
 
+
+// ---------- SATs practice: every statutory test, in the style of the real papers ----------
+// Questions are written for this game in the same format as the Standards and Testing Agency papers.
+const GOVUK_PAST_PAPERS = "https://www.gov.uk/government/collections/national-curriculum-assessments-practice-materials";
+const fr = (n, d) => { const g = (a, b) => b ? g(b, a % b) : a, k = g(n, d); return d / k === 1 ? String(n / k) : `${n / k}/${d / k}`; };
+const SATS_ARITH = [
+  () => { const a = r(1000, 9999), b = r(100, 999); return [`${a} + ${b} =`, a + b]; },
+  () => { const a = r(2000, 9999), b = r(100, 1999); return [`${a} − ${b} =`, a - b]; },
+  () => { const a = r(100, 999), b = r(3, 9); return [`${a} × ${b} =`, a * b]; },
+  () => { const a = r(12, 99), b = r(12, 99); return [`${a} × ${b} =`, a * b]; },
+  () => { const a = r(120, 999), b = r(12, 45); return [`${a} × ${b} =`, a * b]; },
+  () => { const b = r(3, 9), c = r(100, 999); return [`${b * c} ÷ ${b} =`, c]; },
+  () => { const b = r(12, 36), c = r(21, 99); return [`${b * c} ÷ ${b} =`, c]; },
+  () => { const a = r(11, 99) / 10, b = r(101, 999) / 100; return [`${a} + ${b} =`, dec(a + b)]; },
+  () => { const a = r(30, 99) / 10, b = r(101, 299) / 100; return [`${a} − ${b} =`, dec(a - b)]; },
+  () => { const a = r(11, 999) / 100, m = [10, 100, 1000][r(0, 2)]; return [`${a} × ${m} =`, dec(a * m)]; },
+  () => { const a = r(1, 999), m = [10, 100, 1000][r(0, 2)]; return [`${a} ÷ ${m} =`, String(a / m)]; },
+  () => { const d = [5, 6, 7, 8, 9][r(0, 4)], a = r(1, d - 1), b = r(1, d - 1); return [`${a}/${d} + ${b}/${d} =`, fr(a + b, d)]; },
+  () => { const d = [4, 6, 8, 10][r(0, 3)], a = r(1, d / 2 - 1 || 1); return [`1/2 + ${a}/${d} =`, fr(d / 2 + a, d)]; },
+  () => { const d = [3, 4, 5, 8][r(0, 3)], a = r(1, d - 1), w = r(2, 9); return [`${a}/${d} × ${w} =`, fr(a * w, d)]; },
+  () => { const a = r(1, 4), b = r(a + 1, 6), c = r(1, 4), e = r(c + 1, 6); return [`${a}/${b} × ${c}/${e} =`, fr(a * c, b * e)]; },
+  () => { const a = r(1, 4), b = r(a + 1, 7), w = r(2, 5); return [`${a}/${b} ÷ ${w} =`, fr(a, b * w)]; },
+  () => { const p = [10, 20, 25, 50, 75, 5, 1][r(0, 6)], n = r(2, 40) * 20; return [`${p}% of ${n} =`, n * p / 100]; },
+  () => { const n = r(2, 15); return [`${n}² =`, n * n]; },
+  () => { const n = r(2, 6); return [`${n}³ =`, n ** 3]; },
+  () => { const a = r(2, 20), b = r(2, 9), c = r(2, 9); return [`${a} + ${b} × ${c} =`, a + b * c]; },
+  () => { const a = r(20, 90), b = r(2, 9), c = r(2, 5); return [`${a} − ${b * c} ÷ ${c} =`, a - b]; },
+  () => { const a = r(1, 9) / 10, b = r(2, 9); return [`${dec(a)} × ${b} =`, dec(a * b)]; },
+  () => { const w = r(1, 3), d = [4, 5, 8][r(0, 2)], a = r(1, d - 1); return [`${w} ${a}/${d} − ${a}/${d} =`, w]; },
+  () => { const a = r(101, 999); return [`${a * 1000} ÷ 1000 =`, a]; },
+  () => { const a = r(2, 9) * 100, b = r(2, 9) * 10; return [`${a} × ${b} =`, a * b]; },
+  () => { const t = r(1, 9), n = r(10, 99); return [`${n} = ${t} + ?`, n - t]; },
+];
+const SATS_REASON = [
+  () => { const p = r(2, 9) * 25 + 15; return [`A book costs £${(p / 100).toFixed(2)}. Ali pays with a £5 note. How much change does he get? (in pence)`, 500 - p]; },
+  () => { const s = r(8, 11), m = [15, 30, 45][r(0, 2)], d = r(35, 95); const end = s * 60 + m + d; return [`A film starts at ${s}:${String(m).padStart(2, "0")} and lasts ${d} minutes. What time does it end? (like 10:25)`, `${Math.floor(end / 60)}:${String(end % 60).padStart(2, "0")}`]; },
+  () => { const km = r(2, 9) + r(1, 9) / 10; return [`How many metres are in ${km} km?`, Math.round(km * 1000)]; },
+  () => { const a = r(1, 4), b = r(1, 4), k = r(2, 8); return [`For every ${a} red beads there are ${b} blue beads. There are ${a * k} red beads. How many blue beads?`, b * k]; },
+  () => { const l = r(4, 15), w = r(2, 9); return [`A rectangle is ${l} cm long and ${w} cm wide. What is its area? (cm²)`, l * w]; },
+  () => { const a = r(25, 75), b = r(25, 75); return [`Two angles in a triangle are ${a}° and ${b}°. What is the third angle? (°)`, 180 - a - b]; },
+  () => { const a = r(20, 160); return [`Angles on a straight line add up to 180°. One angle is ${a}°. What is the other? (°)`, 180 - a]; },
+  () => { const t = -r(2, 12), u = r(5, 20); return [`The temperature was ${t}°C. It rose by ${u}°C. What is the temperature now? (°C)`, t + u]; },
+  () => { const m = r(4, 9), a = r(1, m), b = r(1, m), c = r(1, m); return [`The mean of four numbers is ${m}. Three of them are ${a}, ${b} and ${c}. What is the fourth number?`, 4 * m - a - b - c]; },
+  () => { const p = [10, 20, 25, 50][r(0, 3)], price = r(2, 20) * 20; return [`A coat costs £${price}. It is reduced by ${p}%. What is the new price? (£)`, price - price * p / 100]; },
+  () => { const n = r(1, 9) * 10000 + r(0, 9999); return [`Round ${n} to the nearest thousand.`, Math.round(n / 1000) * 1000]; },
+  () => { const s = r(2, 9), st = r(1, 9); return [`A sequence goes up by ${s} each time: ${st}, ${st + s}, ${st + 2 * s}, … What is the 10th term?`, st + 9 * s]; },
+  () => { const x = r(1, 8), y = r(1, 8), dx = r(1, 4), dy = r(1, 4); return [`Point A is at (${x}, ${y}). It is translated ${dx} right and ${dy} up. What are its new coordinates? (like 3,5)`, `${x + dx},${y + dy}`]; },
+  () => { const n = r(3, 9), k = r(2, 6); return [`${k}y + ${n} = ${k * 7 + n}. What is y?`, 7]; },
+  () => { const tins = r(3, 9), each = r(12, 40); return [`A box holds ${each} pencils. How many pencils are in ${tins} boxes?`, tins * each]; },
+  () => { const g = r(3, 8), total = g * r(6, 15); return [`${total} children are split into ${g} equal teams. How many in each team?`, total / g]; },
+  () => { const per = r(3, 9), people = r(12, 30); return [`Minibuses carry ${per * 2} people. How many minibuses are needed for ${people * 2 + 1} people?`, Math.ceil((people * 2 + 1) / (per * 2))]; },
+  () => { const a = r(2, 9) * 100, b = r(2, 9) * 50; return [`Jo has ${a} ml of juice. She pours ${b} ml into a glass. How much is left? (ml)`, a - b]; },
+  () => { const r1 = r(2, 9); return [`A circle has a radius of ${r1} cm. What is its diameter? (cm)`, r1 * 2]; },
+  () => { const n = r(3, 6), side = r(2, 9); return [`A regular polygon has ${n + 2} sides, each ${side} cm. What is its perimeter? (cm)`, (n + 2) * side]; },
+];
+const GPS = [
+  "Write the word class of the word in capitals: She sang BEAUTIFULLY.|adverb","Write the word class of the word in capitals: The OLD house creaked.|adjective","Write the word class of the word in capitals: We waited UNTIL the rain stopped.|conjunction|subordinating conjunction","Write the word class of the word in capitals: The cat hid UNDER the bed.|preposition","Write the word class of the word in capitals: THOSE shoes are mine.|determiner","Write the word class of the word in capitals: They played football.|pronoun".replace("They", "THEY"),
+  "Write the past tense of the verb 'catch'.|caught","Write the past tense of the verb 'swim'.|swam","Write the past tense of the verb 'think'.|thought","Complete the sentence in the present perfect: I ___ my homework. (finish)|have finished","Complete with the past progressive: She ___ when the phone rang. (read)|was reading",
+  "Add a prefix to make the opposite of 'possible'.|impossible","Add a prefix to make the opposite of 'appear'.|disappear","Add a prefix to make the opposite of 'legal'.|illegal","Add a suffix to turn 'enjoy' into a noun.|enjoyment","Add a suffix to turn 'hope' into an adjective meaning full of hope.|hopeful","What is the root word of 'unhappiness'?|happy","Write the plural of 'child'.|children","Write the plural of 'knife'.|knives",
+  "Write the contracted form of 'they will'.|they'll","Write the contracted form of 'should not'.|shouldn't","Write the full form of 'won't'.|will not","Add the apostrophe: the girls coat (one girl)|girl's","Add the apostrophe: the childrens toys|children's",
+  "Which relative pronoun completes the sentence? The boy ___ lives next door is kind.|who|that","Which relative pronoun completes the sentence? The bike, ___ was red, was stolen.|which","Write the modal verb in: You must tidy your room.|must","Write the subject of the sentence: The tall girl kicked the ball.|the tall girl|girl","Write the object of the sentence: Sam ate the apple.|the apple|apple",
+  "What punctuation mark is missing at the end? Where are you going|?|question mark","What punctuation mark should join these two clauses? It was raining___ we stayed inside.|;|semicolon","Which punctuation mark introduces a list? You need___ a pen, a ruler and a rubber.|:|colon","Write a synonym for 'tiny'.|small|little|minute|miniature|wee","Write an antonym for 'ancient'.|modern|new|recent","Write the word that is a homophone of 'their' meaning 'in that place'.|there",
+  "Is this sentence active or passive? The window was broken by the ball.|passive","Is this sentence active or passive? The chef cooked the meal.|active","Is this sentence a statement, question, command or exclamation? What a lovely day it is!|exclamation","Is this sentence a statement, question, command or exclamation? Close the door.|command","Write the correct verb: If I ___ you, I would apologise. (was/were)|were","Write the correct word: We ___ late yesterday. (was/were)|were","Which word is the conjunction? I stayed in because it was cold.|because","Which word is an adverbial of time? Yesterday, we went swimming.|yesterday","Write the word that shows possibility: Perhaps it will snow.|perhaps","Write the determiner: An elephant walked by.|an",
+];
+const SATS_SPELL = [
+  ["The ___ of the tower was fifty metres.", "height"], ["I could ___ hear the music in the next room.", "barely"], ["We need to ___ the problem carefully.", "consider"], ["She ___ the ball with one hand.", "caught"], ["It is ___ to drink water every day.", "important"],
+  ["The ___ dog chewed my slipper.", "naughty"], ["My favourite ___ is Wednesday.", "weekday"], ["They walked ___ the dark tunnel.", "through"], ["He felt a ___ of excitement.", "surge"], ["The ___ has many books to borrow.", "library"],
+  ["The bus will ___ at ten o'clock.", "arrive"], ["My ___ lives next door.", "neighbour"], ["There was a long ___ outside the cinema.", "queue"], ["It is ___ to finish before lunch.", "necessary"], ["Please ___ the instructions.", "remember"],
+  ["The magician made the coin ___.", "disappear"], ["We visited an ___ castle.", "ancient"], ["She wrote her ___ at the bottom of the letter.", "signature"], ["The ___ was full of delicious food.", "restaurant"], ["He gave a clear ___ of the rules.", "explanation"],
+  ["I ___ that you are right.", "believe"], ["The weather was ___ cold.", "especially"], ["Our class won the ___.", "competition"], ["The soldier stood on ___.", "guard"], ["My ___ subject is science.", "favourite"],
+  ["The children were very ___ about the parcel.", "curious"], ["Please be ___ with the glass.", "careful"], ["We had a ___ time at the party.", "marvellous"], ["Eat plenty of fruit and ___.", "vegetables"], ["The ___ was twelve metres long.", "vehicle"],
+];
+const READING = [
+  { title: "The Lighthouse Cat", text: "On the rocky island of Gull Point stood a white lighthouse, and in the lighthouse lived a grey cat called Pepper. Every evening, as the sun sank into the sea, Pepper climbed the one hundred and twelve spiral steps to sit beside the great lamp. The keeper, old Mr Finch, said she was checking that the light was working properly.\n\nOne stormy night, the lamp flickered and went dark. Waves crashed against the rocks, and somewhere out in the blackness a ship's horn sounded. Mr Finch's hands shook as he searched for a spare bulb, but his eyes were not what they used to be. Pepper leapt onto the shelf and pushed a small box onto the floor with her paw. Inside was the bulb. Within minutes, the beam swept across the water once again, and the ship turned safely away from the rocks.\n\nThe next morning, the ship's captain rowed to the island with a gift: a tin of the finest sardines. \"For the real keeper of Gull Point,\" he said.",
+    qs: [["How many steps did Pepper climb?", ["112", "one hundred and twelve", "hundred and twelve"]], ["What was the name of the lighthouse keeper?", ["finch"]], ["Find and copy one word that shows the weather was bad that night.", ["stormy", "crashed", "storm"]], ["Why did Mr Finch struggle to find the bulb?", ["eyes", "see", "eyesight", "sight", "old"]], ["How did Pepper help?", ["box", "bulb", "pushed", "paw"]], ["Why did the captain call Pepper 'the real keeper'?", ["saved", "helped", "found", "ship", "light"]]] },
+  { title: "Amazing Honeybees", text: "Honeybees are some of the hardest-working creatures on Earth. A single hive can contain up to 60,000 bees, and each one has a job to do. The queen bee lays eggs, sometimes as many as 2,000 in a day. Worker bees, which are all female, collect nectar and pollen, clean the hive, feed the young and guard the entrance. Male bees, called drones, have only one job: to mate with a queen.\n\nTo make just one jar of honey, bees must visit around two million flowers. When a worker bee finds a good patch of flowers, she returns to the hive and performs a 'waggle dance'. The direction and length of the dance tell the other bees exactly where to fly.\n\nBees are vital to farming. As they move from flower to flower, they carry pollen, which helps plants produce fruit and seeds. Without bees, foods such as apples, strawberries and almonds would become rare and expensive.",
+    qs: [["How many bees can live in one hive?", ["60,000", "60000", "sixty thousand"]], ["What are male bees called?", ["drones", "drone"]], ["Name one job a worker bee does.", ["nectar", "pollen", "clean", "feed", "guard"]], ["What does the waggle dance tell other bees?", ["where", "direction", "flowers", "fly"]], ["Find and copy one word that means 'very important'.", ["vital"]], ["Name one food that would become rare without bees.", ["apple", "strawberr", "almond"]]] },
+  { title: "Snow Day (a poem)", text: "The world woke up in a blanket of white,\nIt fell without a whisper all through the night.\nThe cars wore hats, the hedges wore coats,\nThe pond was a mirror where nobody floats.\n\nWe pulled on our wellies, we raced out the door,\nOur footprints the first on the glittering floor.\nWe built a snowman with a carrot nose,\nAnd a scarf that was red and a smile in rows.\n\nBy tea-time the sky had turned purple and grey,\nAnd the sun said goodbye to our wonderful day.",
+    qs: [["What time of year is the poem about?", ["winter"]], ["What do the words 'a blanket of white' describe?", ["snow"]], ["Find and copy two words that rhyme.", ["night", "white", "coats", "floats", "door", "floor", "nose", "rows", "grey", "day"]], ["What did the children use for the snowman's nose?", ["carrot"]], ["Why is the pond described as 'a mirror'?", ["frozen", "ice", "shiny", "reflect"]], ["What colour was the sky at tea-time?", ["purple", "grey", "gray"]]] },
+  { title: "The First Flight", text: "On 17 December 1903, on a windy beach in North Carolina, USA, two brothers made history. Orville and Wilbur Wright had spent years building gliders and testing their ideas. Their aeroplane, the Wright Flyer, was made from spruce wood and cotton cloth, and was powered by a small petrol engine they had designed themselves.\n\nAt 10:35 that morning, Orville lay flat on the lower wing and started the engine. The Flyer rose into the air and stayed up for twelve seconds, travelling 37 metres – about the length of three buses. The brothers took turns to make three more flights that day. The longest, flown by Wilbur, lasted 59 seconds and covered 260 metres.\n\nFew people believed the news at first. Yet within ten years, aeroplanes were crossing countries, and the world would never be the same again.",
+    qs: [["In which year was the first flight?", ["1903"]], ["What were the brothers' first names?", ["orville", "wilbur"]], ["How long did the first flight last?", ["12", "twelve"]], ["What was the Flyer made from?", ["wood", "spruce", "cotton", "cloth"]], ["Who flew the longest flight that day?", ["wilbur"]], ["Why might few people have believed the news at first?", ["never", "impossible", "new", "unbelievable", "hard to believe", "no one had"]]] },
+];
+const PHONICS = ["chip","shop","thin","ring","quick","fox","frog","stamp","crisp","train","night","coin","storm","bird","chair","shout","cloud","spoil","scrunch","strand","vap","jid","chom","shap","blan","fape","stroft","quoob","jound","sloy","zort","tharn","glimp","splue","voit","cheb","yurp","grinth","plaim","skow"];
+const ALIEN = new Set(["vap","jid","chom","shap","blan","fape","stroft","quoob","jound","sloy","zort","tharn","glimp","splue","voit","cheb","yurp","grinth","plaim","skow"]);
+const sumCard = (q, a, tag, extra = {}) => ({kind: "sum", question: q, answer: String(a), worded: true, tries: 1, tag, ...extra});
+function satsDeck(name) {
+  const many = (gens, n, tag) => Array.from({length: n}, (_, k) => { const [q, a] = gens[k % gens.length](); const qq = q.replace(/\s*=\s*$/, ""); return sumCard(qq, a, tag, {worded: /\?/.test(qq) || /[a-z]{3}/i.test(qq)}); });
+  switch (name) {
+    case "Phonics Screening Check": return shuffle(PHONICS.slice()).map(w => ({kind: "quiz", question: w, answer: "✓ Read it correctly", wrong: ["✗ Not yet"], noShuffle: true, big: true, tag: `Year 1 Phonics Check${ALIEN.has(w) ? " · 👽 alien word" : " · real word"}`}));
+    case "Times Tables Check": return Array.from({length: 25}, () => { const a = [6, 7, 8, 9, 12, r(2, 12)][r(0, 5)], b = r(2, 12); return sumCard(`${a} × ${b}`, a * b, "Year 4 Multiplication Tables Check · 6 seconds", {worded: false, timer: 6}); });
+    case "Arithmetic (Paper 1)": return many(shuffle(SATS_ARITH.slice()), 36, "KS2 Maths Paper 1 · Arithmetic");
+    case "Reasoning (Papers 2 & 3)": return many(shuffle(SATS_REASON.slice()), 20, "KS2 Maths Papers 2 & 3 · Reasoning");
+    case "Grammar & Punctuation (Paper 1)": return shuffle(GPS.slice()).slice(0, 30).map(s => { const [q, ...ok] = s.split("|"); return sumCard(q, ok[0], "KS2 Grammar, Punctuation & Spelling · Paper 1", {accept: ok}); });
+    case "Spelling (Paper 2)": return shuffle(SATS_SPELL.slice()).slice(0, 20).map(([sent, w]) => ({kind: "spell", answer: w, clue: sent, sentence: sent.replace("___", w), tries: 1, tag: "KS2 Grammar, Punctuation & Spelling · Paper 2 Spelling"}));
+    case "Reading": return READING.flatMap(p => p.qs.map(([q, keys]) => sumCard(q, keys[0], `KS2 Reading · ${p.title}`, {passage: p.text, title: p.title, keywords: keys})));
+    case "Year 2 Maths (KS1)": return many([MATHS["Year 2"]], 25, "KS1 Maths · Year 2");
+  }
+  return [];
+}
+const SATS_INFO = {
+  "Phonics Screening Check": ["🔤", "Year 1 · 40 words · a grown-up marks", null],
+  "Year 2 Maths (KS1)": ["2️⃣", "Year 2 · 25 questions", null],
+  "Times Tables Check": ["⏱️", "Year 4 · 25 questions · 6 seconds each", null],
+  "Reading": ["📖", "Year 6 · 4 texts · 24 questions", null],
+  "Grammar & Punctuation (Paper 1)": ["✏️", "Year 6 · 30 questions", null],
+  "Spelling (Paper 2)": ["🐝", "Year 6 · 20 words", null],
+  "Arithmetic (Paper 1)": ["➗", "Year 6 · 36 questions · 30 minutes", 30 * 60],
+  "Reasoning (Papers 2 & 3)": ["🧠", "Year 6 · 20 questions · 40 minutes", 40 * 60],
+};
+SUBJECTS.sats = {title: "SATs Practice", icon: "🎓", unit: "tests", note: "Practise for the real tests: type your answers", decks: Object.fromEntries(Object.keys(SATS_INFO).map(k => [k, []]))};
 
 // Topics inside each year group: [name, icon, words that belong to it]. The first match wins.
 const TOPICS = {
@@ -1261,7 +1392,8 @@ async function loadImages(from) {
 let deckName = "";
 function start(name) { deckName = name; return begin(deckFor(subject, name)); }
 async function begin(cards) {
-  deck = shuffle(cards); i = 0; score = 0; streak = 0; finishing = false;
+  deck = subject === "sats" && deckName === "Reading" ? cards : shuffle(cards); i = 0; score = 0; streak = 0; finishing = false; mistakes = []; stopTimers();
+  if (subject === "sats" && SATS_INFO[deckName] && SATS_INFO[deckName][2]) startExamTimer(SATS_INFO[deckName][2]);
   $("menu").hidden = true; $("topbar").hidden = true; $("game").hidden = false;
   $("sub").textContent = SUBJECTS[subject].note;
   $("credit").textContent = subject === "animals" ? "Photos from Wikipedia" : subject === "flags" ? "Flags from flagcdn.com" : subject === "books" ? "Covers from Open Library" : "";
@@ -1321,9 +1453,9 @@ async function show() {
     $("pic").className = c.kind === "flag" ? "pic flag" : "pic";
     $("pic").hidden = false;
   } else if (c.kind === "quiz") {
-    $("big").textContent = c.question; $("big").className = "big q"; $("big").hidden = false;
+    $("big").textContent = c.question; $("big").className = c.big ? "big phon" : "big q"; $("big").hidden = false;
     $("opts").innerHTML = "";
-    for (const o of shuffle([c.answer, ...c.wrong])) {
+    for (const o of c.noShuffle ? [c.answer, ...c.wrong] : shuffle([c.answer, ...c.wrong])) {
       const b = document.createElement("button"); b.className = "opt"; b.type = "button"; b.textContent = o;
       b.onclick = e => { e.stopPropagation(); pickOption(b, o); };
       $("opts").appendChild(b);
@@ -1336,14 +1468,18 @@ async function show() {
     $("name").textContent = c.answer;
   } else if (c.kind === "sum") {
     $("big").textContent = c.worded ? c.question : c.question + " = ?"; $("big").hidden = false;
-    openForm("Type the answer", "decimal");
+    openForm(c.passage || c.accept ? "Type your answer" : "Type the answer", c.passage || c.accept || /[a-z]{3}/i.test(c.question) && !/\(like|\(in|\(cm|\(ml|\(°|\(£/.test(c.question) && isNaN(c.answer) ? "text" : "decimal");
+    if (c.tries) triesLeft = c.tries;
+    if (c.passage) { $("story").textContent = c.passage; $("story").className = "story passage"; $("story").hidden = false; $("big").className = "big q small"; }
+    if (c.timer) startQTimer(c);
   } else {
     openForm("Type the word", "text");
+    if (c.tries) triesLeft = c.tries;
     $("speak").hidden = false; $("clue").textContent = c.clue ? "Clue: " + c.clue : "Listen carefully!"; $("clue").hidden = false;
-    say(c.answer);
+    say(c.sentence ? `${c.answer}. ${c.sentence}. ${c.answer}.` : c.answer);
   }
   $("count").textContent = `Card ${i + 1} of ${deck.length}` + (typed(c) || c.kind === "quiz" ? ` · ⭐ ${score}` : "");
-  $("hint").textContent = c.kind === "spell" ? "Type the word and press Check. Tap 🔊 to hear it again" : c.kind === "sum" ? "Type your answer and press Check. You have 3 tries" : c.kind === "story" ? "Tap the card to open the story" : c.kind === "quiz" ? "Tap the answer you think is right" : "Tap the card to reveal the answer";
+  $("hint").textContent = c.kind === "spell" ? "Type the word and press Check. Tap 🔊 to hear it again" : c.kind === "sum" ? (c.tries === 1 ? "Type your answer and press Check. One try, like the real test" : "Type your answer and press Check. You have 3 tries") : c.kind === "story" ? "Tap the card to open the story" : c.kind === "quiz" ? "Tap the answer you think is right" : "Tap the card to reveal the answer";
   const card = $("card"); card.classList.remove("pop"); void card.offsetWidth; card.classList.add("pop");
   ready = true;
   if (autoRead && c.kind !== "spell" && c.kind !== "story") setTimeout(() => { if (deck[i] === c && !revealed) readCard(); }, 400);
@@ -1375,14 +1511,21 @@ const showAuto = () => { $("autoRead").classList.toggle("on", autoRead); $("auto
 showAuto();
 $("autoRead").onclick = () => { autoRead = !autoRead; store.set("speedy-autoread", autoRead ? "1" : "0"); showAuto(); say(autoRead ? "I will read every question out loud." : "Reading out loud is off."); };
 $("readRules").onclick = () => say($("rules").innerText.replace("🔊", ""));
-$("speak").onclick = e => { e.stopPropagation(); say(deck[i].answer); };
+$("speak").onclick = e => { e.stopPropagation(); const c = deck[i]; say(c.sentence ? `${c.answer}. ${c.sentence}. ${c.answer}.` : c.answer); };
 const typed = c => c.kind === "spell" || c.kind === "sum";
 function openForm(placeholder, mode) {
   triesLeft = 3; const inp = $("spellIn");
   inp.value = ""; inp.disabled = false; inp.placeholder = placeholder; inp.inputMode = mode; $("spellGo").disabled = false;
   $("spellForm").hidden = false; setTimeout(() => inp.focus(), 50);
 }
+const fracVal = s => { s = s.trim(); let m = s.match(/^(-?\d+)\s+(\d+)\/(\d+)$/); if (m) return +m[1] + m[2] / m[3]; m = s.match(/^(-?\d+)\/(\d+)$/); if (m) return m[1] / m[2]; return s !== "" && !isNaN(s) ? +s : null; };
 function isRight(c, guess) {
+  const g0 = norm(guess).replace(/^£/, "").replace(/\s*(cm²|cm|ml|m|°c|°|p|pence|pounds)$/i, "");
+  if (c.keywords) return c.keywords.some(k => g0.includes(norm(k)));
+  if (c.accept) return c.accept.some(a => norm(a) === g0 || norm(a).replace(/[^a-z0-9;:?']/g, "") === g0.replace(/[^a-z0-9;:?']/g, ""));
+  if (/^\d+,\d+$/.test(c.answer)) return g0.replace(/[()\s]/g, "") === c.answer;
+  if (c.kind === "sum" && /\//.test(c.answer + guess)) { const a = fracVal(c.answer), b = fracVal(g0); if (a !== null && b !== null) return Math.abs(a - b) < 1e-9; }
+  guess = g0;
   if (c.kind === "sum") {
     const g = guess.trim().replace(/[−–]/g, "-").replace(/,/g, "");
     if (g !== "" && !isNaN(g) && !isNaN(c.answer)) return Number(g) === Number(c.answer);
@@ -1428,11 +1571,30 @@ function scored(right) {
     streak++; sfx("right"); confetti(streak >= 3 ? 70 : 35);
     card.classList.remove("cheer"); void card.offsetWidth; card.classList.add("cheer");
     $("tries").textContent = "✅ " + PRAISE[r(0, PRAISE.length - 1)] + (streak >= 3 ? ` 🔥 ${streak} in a row!` : "");
-  } else { streak = 0; sfx("wrong"); }
+  } else { streak = 0; sfx("wrong"); const c = deck[i]; mistakes.push([c.question || c.clue || c.answer, c.answer]); }
   if (i + 1 >= deck.length) { finishing = true; const final = score; setTimeout(() => finishDeck(final), 900); }
 }
-function finishDeck(final = score) {
-  score = final;
+let qTimer = null, examTimer = null, examEnds = 0, mistakes = [];
+function startQTimer(c) {
+  clearInterval(qTimer); let left = c.timer;
+  $("tries").className = "tries"; $("tries").textContent = `⏱️ ${left}`;
+  qTimer = setInterval(() => {
+    if (deck[i] !== c || revealed) { clearInterval(qTimer); return; }
+    left--; $("tries").textContent = `⏱️ ${left}`;
+    if (left <= 0) { clearInterval(qTimer); triesLeft = 1; $("spellIn").value = $("spellIn").value || "—"; $("spellForm").requestSubmit(); setTimeout(() => { if (deck[i] === c) $("card").click(); }, 1200); }
+  }, 1000);
+}
+function startExamTimer(secs) {
+  clearInterval(examTimer); examEnds = Date.now() + secs * 1000;
+  examTimer = setInterval(() => {
+    const left = Math.max(0, Math.round((examEnds - Date.now()) / 1000));
+    $("clock").textContent = `⏳ ${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`; $("clock").hidden = false;
+    if (left <= 0) { clearInterval(examTimer); if (!finishing) { finishing = true; finishDeck(score, true); } }
+  }, 1000);
+}
+function stopTimers() { clearInterval(qTimer); clearInterval(examTimer); $("clock").hidden = true; }
+function finishDeck(final = score, timeUp = false) {
+  score = final; stopTimers();
   const pct = deck.length ? score / deck.length : 0, stars = pct >= .9 ? 3 : pct >= .6 ? 2 : pct > 0 ? 1 : 0;
   if (deckName) {
     const key = `speedy-best|${subject}|${deckName}`, old = parseInt(store.get(key) || "0", 10);
@@ -1440,10 +1602,16 @@ function finishDeck(final = score) {
   }
   $("finStars").textContent = "⭐".repeat(stars) + "☆".repeat(3 - stars);
   $("finTitle").textContent = stars === 3 ? "Superstar!" : stars === 2 ? "Great work!" : "Good try!";
-  $("finText").textContent = `You got ${score} out of ${deck.length}.` + (stars < 3 ? " Play again to get 3 stars!" : "");
+  $("finText").textContent = (timeUp ? "⏳ Time's up! " : "") + `You got ${score} out of ${deck.length}.` + (stars < 3 ? " Play again to get 3 stars!" : "");
+  if (subject === "sats") $("finText").textContent += deckName === "Phonics Screening Check" ? " The pass mark has been 32 out of 40 every year since 2014." : deckName === "Times Tables Check" ? " There's no pass mark for the real check, but the aim is to answer all 25 within 6 seconds each." : deckName === "Year 2 Maths (KS1)" ? ` That's ${Math.round(pct * 100)}%.` : ` That's ${Math.round(pct * 100)}%. In recent years, around half marks or more has usually been close to the expected standard (a scaled score of 100), but the pass mark changes every year.`;
+  $("finMiss").innerHTML = "";
+  if (mistakes.length) {
+    const h3 = document.createElement("h3"); h3.textContent = "Let's look at the ones to practise:"; $("finMiss").appendChild(h3);
+    for (const [q, a] of mistakes.slice(0, 12)) { const li = document.createElement("li"); li.innerHTML = "<b></b> <span></span>"; li.firstChild.textContent = q.replace(/\n/g, " "); li.lastChild.textContent = "→ " + a; $("finMiss").appendChild(li); }
+  }
   $("finish").hidden = false; sfx("win"); confetti(160);
 }
-$("finAgain").onclick = () => { $("finish").hidden = true; finishing = false; deck.length && (shuffle(deck), i = 0, score = 0, streak = 0, show()); };
+$("finAgain").onclick = () => { $("finish").hidden = true; finishing = false; mistakes = []; if (subject === "sats") { start(deckName); return; } deck.length && (shuffle(deck), i = 0, score = 0, streak = 0, show()); };
 $("finDecks").onclick = () => { $("finish").hidden = true; finishing = false; year ? showTopics(subject, year) : showDecks(subject); };
 
 function pickOption(btn, choice) {
