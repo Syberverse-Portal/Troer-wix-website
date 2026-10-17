@@ -15,6 +15,10 @@
   .cat span { display:block; font-size:2.6rem; }
   .cat small { display:block; font-weight:normal; color:var(--muted); font-size:.8rem; margin-top:4px; }
   .cat:hover { transform:translateY(-3px); }
+  .rules { background:var(--card); border:4px solid var(--accent); border-radius:16px; padding:12px 20px; width:100%; max-width:760px; margin-bottom:16px; box-shadow:0 4px 0 #0003; font-size:1.05rem; }
+  .rules h2 { margin:4px 0 8px; }
+  .rules ol { margin:0 0 8px; padding-left:22px; line-height:1.6; }
+  .rules p { margin:0 0 4px; }
   .topbar { width:100%; max-width:760px; margin-bottom:12px; }
   .btn { background:var(--accent); border:none; border-radius:10px; padding:8px 14px; font-weight:bold; cursor:pointer; font-family:inherit; font-size:1rem; }
   #game { flex-direction:column; align-items:center; width:100%; }
@@ -41,6 +45,16 @@
 <p class="sub" id="sub">Pick a subject</p>
 
 <div class="topbar" id="topbar" hidden><button class="btn" id="home">← Subjects</button></div>
+<div class="rules" id="rules">
+  <h2>How to play</h2>
+  <ol>
+    <li>Pick a subject, then pick a deck.</li>
+    <li>Look at the card and say your answer out loud.</li>
+    <li>Tap the card to see if you were right.</li>
+    <li>Tap again for the next card.</li>
+  </ol>
+  <p>In Spelling Bee, listen to the word and spell it out loud. Tap 🔊 to hear it again.</p>
+</div>
 <div id="menu" class="cats"></div>
 
 <div id="game" style="display:flex" hidden>
@@ -144,7 +158,7 @@ function button(icon, label, small, onclick) {
 
 function showSubjects() {
   subject = null; window.speechSynthesis && speechSynthesis.cancel();
-  $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = true;
+  $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = true; $("rules").hidden = false;
   $("sub").textContent = "Pick a subject";
   for (const [k, S] of Object.entries(SUBJECTS)) {
     const n = k === "maths" ? "Endless questions" : Object.values(S.decks).reduce((t, d) => t + d.length, 0) + " cards";
@@ -153,7 +167,7 @@ function showSubjects() {
 }
 
 function showDecks(s) {
-  subject = s; const S = SUBJECTS[s];
+  subject = s; const S = SUBJECTS[s]; $("rules").hidden = true;
   window.speechSynthesis && speechSynthesis.cancel();
   $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = false;
   $("sub").textContent = `${S.title}: pick a deck`;
