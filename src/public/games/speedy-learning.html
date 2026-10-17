@@ -67,6 +67,7 @@
     <li>Tap again for the next card.</li>
   </ol>
   <p>In Spelling Bee, listen to the word and type it in, then press Check. You get 3 tries for each word. Tap 🔊 to hear it again.</p>
+  <p>In Maths, type your answer and press Check. You get 3 tries for each question.</p>
 </div>
 <div id="menu" class="cats"></div>
 
@@ -392,14 +393,14 @@ async function show() {
     $("pic").hidden = false;
   } else if (c.kind === "sum") {
     $("big").textContent = c.worded ? c.question : c.question + " = ?"; $("big").hidden = false;
+    openForm("Type the answer", "decimal");
   } else {
-    triesLeft = 3; $("spellIn").value = ""; $("spellIn").disabled = false; $("spellGo").disabled = false;
-    $("spellForm").hidden = false; setTimeout(() => $("spellIn").focus(), 50);
+    openForm("Type the word", "text");
     $("speak").hidden = false; $("clue").textContent = c.clue ? "Clue: " + c.clue : "Listen carefully!"; $("clue").hidden = false;
     say(c.answer);
   }
-  $("count").textContent = `Card ${i + 1} of ${deck.length}` + (c.kind === "spell" ? ` · ⭐ ${score}` : "");
-  $("hint").textContent = c.kind === "spell" ? "Type the word and press Check. Tap 🔊 to hear it again" : "Tap the card to reveal the answer";
+  $("count").textContent = `Card ${i + 1} of ${deck.length}` + (typed(c) ? ` · ⭐ ${score}` : "");
+  $("hint").textContent = c.kind === "spell" ? "Type the word and press Check. Tap 🔊 to hear it again" : c.kind === "sum" ? "Type your answer and press Check. You have 3 tries" : "Tap the card to reveal the answer";
   const card = $("card"); card.classList.remove("pop"); void card.offsetWidth; card.classList.add("pop");
   ready = true;
   const next = deck[i + 1];
@@ -409,6 +410,19 @@ async function show() {
 }
 
 $("speak").onclick = e => { e.stopPropagation(); say(deck[i].answer); };
+const typed = c => c.kind === "spell" || c.kind === "sum";
+function openForm(placeholder, mode) {
+  triesLeft = 3; const inp = $("spellIn");
+  inp.value = ""; inp.disabled = false; inp.placeholder = placeholder; inp.inputMode = mode; $("spellGo").disabled = false;
+  $("spellForm").hidden = false; setTimeout(() => inp.focus(), 50);
+}
+function isRight(c, guess) {
+  if (c.kind === "sum") {
+    const g = guess.trim().replace(/[−–]/g, "-").replace(/,/g, "");
+    if (g !== "" && !isNaN(g) && !isNaN(c.answer)) return Number(g) === Number(c.answer);
+  }
+  return norm(guess) === norm(c.answer);
+}
 function next() { i++; if (i >= deck.length) { shuffle(deck); i = 0; score = 0; } show(); }
 const norm = s => s.trim().toLowerCase().replace(/[’']/g, "'");
 $("spellForm").onclick = e => e.stopPropagation();
@@ -418,12 +432,13 @@ $("spellForm").onsubmit = e => {
   if (revealed || !guess.trim()) return;
   const done = right => {
     revealed = true; $("spellIn").disabled = true; $("spellGo").disabled = true;
-    $("name").textContent = c.answer; $("name").className = "name spell";
+    if (c.kind === "spell") { $("name").textContent = c.answer; $("name").className = "name spell"; }
+    else { $("big").hidden = true; $("name").textContent = c.worded ? `${c.question}\n${c.answer}` : `${c.question} = ${c.answer}`; }
     $("count").textContent = `Card ${i + 1} of ${deck.length} · ⭐ ${score}`;
-    $("hint").textContent = i + 1 < deck.length ? "Tap the card for the next word" : `Finished! You got ${score} out of ${deck.length}. Tap to play again`;
-    if (!right) say(c.answer);
+    $("hint").textContent = i + 1 < deck.length ? `Tap the card for the next ${c.kind === "spell" ? "word" : "question"}` : `Finished! You got ${score} out of ${deck.length}. Tap to play again`;
+    if (!right && c.kind === "spell") say(c.answer);
   };
-  if (norm(guess) === norm(c.answer)) {
+  if (isRight(c, guess)) {
     score++; $("tries").textContent = "✅ Correct! Well done!"; $("tries").className = "tries good"; done(true);
   } else {
     triesLeft--;
@@ -431,15 +446,15 @@ $("spellForm").onsubmit = e => {
     $("tries").className = "tries bad";
     if (triesLeft > 0) {
       $("tries").textContent = `❌ Not quite. ${triesLeft} ${triesLeft === 1 ? "try" : "tries"} left`;
-      $("spellIn").select(); say(c.answer);
+      $("spellIn").select(); if (c.kind === "spell") say(c.answer);
     } else {
-      $("tries").textContent = "❌ Out of tries. Here's how to spell it:"; done(false);
+      $("tries").textContent = c.kind === "spell" ? "❌ Out of tries. Here's how to spell it:" : "❌ Out of tries. Here's the answer:"; done(false);
     }
   }
 };
 $("card").onclick = () => {
   if (!ready) { show(); return; }
-  if (deck[i].kind === "spell") { if (revealed) next(); else $("spellIn").focus(); return; }
+  if (typed(deck[i])) { if (revealed) next(); else $("spellIn").focus(); return; }
   if (!revealed) {
     revealed = true;
     const c = deck[i];
