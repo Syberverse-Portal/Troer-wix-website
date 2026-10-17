@@ -213,6 +213,11 @@
   .day { flex:1; text-align:center; font-size:.8rem; }
   .day i { display:block; height:40px; border-radius:8px; background:#eee; margin-bottom:3px; font-style:normal; line-height:40px; }
   .day i.on { background:#27ae60; color:#fff; }
+  .writing { width:100%; max-width:760px; }
+  .wPrompt { font-size:1.15rem; font-weight:bold; background:#fff8e1; border-radius:10px; padding:10px; }
+  .writing textarea { width:100%; font:inherit; font-size:1.1rem; line-height:1.5; padding:10px; border:3px solid #ccc; border-radius:10px; resize:vertical; }
+  .wFeedback .stars { font-size:2rem; }
+  .wFeedback ul { padding-left:20px; }
   .readQ { position:absolute; top:30px; right:10px; z-index:3; font-size:1.3rem; width:44px; height:44px; border-radius:50%; border:3px solid var(--accent); background:#fff; cursor:pointer; box-shadow:0 2px 0 #0002; }
   .readRules { border:none; background:none; cursor:pointer; font-size:1.2rem; }
   .readQ:active { transform:scale(.92); }
@@ -275,6 +280,15 @@
 </div>
 
 <div class="progress" id="progress" hidden></div>
+
+<div class="panel writing" id="writing" hidden>
+  <h2>🖊️ Your writing task</h2>
+  <p class="wPrompt" id="wPrompt"></p>
+  <label for="wText" class="sr">Your writing</label>
+  <textarea id="wText" rows="12" placeholder="Start writing here…"></textarea>
+  <div class="edBtns"><button class="btn" id="wCheck" type="button">Check my writing</button><button class="btn ghost" id="wNew" type="button">New task</button></div>
+  <div class="wFeedback" id="wFeedback" aria-live="polite"></div>
+</div>
 
 <div class="chat" id="chat" hidden>
   <div class="msgs" id="msgs" aria-live="polite"></div>
@@ -1027,10 +1041,43 @@ QUIZ.eyfs = { title: "Reception Explorers", icon: "🧸", decks: {
   "Art & Music": ["What colour is grass?|Green|Red|Purple","What do red and yellow make?|Orange|Blue|Green","Which instrument do you shake?|Maraca|Piano|Trumpet","What do you use to paint?|A brush|A fork|A shoe","What is singing?|Making music with your voice|Drawing|Running","Which is a loud sound?|A drum|A whisper|A feather","What do you call moving to music?|Dancing|Sleeping|Reading","What do you make with clay?|Models|Soup|Music","Which is a nursery rhyme?|Twinkle Twinkle Little Star|The Gruffalo|Paddington","What colour do blue and yellow make?|Green|Purple|Orange","What do we use to stick paper?|Glue|Water|Paint","What is pretend play?|Acting out stories and games|Homework|Sleeping"],
 }};
 
+// Reading comprehension: original passages for each stage, with questions on retrieval, inference, vocabulary, prediction and summarising
+const COMPREHENSION = {
+  "Years 1–2": [
+    {title: "Tom's New Puppy", text: "Tom got a new puppy on Saturday. She was small and brown with one white ear. Tom called her Biscuit. Biscuit liked to chew socks and chase her tail. At night, she slept in a basket next to Tom's bed. On Monday, Tom felt sad to go to school. When he came home, Biscuit ran to the door and wagged her tail.",
+      qs: ["What day did Tom get the puppy?|Saturday|Monday|Sunday", "What colour was the puppy?|Brown with one white ear|All white|Black", "What did Tom call the puppy?|Biscuit|Cookie|Patch", "What did Biscuit like to chew?|Socks|Shoes|Bones", "Where did Biscuit sleep?|In a basket next to Tom's bed|In the garden|On the sofa", "How did Biscuit feel when Tom came home?|Happy|Sad|Cross"]},
+    {title: "Plants Need Water", text: "All plants need water to grow. Water goes into the plant through its roots. The roots are under the soil. If a plant does not get enough water, its leaves go floppy and brown. Plants also need sunlight. Most plants grow best in a warm, sunny place. You can grow a bean in a jar with some wet paper towel.",
+      qs: ["How does water get into a plant?|Through its roots|Through its flowers|Through the air", "Where are the roots?|Under the soil|On the leaves|In the sky", "What happens if a plant has too little water?|Its leaves go floppy and brown|It grows taller|It flowers", "What else do plants need?|Sunlight|Sweets|Noise", "Is this text fiction or non-fiction?|Non-fiction|Fiction|A poem", "What could you grow in a jar?|A bean|A tree|A pumpkin"]},
+    {title: "The Rainy Picnic", text: "Mum packed sandwiches, apples and a big flask of juice. 'Let's have a picnic in the park!' she said. But as soon as they laid out the blanket, big grey clouds rolled across the sky. Drip, drop, splash! Everyone grabbed the food and ran. Back home, they spread the blanket on the living room floor and had their picnic inside. 'This is the best picnic ever,' laughed Ella.",
+      qs: ["Where did they first go for the picnic?|The park|The beach|School", "What changed the weather?|Big grey clouds|Snow|Wind", "Which words show the sound of rain?|Drip, drop, splash|Bang, crash|Buzz, hum", "Where did they have the picnic in the end?|On the living room floor|In the car|In the garden", "How did Ella feel at the end?|Happy|Cross|Scared", "What is the problem in the story?|It started to rain|They forgot the food|They got lost"]},
+  ],
+  "Years 3–4": [
+    {title: "The Mystery of the Missing Medal", text: "When Kofi arrived at school on Monday, the sports trophy cabinet was open and the gold medal had vanished. Mrs Baker looked worried. 'It was here on Friday,' she said, pointing at the empty velvet stand. Kofi noticed something the grown-ups had missed: tiny muddy paw prints on the windowsill, and a shiny thread caught on the latch. He followed the prints across the field to the old oak tree. There, in a magpie's nest high above, something glinted in the morning sun.",
+      qs: ["What had gone missing?|The gold medal|A trophy|A football", "When was the medal last seen?|On Friday|On Monday|On Sunday", "What clue did Kofi find on the windowsill?|Muddy paw prints|A footprint|A note", "Which word means 'disappeared'?|Vanished|Glinted|Followed", "Who probably took the medal?|A magpie|Mrs Baker|Kofi", "Why might a magpie take the medal?|It is shiny|It is heavy|It is soft"]},
+    {title: "Volcanoes", text: "A volcano is an opening in the Earth's crust. Deep underground, rock is so hot that it melts into a thick liquid called magma. When pressure builds up, the magma is forced upwards and bursts out of the volcano. Once it reaches the surface, it is called lava. Some volcanoes are active, which means they could erupt at any time. Others are dormant, or sleeping, and some are extinct, which means they will never erupt again. Mount Etna in Italy is one of the most active volcanoes in Europe.",
+      qs: ["What is magma?|Melted rock underground|Water in a volcano|A type of cloud", "What is magma called when it reaches the surface?|Lava|Ash|Crust", "What does 'dormant' mean?|Sleeping|Erupting|Dead forever", "Which volcano is mentioned?|Mount Etna|Mount Everest|Vesuvius", "What makes magma burst out?|Pressure building up|Rain|Wind", "Why does the writer use the words active, dormant and extinct?|To sort volcanoes into types|To tell a story|To describe weather"]},
+    {title: "The Owl and the Moon (a poem)", text: "Each night the owl flies out to see\nThe silver moon above the tree.\nShe hoots a greeting, soft and low,\nTo all the sleeping fields below.\n\nThe moon replies with gentle light\nThat paints the hedges white and bright,\nAnd when the dawn begins to break,\nThe owl goes home, the birds awake.",
+      qs: ["When does the owl fly out?|At night|In the morning|At lunchtime", "What colour is the moon in the poem?|Silver|Gold|Red", "Which word rhymes with 'light'?|Bright|Break|Low", "What 'paints the hedges white'?|The moon's light|Snow|Paint", "What happens when dawn breaks?|The owl goes home|The owl wakes up|The moon gets brighter", "How does the poem make you feel?|Calm and peaceful|Scared|Angry"]},
+  ],
+  "Years 5–6": [
+    {title: "The Last Voyage of the Endurance", text: "In 1914, the explorer Ernest Shackleton set sail for Antarctica on a ship called Endurance. His aim was to be the first person to cross the frozen continent on foot. But before the crew could even land, the ship became trapped in pack ice. For ten months, the twenty-eight men waited as the ice slowly crushed the wooden hull. Eventually, Endurance sank beneath the ice. Shackleton refused to give up. He led his men across the ice to a bleak island, then sailed 1,300 kilometres in a small lifeboat through some of the roughest seas on Earth to fetch help. Astonishingly, every single member of the crew survived.",
+      qs: ["What was Shackleton's aim?|To cross Antarctica on foot|To find gold|To reach the North Pole", "What happened to the ship?|It was crushed by ice and sank|It hit a rock|It was attacked", "How many men were in the crew?|28|10|1,300", "Which word in the text means 'gloomy and empty'?|Bleak|Frozen|Rough", "What does 'Shackleton refused to give up' tell us about him?|He was determined|He was lazy|He was lost", "Which is the best summary?|A crew survived a disaster thanks to a determined leader|A ship sailed easily to Antarctica|Explorers found a new island"]},
+    {title: "Should Schools Have Longer Holidays?", text: "Some people believe the summer holiday should be longer. They argue that children need time to rest, play outside and spend time with family, and that tired pupils do not learn well. Others disagree. They point out that long breaks can cause children to forget what they have learned, a problem teachers call the 'summer slide'. Working parents may also struggle to find childcare. Perhaps the answer is not longer holidays, but better-spread ones, with shorter breaks more often throughout the year.",
+      qs: ["What type of text is this?|A discussion text|A story|A poem", "Give one reason for longer holidays.|Children need time to rest|Children forget learning|Parents need childcare", "What is the 'summer slide'?|Forgetting learning over a long break|A playground slide|A holiday", "Which word introduces a possible solution?|Perhaps|Others|Some", "Why might working parents disagree with longer holidays?|They may struggle to find childcare|They want more homework|They like school dinners", "What does the writer suggest in the end?|Shorter breaks more often|No holidays at all|Much longer summers"]},
+    {title: "The Clockwork Bird", text: "Grandpa's workshop smelled of oil and sawdust. Shelves groaned under jars of springs, cogs and tiny screws, and in the middle of the bench sat a brass bird with one wing missing. 'It belonged to my mother,' Grandpa said, his voice suddenly quiet. 'It used to sing every morning.' Ivy studied the delicate gears. For three evenings she worked beside him, her tongue poking out in concentration. On the fourth morning, as sunlight crept across the bench, she turned the tiny key. The bird shivered, stretched its new wing, and sang. Grandpa didn't say anything at all. He just squeezed her hand.",
+      qs: ["What did the workshop smell of?|Oil and sawdust|Flowers|Bread", "What was wrong with the bird?|It had one wing missing|It was broken in half|It was made of wood", "Why was Grandpa's voice 'suddenly quiet'?|The bird reminded him of his mother|He had a cold|He was angry", "Which phrase shows Ivy was concentrating hard?|Her tongue poking out|Sunlight crept|Shelves groaned", "What technique is 'shelves groaned'?|Personification|Simile|Alliteration", "Why didn't Grandpa say anything at the end?|He was too moved to speak|He was cross|He didn't notice"]},
+  ],
+};
+QUIZ.comprehension = {title: "Reading Comprehension", icon: "🔎", decks: Object.fromEntries(Object.entries(COMPREHENSION).map(([band, ps]) => [band, ps.flatMap(p => p.qs.map(q => q + "|@@" + p.title))]))};
+
 for (const [k, decks] of Object.entries(QUIZ_MORE)) for (const [d, l] of Object.entries(decks)) QUIZ[k].decks[d].push(...l);
 for (const [k, Q] of Object.entries(QUIZ)) SUBJECTS[k] = {
   title: Q.title, icon: Q.icon, unit: "questions", note: "Pick the right answer",
-  decks: Object.fromEntries(Object.entries(Q.decks).map(([d, l]) => [d, l.map(s => { const [question, answer, ...wrong] = s.split("|"); return {kind: "quiz", question, answer, wrong, tag: `${Q.title} · ${d}${AGES[d] ? " · " + AGES[d] : ""}`}; })]))
+  decks: Object.fromEntries(Object.entries(Q.decks).map(([d, l]) => [d, l.map(s => {
+    const parts = s.split("|"), pt = parts[parts.length - 1].startsWith("@@") ? parts.pop().slice(2) : null;
+    const [question, answer, ...wrong] = parts, p = pt && COMPREHENSION[d].find(x => x.title === pt);
+    return {kind: "quiz", question, answer, wrong, tag: `${Q.title} · ${d}${pt ? " · " + pt : AGES[d] ? " · " + AGES[d] : ""}`, ...(p ? {passage: p.text, title: p.title} : {})};
+  })]))
 };
 
 const $ = id => document.getElementById(id);
@@ -1119,10 +1166,10 @@ function button(icon, label, small, onclick) {
 
 function showSubjects() {
   subject = null; year = ""; stopReading(); if (typeof watching !== "undefined" && watching) stopWatching();
-  $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = true; $("rules").hidden = false; $("editor").hidden = true; $("chat").hidden = true; $("progress").hidden = true;
+  $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = true; $("rules").hidden = false; $("editor").hidden = true; $("chat").hidden = true; $("progress").hidden = true; $("writing").hidden = true;
   $("sub").textContent = "Pick a subject";
   for (const [k, S] of Object.entries(SUBJECTS)) {
-    const n = k === "maths" ? "Endless questions" : k === "sats" ? "Every Year 1, 2, 4 and 6 test" : Object.values(S.decks).reduce((t, d) => t + d.length, 0) + " " + (S.unit || "cards");
+    const n = k === "maths" ? "Endless questions" : k === "sats" ? "Every Year 1, 2, 4 and 6 test" : k === "writing" ? "Write and get feedback" : Object.values(S.decks).reduce((t, d) => t + d.length, 0) + " " + (S.unit || "cards");
     button(S.icon, S.title, n, () => showDecks(k));
   }
   button("💬", "What Does This Mean?", "Ask about school words", openChat);
@@ -1131,10 +1178,15 @@ function showSubjects() {
 
 function showDecks(s) {
   stopTimers(); if (typeof watching !== "undefined" && watching) stopWatching();
-  subject = s; year = ""; $("years").hidden = true; const S = SUBJECTS[s]; $("rules").hidden = true; $("editor").hidden = true; $("chat").hidden = true; $("progress").hidden = true;
+  subject = s; year = ""; $("years").hidden = true; const S = SUBJECTS[s]; $("rules").hidden = true; $("editor").hidden = true; $("chat").hidden = true; $("progress").hidden = true; $("writing").hidden = true;
   stopReading();
   $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = false;
   $("sub").textContent = `${S.title}: pick a deck`;
+  if (s === "writing") {
+    $("sub").textContent = "Writing Workshop: pick your year group";
+    for (const band of Object.keys(WRITING)) button({"Years 1–2": "✏️", "Years 3–4": "📝", "Years 5–6": "🖋️"}[band], band, `${AGES[band]} · ${WRITING[band].checks.length} writing skills`, () => openWriting(band));
+    return;
+  }
   if (s === "sats") {
     $("sub").textContent = "SATs Practice: pick a test. One try per question, just like the real thing";
     for (const [name, [icon, info]] of Object.entries(SATS_INFO)) {
@@ -1398,7 +1450,7 @@ function showTopics(s, name) {
   year = name; subject = s; const S = SUBJECTS[s];
   stopReading();
   $("menu").innerHTML = ""; $("menu").hidden = false; $("game").hidden = true; $("topbar").hidden = false; $("years").hidden = false;
-  $("rules").hidden = true; $("editor").hidden = true; $("chat").hidden = true; $("progress").hidden = true;
+  $("rules").hidden = true; $("editor").hidden = true; $("chat").hidden = true; $("progress").hidden = true; $("writing").hidden = true;
   $("sub").textContent = `${S.title} · ${name}: pick a topic`;
   button("🎲", `All of ${name}`, AGES[name] || "Every topic mixed", () => start(name));
   for (const [t, icon, n] of topicsFor(s, name)) {
@@ -1429,9 +1481,9 @@ async function loadImages(from) {
 let deckName = "";
 function start(name) { deckName = name; return begin(deckFor(subject, name)); }
 async function begin(cards) {
-  deck = subject === "sats" && deckName === "Reading" ? cards : shuffle(cards); i = 0; score = 0; streak = 0; finishing = false; mistakes = []; stopTimers();
+  deck = subject === "sats" && deckName === "Reading" || subject === "comprehension" && deckName !== "Mixed" ? cards : shuffle(cards); i = 0; score = 0; streak = 0; finishing = false; mistakes = []; stopTimers();
   if (subject === "sats" && SATS_INFO[deckName] && SATS_INFO[deckName][2]) startExamTimer(SATS_INFO[deckName][2]);
-  $("menu").hidden = true; $("topbar").hidden = true; $("game").hidden = false; $("progress").hidden = true;
+  $("menu").hidden = true; $("topbar").hidden = true; $("game").hidden = false; $("progress").hidden = true; $("writing").hidden = true;
   $("sub").textContent = SUBJECTS[subject].note;
   $("credit").textContent = subject === "animals" ? "Photos from Wikipedia" : subject === "flags" ? "Flags from flagcdn.com" : subject === "books" ? "Covers from Open Library" : "";
   await show();
@@ -1491,7 +1543,8 @@ async function show() {
     $("pic").className = c.kind === "flag" ? "pic flag" : "pic";
     $("pic").hidden = false;
   } else if (c.kind === "quiz") {
-    $("big").textContent = c.question; $("big").className = c.big ? "big phon" : "big q"; $("big").hidden = false;
+    $("big").textContent = c.question; $("big").className = c.big ? "big phon" : c.passage ? "big q small" : "big q"; $("big").hidden = false;
+    if (c.passage) { $("story").textContent = c.passage; $("story").className = "story passage"; $("story").hidden = false; }
     $("opts").innerHTML = "";
     for (const o of c.noShuffle ? [c.answer, ...c.wrong] : shuffle([c.answer, ...c.wrong])) {
       const b = document.createElement("button"); b.className = "opt"; b.type = "button"; b.textContent = o;
@@ -1570,6 +1623,38 @@ function isRight(c, guess) {
   }
   return norm(guess) === norm(c.answer);
 }
+// Writing Workshop: a prompt, then instant feedback on the writing skills each year group is taught
+const WRITING = {
+  "Years 1–2": {prompts: ["Write about your favourite animal. What does it look like? What does it eat?", "Write about the best day you have ever had.", "Imagine you found a magic door in the garden. What happens next?", "Write instructions for brushing your teeth."],
+    checks: [["Capital letter at the start of sentences", t => sentences(t).length && sentences(t).every(s => /^[A-Z"'“]/.test(s))], ["Full stops, question marks or exclamation marks", t => /[.!?]/.test(t)], ["A capital I for yourself", t => !/\bi\b/.test(t)], ["Joining words like and, but, because, so, when", t => /\b(and|but|because|so|when|or|if)\b/i.test(t)], ["Describing words (adjectives)", t => countWords(t, ADJ) >= 2], ["At least 3 sentences", t => sentences(t).length >= 3]]},
+  "Years 3–4": {prompts: ["Write the opening of an adventure story set in a dark forest.", "Write a letter to your head teacher persuading them to have a pet in school.", "Write a report about an animal of your choice.", "Write a diary entry as a Roman soldier arriving in Britain."],
+    checks: [["Paragraphs (leave a blank line between them)", t => t.trim().split(/\n\s*\n/).length >= 2], ["A fronted adverbial with a comma (e.g. 'After lunch,')", t => /(^|[.!?]\s+)(After|Before|Later|Suddenly|Slowly|Quickly|Silently|Meanwhile|Eventually|Finally|Once|As|When|Without|Without warning|In the|At the|On the|Under the|Beyond)[^,.!?]{0,30},/m.test(t)], ["Inverted commas for speech", t => /["“].+?["”]/.test(t)], ["Conjunctions like because, although, when, if, while", t => /\b(because|although|when|if|while|until|since|before|after)\b/i.test(t)], ["Interesting adjectives and adverbs", t => countWords(t, ADJ) >= 3 && /\w+ly\b/.test(t)], ["Apostrophes for missing letters or belonging", t => /\w'\w|\w’\w/.test(t)], ["At least 6 sentences", t => sentences(t).length >= 6]]},
+  "Years 5–6": {prompts: ["Write a suspenseful story opening that ends on a cliffhanger.", "Write a balanced argument: should children have mobile phones?", "Write a newspaper report about a strange event in your town.", "Describe a setting using all five senses."],
+    checks: [["Paragraphs to organise ideas", t => t.trim().split(/\n\s*\n/).length >= 3], ["A relative clause (who, which, whose, where, that)", t => /,\s*(who|which|whose|where)\b/i.test(t) || /\b(who|which|whose)\b/i.test(t)], ["Modal verbs (might, could, should, would, must)", t => /\b(might|could|should|would|must|may)\b/i.test(t)], ["Advanced punctuation: semicolon, colon, dash or brackets", t => /[;:()–—]|\s-\s/.test(t)], ["Cohesive links (however, therefore, meanwhile, as a result)", t => /\b(however|therefore|meanwhile|as a result|furthermore|consequently|on the other hand|nevertheless|in addition)\b/i.test(t)], ["Varied sentence starts", t => { const s = sentences(t).map(x => x.split(" ")[0].toLowerCase()); return s.length >= 4 && new Set(s).size >= s.length * .7; }], ["Figurative language (simile or metaphor: like, as … as)", t => /\blike a\b|\bas \w+ as\b/i.test(t)], ["At least 10 sentences", t => sentences(t).length >= 10]]},
+};
+const ADJ = /\b(big|small|tiny|huge|giant|little|red|blue|green|yellow|black|white|brown|pink|purple|orange|dark|bright|happy|sad|angry|scary|spooky|gloomy|beautiful|lovely|fluffy|soft|hard|cold|hot|warm|icy|old|new|ancient|tall|short|long|fast|slow|loud|quiet|silent|shiny|sparkling|enormous|delicious|crunchy|wet|dry|muddy|brave|kind|clever|funny|strange|mysterious|magical|golden|silver|deep|empty|heavy|rough|smooth|sticky|cosy|creepy|wild|gentle|fierce|tired|excited|nervous|grumpy|curious|terrible|wonderful|amazing|massive|frosty|misty)\b/gi;
+const sentences = t => t.replace(/\n/g, " ").split(/(?<=[.!?])\s+/).map(s => s.trim()).filter(s => s.split(" ").length > 1);
+const countWords = (t, re) => (t.match(re) || []).length;
+function openWriting(band) {
+  const W = WRITING[band], prompt = W.prompts[r(0, W.prompts.length - 1)];
+  $("menu").hidden = true; $("topbar").hidden = false; $("years").hidden = true; $("writing").hidden = false;
+  $("sub").textContent = `Writing Workshop · ${band}`;
+  $("wPrompt").textContent = prompt; $("wText").value = store.get(`speedy-writing|${band}`) || ""; $("wFeedback").innerHTML = "";
+  $("wNew").onclick = () => openWriting(band);
+  $("wCheck").onclick = () => {
+    const t = $("wText").value; store.set(`speedy-writing|${band}`, t);
+    const words = (t.match(/\b[\w']+\b/g) || []).length;
+    if (words < 10) { $("wFeedback").innerHTML = "<p>Write a little more first, at least a few sentences.</p>"; return; }
+    const res = W.checks.map(([label, test]) => [label, !!test(t)]), got = res.filter(x => x[1]).length;
+    const stars = got / res.length >= .85 ? 3 : got / res.length >= .5 ? 2 : 1;
+    $("wFeedback").innerHTML = `<div class="stars">${"⭐".repeat(stars)}${"☆".repeat(3 - stars)}</div><p><b>${words} words, ${sentences(t).length} sentences.</b> You used ${got} of ${res.length} writing skills:</p><ul>${res.map(([l, ok]) => `<li>${ok ? "✅" : "➡️ Try adding:"} ${l}</li>`).join("")}</ul>`;
+    sfx(stars === 3 ? "win" : "right"); if (stars === 3) confetti(120);
+    if (subject !== "writing") subject = "writing";
+    record({kind: "writing", question: prompt, answer: `${got}/${res.length}`, tag: `Writing Workshop · ${band}`, subj: "writing"}, got / res.length >= .5);
+  };
+}
+SUBJECTS.writing = {title: "Writing Workshop", icon: "🖊️", unit: "prompts", note: "Write, then get instant feedback", decks: {"Years 1–2": [1, 2, 3, 4], "Years 3–4": [1, 2, 3, 4], "Years 5–6": [1, 2, 3, 4]}};
+
 // ---------- Progress tracking: who's playing, what they've answered, what to practise ----------
 const loadJSON = (k, d) => { try { return JSON.parse(store.get(k)) ?? d; } catch (e) { return d; } };
 const saveJSON = (k, v) => store.set(k, JSON.stringify(v));
@@ -1596,7 +1681,7 @@ function streakDays(days) { let n = 0; const d = new Date(); for (;;) { const k 
 function showProgress() {
   stopReading(); stopTimers();
   subject = null; year = "";
-  $("menu").hidden = true; $("rules").hidden = true; $("game").hidden = true; $("chat").hidden = true; $("editor").hidden = true; $("topbar").hidden = false; $("years").hidden = true;
+  $("menu").hidden = true; $("rules").hidden = true; $("game").hidden = true; $("chat").hidden = true; $("editor").hidden = true; $("topbar").hidden = false; $("years").hidden = true; $("writing").hidden = true;
   $("sub").textContent = "My Progress";
   const log = loadJSON(logKey(), []), days = loadJSON(dayKey(), []), miss = loadJSON(missKey(), {});
   const total = log.length, right = log.filter(x => x.ok).length, pct = total ? Math.round(right / total * 100) : 0;
@@ -1627,7 +1712,7 @@ function showProgress() {
   p.querySelectorAll(".kid").forEach(b => b.onclick = () => { player = b.dataset.name; store.set("speedy-player", player); showProgress(); });
   $("addKid").onclick = () => { const n = $("newKid").value.trim().slice(0, 20); if (!n || players.includes(n)) return; players.push(n); saveJSON("speedy-players", players); player = n; store.set("speedy-player", player); showProgress(); };
   $("newKid").onkeydown = e => { if (e.key === "Enter") $("addKid").click(); };
-  if ($("practise")) $("practise").onclick = () => { const m = loadJSON(missKey(), {}); const cards = Object.values(m).map(x => ({...x.card, subj: x.s, tag: "Practise my mistakes · " + ((SUBJECTS[x.s] || {}).title || "")})); subject = Object.values(m)[0].s; deckName = ""; $("progress").hidden = true; begin(cards.slice(-30)); };
+  if ($("practise")) $("practise").onclick = () => { const m = loadJSON(missKey(), {}); const cards = Object.values(m).map(x => ({...x.card, subj: x.s, tag: "Practise my mistakes · " + ((SUBJECTS[x.s] || {}).title || "")})); subject = Object.values(m)[0].s; deckName = ""; $("progress").hidden = true; $("writing").hidden = true; begin(cards.slice(-30)); };
   let armed = false;
   $("resetKid").onclick = () => { if (!armed) { armed = true; $("resetMsg").textContent = "Press again to confirm."; return; } store.set(logKey(), "[]"); store.set(missKey(), "{}"); store.set(dayKey(), "[]"); showProgress(); };
 }
@@ -3226,7 +3311,7 @@ async function ask(question) {
 }
 function openChat() {
   stopReading();
-  $("menu").hidden = true; $("rules").hidden = true; $("topbar").hidden = false; $("chat").hidden = false; $("progress").hidden = true;
+  $("menu").hidden = true; $("rules").hidden = true; $("topbar").hidden = false; $("chat").hidden = false; $("progress").hidden = true; $("writing").hidden = true;
   $("sub").textContent = "What does this mean? Ask about any school word";
   if (!$("msgs").children.length) {
     addMsg("Hello! I'm Ollie the Owl. Ask me what a school word means, like \"What is an adverb?\"" + (Listen ? " You can type, or press 🎤 and say your question." : ""), "bot");
