@@ -272,11 +272,33 @@ async function begin(cards) {
   await show();
 }
 
-function say(word) {
+// Read words aloud with the device's built-in voice
+let voice = null;
+function pickVoice() {
+  const vs = window.speechSynthesis ? speechSynthesis.getVoices() : [];
+  voice = vs.find(v => v.lang === "en-GB") || vs.find(v => /^en[-_]/i.test(v.lang)) || vs[0] || null;
+}
+if (window.speechSynthesis) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+// Some phones only allow speech that starts straight from a tap, so prime it on the first tap
+document.addEventListener("click", function unlock() {
   if (!window.speechSynthesis) return;
-  speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(word); u.lang = "en-GB"; u.rate = .8;
+  const u = new SpeechSynthesisUtterance(" "); u.volume = 0; speechSynthesis.speak(u);
+  document.removeEventListener("click", unlock, true);
+}, true);
+function say(word) {
+  if (!window.speechSynthesis) { $("hint").textContent = "This browser can't read words aloud. Try Chrome, Safari or Edge."; return; }
+  if (!voice) pickVoice();
+  const u = new SpeechSynthesisUtterance(word);
+  if (voice) u.voice = voice;
+  u.lang = voice ? voice.lang : "en-GB"; u.rate = .8; u.volume = 1;
+  let started = false;
+  u.onstart = () => { started = true; };
+  if (speechSynthesis.speaking || speechSynthesis.pending) speechSynthesis.cancel();
+  speechSynthesis.resume();
   speechSynthesis.speak(u);
+  setTimeout(() => {
+    if (!started && !speechSynthesis.speaking) $("hint").textContent = "No sound? Turn the volume up and check silent mode is off, then tap 🔊.";
+  }, 1500);
 }
 
 async function show() {
